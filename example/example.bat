@@ -3,8 +3,9 @@
 rem Make sure the script is executed in the example directory even if it's called from somewhere else.
 pushd %~dp0
 
-rem Create output dir.
 set OUTPUT_DIR=generated
+
+rem Create output dir.
 if not exist %OUTPUT_DIR% (
     mkdir %OUTPUT_DIR%
 )
