@@ -10,5 +10,5 @@ config-generator can either be used via the commandline or called from within Py
 
 ### Commandline
 ```bash
-
+python3 -m config-generator -c example/test-config.yaml -o example
 ```
