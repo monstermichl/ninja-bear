@@ -1,6 +1,8 @@
 import argparse
 from os import path
 
+from .generator import ConfigGenerator
+
 from .base.config import Config
 
 _CONFIG_PARAMETER = 'config'
@@ -18,8 +20,8 @@ def main():
 
     if output_dir and not path.isdir(output_dir):
         raise Exception(f'Output directory {output_dir} does not exist')
-        
-    language_configs = Config.parse(getattr(args, _CONFIG_PARAMETER))
+    
+    language_configs = ConfigGenerator.read_config(getattr(args, _CONFIG_PARAMETER))
     
     for language_config in language_configs:
         generatedCode = language_config.dump()
