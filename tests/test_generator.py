@@ -3,13 +3,13 @@ import pathlib
 from typing import List, Type
 import unittest
 
-from config_generator import ConfigGenerator
-from config_generator.base.language_config import LanguageConfig
-from config_generator.base.language_type import LanguageType
-from config_generator.generators.java_generator import JavaGenerator
-from config_generator.generators.typescript_generator import TypescriptGenerator
-from config_generator.language_configs.java_config import JavaConfig
-from config_generator.language_configs.typescript_config import TypescriptConfig
+from src import ConfigGenerator
+from src.base.language_config import LanguageConfig
+from src.base.language_type import LanguageType
+from src.generators.java_generator import JavaGenerator
+from src.generators.typescript_generator import TypescriptGenerator
+from src.language_configs.java_config import JavaConfig
+from src.language_configs.typescript_config import TypescriptConfig
 
 class TestGenerator(unittest.TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
