@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 VERSION = '0.0.1' 
 DESCRIPTION = 'Generator to build config files in the style of classes for different languages.'
-LONG_DESCRIPTION = Path(__file__).joinpath('/README.md').read_text()
+LONG_DESCRIPTION = Path(__file__).parent.absolute().joinpath('README.md').read_text()
 
 setup(
         name='config-generator', 
