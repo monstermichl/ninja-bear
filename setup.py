@@ -20,8 +20,11 @@ setup(
             'pyyaml >= 6.0.1',
             'schema >= 0.7.5',
         ],
-        extra_require={
-            'dev': ['twine>=4.0.2'],
+        extras_require={
+            'dev': [
+                'wheel>=0.41.1',
+                'twine>=4.0.2',
+            ],
         },
         python_requires='>=3.10',
         classifiers= [
