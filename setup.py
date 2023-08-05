@@ -20,9 +20,9 @@ setup(
             'pyyaml >= 6.0.1',
             'schema >= 0.7.5',
         ],
-        extra_require=[
+        extra_require={
             'dev': ['twine>=4.0.2'],
-        ],
+        },
         python_requires='>=3.10',
         classifiers= [
             'Programming Language :: Python :: 3',
