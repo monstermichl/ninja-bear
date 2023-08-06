@@ -1,7 +1,7 @@
 from typing import List
 
-from .base.language_config import LanguageConfig
-from .base.config import Config
+from .language_config import LanguageConfig
+from .config import Config
 
 class ConfigGenerator:
     @staticmethod

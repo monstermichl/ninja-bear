@@ -1,1 +1,1 @@
-from .generator import ConfigGenerator
+from .base.generator import ConfigGenerator

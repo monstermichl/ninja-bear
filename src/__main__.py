@@ -1,7 +1,7 @@
 import argparse
 from os import path
 
-from .generator import ConfigGenerator
+from .base.generator import ConfigGenerator
 
 from .base.config import Config
 
