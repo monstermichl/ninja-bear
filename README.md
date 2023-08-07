@@ -20,23 +20,68 @@ For details about the configuration file, please check *example/test-config.yaml
 
 ```yaml
 languages:
+  - type: java                        # Specifies the output language. Supported values are: java | typescript
+    file_naming: pascal               # Specifies the file naming convention. Supported values: snake | screaming_snake | camel | pascal | kebap
+    indent: 4                         # Specifies the amount of spaces before each constant.
+    package: my.test.package          # For Java, a package name must be specified.
+
   - type: typescript
     file_naming: kebap
     indent: 4
 
 properties:
+  - type: bool                        # Specifies the constant data type. Supported values: bool | int | float | double | string | regex
+    name: myBoolean                   # Specifies the constant's name.
+    value: true                       # Specifies the constant's value.
+
+  - type: int
+    name: myInteger
+    value: 142
+
+  - type: float
+    name: myFloat
+    value: 322f                       # Float with float specifier. However, an additional specifier (f) is not required and will be trimmed.
+
+  - type: double
+    name: myDouble
+    value: 233.9
+
   - type: string
     name: myString
     value: Hello World
-    hidden: true
+    hidden: true                      # If a property should act as a helper but should not be written to the generated file, it must be marked as 'hidden'.
+
+  - type: regex
+    name: myRegex
+    value: Test Reg(E|e)x
+    comment: Just another RegEx.      # Variables can be described using the comment property.
 
   - type: string
     name: mySubstitutedString
     value: Sometimes I just want to scream ${myString}!
 ```
 
+```java
+package my.test.package;
+
+public class TestConfig {
+    public final static boolean myBoolean = true;
+    public final static int myInteger = 142;
+    public final static float myFloat = 322.0f;
+    public final static double myDouble = 233.9d;
+    public final static String myRegex = "Test Reg(E|e)x"; /* Just another RegEx. */
+    public final static String mySubstitutedString = "Sometimes I just want to scream Hello World!";
+}
+
+```
+
 ```typescript
 export class TestConfig {
+    public static readonly myBoolean = true;
+    public static readonly myInteger = 142;
+    public static readonly myFloat = 322.0;
+    public static readonly myDouble = 233.9;
+    public static readonly myRegex = /Test Reg(E|e)x/; /* Just another RegEx. */
     public static readonly mySubstitutedString = 'Sometimes I just want to scream Hello World!';
 }
 ```
