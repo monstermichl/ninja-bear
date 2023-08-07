@@ -9,6 +9,8 @@
 name: Publish Python Package
 on:
   push:
+    tags:
+      - 'v*'
 
 jobs:
   deploy:
@@ -30,7 +32,6 @@ jobs:
     - name: Publish package
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
-        repository-url: https://test.pypi.org/legacy/
         user: __token__
-        password: ${{ secrets.TEST_PYPI_TOKEN }}
+        password: ${{ secrets.PYPI_TOKEN }}
     

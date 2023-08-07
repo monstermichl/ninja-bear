@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 # Setup process taken from here: https://www.freecodecamp.org/news/build-your-first-python-package/.
 
-VERSION = '0.0.1' 
+VERSION = '0.0.3' 
 DESCRIPTION = 'Generator to build config files in the style of classes for different languages.'
 LONG_DESCRIPTION = Path(__file__).parent.absolute().joinpath('README.md').read_text()
 
