@@ -3,8 +3,6 @@ from os import path
 
 from .base.generator import ConfigGenerator
 
-from .base.config import Config
-
 _CONFIG_PARAMETER = 'config'
 _OUTPUT_PARAMETER = 'output'
 
