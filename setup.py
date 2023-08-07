@@ -15,7 +15,6 @@ setup(
         long_description=LONG_DESCRIPTION,
         long_description_content_type='text/markdown',
         package_dir={'': 'src'},
-        packages=find_packages(where='src'),
         install_requires=[
             'pyyaml >= 6.0.1',
             'schema >= 0.7.5',
