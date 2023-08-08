@@ -16,6 +16,9 @@ setup(
         long_description_content_type='text/markdown',
         package_dir={'': 'src'},
         packages=find_packages(where='src'),
+        entry_points = {
+            'console_scripts': ['config-generator=src.config_generator:__main__'],
+        },
         install_requires=[
             'pyyaml >= 6.0.1',
             'schema >= 0.7.5',
