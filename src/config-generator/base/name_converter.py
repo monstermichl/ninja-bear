@@ -33,7 +33,9 @@ class NameConverter:
                 compare_name = ''
                 while compare_name != name:
                     compare_name = name
-                    name = re.sub(rf'{UNDERLINE}+([a-zA-Z0-9])', lambda match: match.group(1).upper(), name)  # Thanks for the hint: https://stackoverflow.com/a/8934655.
+                    name = re.sub(rf'{UNDERLINE}+([a-zA-Z0-9])',
+                        lambda match: match.group(1).upper(), name # Thanks for the hint: https://stackoverflow.com/a/8934655.
+                    )
 
                 # If Pascal-case, uppercase the first letter.
                 if type == NamingConventionType.PASCAL_CASE:

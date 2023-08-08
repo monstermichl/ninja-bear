@@ -9,7 +9,13 @@ from .property import Property
 class GeneratorBase(ABC):
     _DEFAULT_INDENT = 3
 
-    def __init__(self, class_name: str, properties: List[Property] = [], indent = _DEFAULT_INDENT, additional_props = {}) -> Self:
+    def __init__(
+        self,
+        class_name: str,
+        properties: List[Property] = [],
+        indent = _DEFAULT_INDENT,
+        additional_props = {}
+    ) -> Self:
         self._properties: List[Property] = []
         self._additional_props = additional_props
 

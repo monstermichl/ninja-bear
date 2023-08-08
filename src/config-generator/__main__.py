@@ -14,7 +14,9 @@ def main():
     parser.add_argument('-o', f'--{_OUTPUT_PARAMETER}', help='Output location', required=False, type=str)
 
     args = parser.parse_args()
-    output_dir = f'{str(getattr(args, _OUTPUT_PARAMETER)).strip("/")}/' if hasattr(args, _OUTPUT_PARAMETER) else ''  # TODO: Might also strip backslashes.
+
+    # TODO: Might also strip backslashes.
+    output_dir = f'{str(getattr(args, _OUTPUT_PARAMETER)).strip("/")}/' if hasattr(args, _OUTPUT_PARAMETER) else ''
 
     if output_dir and not path.isdir(output_dir):
         raise Exception(f'Output directory {output_dir} does not exist')

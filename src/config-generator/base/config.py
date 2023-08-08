@@ -53,16 +53,19 @@ class Config:
                 # Substitute property only if it's not the same property as the one
                 # which is currently being processed.
                 if substitution_property != property.name:
-                    found_properties = [search_property.value for search_property in properties if search_property.name == substitution_property]
+                    found_properties = [
+                        search_property.value for search_property in properties if
+                        search_property.name == substitution_property
+                    ]
 
                     if not found_properties:
                         raise Exception(f'Unknown substitution property {substitution_property}')
                     replacement = found_properties[0]
                 else:
-                    raise Exception(f'It\'s not allowed to reference the property itself')
+                    raise Exception('It\'s not allowed to reference the property itself')
                 return replacement
             
-            if type(property.value) == str:
+            if isinstance(property.value, str):
                 property.value = re.sub(r'\${(\w+)}', replace, property.value)
 
         # Remove hidden properties.
@@ -72,7 +75,9 @@ class Config:
         for language in validated_object[_KEY_LANGUAGES]:
             language_type = language[_KEY_TYPE]
             indent = language[_KEY_INDENT] if _KEY_INDENT in language else None
-            file_naming_convention = Config._evaluate_naming_convention_type(language[_KEY_FILE_NAMING] if _KEY_FILE_NAMING in language else None)
+            file_naming_convention = Config._evaluate_naming_convention_type(
+                language[_KEY_FILE_NAMING] if _KEY_FILE_NAMING in language else None
+            )
 
             match language_type:
                 case LanguageType.JAVA:
@@ -87,7 +92,10 @@ class Config:
                 file_naming_convention,
                 properties,
                 indent,
-                language,  # Pass all language props as additional_props to let the specific generator decides which props he requires additionally.
+
+                # Pass all language props as additional_props to let the specific
+                # generator decides which props he requires additionally.
+                language,
             ))
 
         return language_configs

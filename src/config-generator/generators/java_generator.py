@@ -1,7 +1,6 @@
 from ..base.generator_base import GeneratorBase
 from ..base.property import Property
 from ..base.property_type import PropertyType
-from ..base.name_converter import NamingConventionType
 
 
 class JavaGenerator(GeneratorBase):
@@ -34,7 +33,7 @@ class JavaGenerator(GeneratorBase):
         return f' /* {comment} */'
     
     def _before_class(self, **props) -> str:
-        if not self._ATTRIBUTE_PACKAGE in props:
+        if self._ATTRIBUTE_PACKAGE not in props:
             raise Exception('Java requires a package definition')
         else:
             package = props[self._ATTRIBUTE_PACKAGE]

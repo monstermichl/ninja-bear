@@ -1,7 +1,6 @@
 from ..base.generator_base import GeneratorBase
 from ..base.property import Property
 from ..base.property_type import PropertyType
-from ..base.name_converter import NamingConventionType
 
 
 class TypescriptGenerator(GeneratorBase):

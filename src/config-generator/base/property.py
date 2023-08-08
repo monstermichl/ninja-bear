@@ -3,16 +3,24 @@ from .property_type import PropertyType
 
 
 class Property:
-    def __init__(self, name: str, value: str | bool | int | float, property_type: PropertyType, hidden = False, comment = None):
+    def __init__(
+        self,
+        name: str,
+        value: str | bool | int | float,
+        property_type: PropertyType,
+        hidden = False,
+        comment = None
+    ):
         # Check if the key is a valid variable name by Java standards.
         if not re.match(r'^(_|[a-zA-Z])\w*$', name):
             raise Exception(f'Key {name} is not a valid variable name')
         
         # Make sure that the provided value is valid even if it's a string.
-        if type(value) is str:
+        if isinstance(value, str):
             match property_type:
                 case PropertyType.BOOL:
-                    value = True if value.lower() in ['1', 'true', 'yes', 'on'] else False  # Correct boolean property value to 'true' or 'false'.
+                    # Correct boolean property value to 'true' or 'false'.
+                    value = True if value.lower() in ['1', 'true', 'yes', 'on'] else False
                 case PropertyType.INT:
                     match = re.match(r'\d+', value)
                     value = int(match.group(0)) if match else 0  # Remove everything that comes after the integer.
