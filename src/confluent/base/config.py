@@ -5,15 +5,12 @@ from typing import List
 import yaml
 from schema import Schema, Use, Optional, Or
 
+from .config_language_mapping import ConfigLanguageMapping
 from .name_converter import NamingConventionType
 from .property import Property
 from .property_type import PropertyType
 from .language_type import LanguageType
 from .language_config import LanguageConfig
-
-from ..language_configs.java_config import JavaConfig
-from ..language_configs.javascript_config import JavascriptConfig
-from ..language_configs.typescript_config import TypescriptConfig
 
 
 _KEY_LANGUAGES = 'languages'
@@ -26,6 +23,7 @@ _KEY_VALUE = 'value'
 _KEY_HIDDEN = 'hidden'
 _KEY_COMMENT = 'comment'
 
+_LANGUAGE_MAPPINGS = ConfigLanguageMapping.get_mappings()
 
 class Config:
 
@@ -79,16 +77,7 @@ class Config:
             file_naming_convention = Config._evaluate_naming_convention_type(
                 language[_KEY_FILE_NAMING] if _KEY_FILE_NAMING in language else None
             )
-
-            match language_type:
-                case LanguageType.JAVA:
-                    config_type = JavaConfig
-                case LanguageType.JAVASCRIPT:
-                    config_type = JavascriptConfig
-                case LanguageType.TYPESCRIPT:
-                    config_type = TypescriptConfig
-                case _:
-                    raise Exception('Unknown language type')
+            config_type = Config._evaluate_config_type(language_type)
 
             language_configs.append(config_type(
                 config_name,
@@ -142,15 +131,25 @@ class Config:
 
     @staticmethod
     def _evaluate_language_type(language: str) -> LanguageType:
-        if language == 'java':
-            type = LanguageType.JAVA
-        elif language == 'javascript':
-            type = LanguageType.JAVASCRIPT
-        elif language == 'typescript':
-            type = LanguageType.TYPESCRIPT
-        else:
+        found = [mapping.type for mapping in _LANGUAGE_MAPPINGS if mapping.name == language]
+        length = len(found)
+
+        if length == 0:
             raise Exception('Unknown language')
-        return type
+        elif length > 1:
+            raise Exception('Several languages found')
+        return found[0]
+    
+    @staticmethod
+    def _evaluate_config_type(language_type: LanguageType) -> LanguageType:
+        found = [mapping.config_type for mapping in _LANGUAGE_MAPPINGS if mapping.type == language_type]
+        length = len(found)
+
+        if length == 0:
+            raise Exception('Unknown language config')
+        elif length > 1:
+            raise Exception('Several language configs found')
+        return found[0]
     
     @staticmethod
     def _evaluate_naming_convention_type(naming_convention: str) -> NamingConventionType:
