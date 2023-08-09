@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import List, Type
 
-from .config_info import ConfigInfo
+from .config_file_info import ConfigFileInfo
 from .name_converter import NameConverter, NamingConventionType
 from .language_type import LanguageType
 from .property import Property
@@ -32,7 +32,7 @@ class LanguageConfig:
             indent,
             additional_props,
         )
-        self.config_info = ConfigInfo(
+        self.config_info = ConfigFileInfo(
             NameConverter.convert(config_name, file_naming_convention),
             file_extension,
         )

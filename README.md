@@ -7,6 +7,11 @@ In times of distributed systems and en vogue micro-architecture it can get quite
 - [x] TypeScript
 - [x] Python
 
+## Installation
+```bash
+python -m pip install confluent  # On Linux use python3.
+```
+
 ## Configuration
 For details about the configuration file, please check *example/test-config.yaml*. All possible values are described there. Basically the configuration consists of a *languages*- and a *properties*-section. The first one describes language specific properties e.g. for which language to generate, which naming convention to use for the output file or how much indent to use. The *properties*-section defines the actual values whereis the following types are supported: *bool*, *int*, *float*, *double*, *string* and *regex*. Properties can also act as helpers for other properties which don't need to be written to the final config-file. These properties can be marked as *hidden*. Acting as a helper-property means that it defines a value which other properties can use as substitute values referencing them via *${property-name}*.
 
@@ -16,7 +21,7 @@ For details about the configuration file, please check *example/test-config.yaml
 python3 -m confluent -c test-config.yaml -o generated
 ```
 
-#### Script
+### Script
 ```python
 from confluent import Generator
 

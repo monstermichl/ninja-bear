@@ -25,10 +25,79 @@ _KEY_COMMENT = 'comment'
 
 _LANGUAGE_MAPPINGS = ConfigLanguageMapping.get_mappings()
 
+
+class UnknownSubstitutionException(Exception):
+    def __init__(self, substitution_property: str):
+        super().__init__(f'Unknown substitution property {substitution_property}')
+
+
+class RecursiveSubstitutionException(Exception):
+    def __init__(self, substitution_property: str):
+        super().__init__(f'It\'s not allowed for a property to reference itself ({substitution_property})')
+
+
+class UnknownPropertyTypeException(Exception):
+    def __init__(self, property_type: str):
+        super().__init__(f'Unknown property type {property_type}')
+
+
+class UnknownLanguageException(Exception):
+    def __init__(self, language: str):
+        super().__init__(f'Unknown language {language}')
+
+
+class SeveralLanguagesException(Exception):
+    def __init__(self, language: str):
+        super().__init__(f'Several languages matched for {language}')
+
+
+class NoLanguageConfigException(Exception):
+    def __init__(self, language_type: LanguageType):
+        super().__init__(f'No language config found for {language_type}')
+
+
+class SeveralLanguageConfigsException(Exception):
+    def __init__(self, language_type: LanguageType):
+        super().__init__(f'Several languages configs found for {language_type}')
+
+
 class Config:
+    """
+    Handles the config evaluation by parsing the provided YAML string via the parse-method.
+
+    :raises UnknownSubstitutionException:    Raised if the requested substitution property does not exist.
+    :raises RecursiveSubstitutionException:  Raised if a property referenced itself as substitution.
+    :raises UnknownPropertyTypeException:    Raised if an unsupported property type was used in the config.
+    :raises UnknownLanguageException:        Raised if an unsupported language was used in the config.
+    :raises SeveralLanguagesException:       Raised if several mappings were found for the requested language. If this
+                                             error arises, it's a package error. Please open an issue at
+                                             https://github.com/monstermichl/confluent/issues.
+    :raises NoLanguageConfigException:       Raised if no language config mapping was provided for the specified
+                                             language type. If this error arises, it's a package error. Please open an
+                                             issue at https://github.com/monstermichl/confluent/issues.
+    :raises SeveralLanguageConfigsException: Raised if several language config mappings were found for the specified
+                                             language type. If this error arises, it's a package error. Please open an
+                                             issue at https://github.com/monstermichl/confluent/issues.
+    """
 
     @staticmethod
     def parse(content: str, config_name: str) -> List[LanguageConfig]:
+        """
+        Parses the provided YAML configuration string and returns the corresponding language configurations.
+
+        :param content:     YAML configuration strings. For config details, please check the test-config.yaml in
+                            the example folder.
+        :type content:      str
+        :param config_name: Output config file name. NOTE: The actual file name format might be overruled by
+                            the specified file_naming rule from the config.
+        :type config_name:  str
+
+        :raises UnknownSubstitutionException:    Raised if the requested substitution property does not exist.
+        :raises RecursiveSubstitutionException:  Raised if a property referenced itself as substitution.
+
+        :return: Language configurations which further can be dumped as config files.
+        :rtype:  List[LanguageConfig]
+        """
         yaml_object = yaml.safe_load(content)
         validated_object = Config._schema().validate(yaml_object)
         properties: List[Property] = []
@@ -58,10 +127,10 @@ class Config:
                     ]
 
                     if not found_properties:
-                        raise Exception(f'Unknown substitution property {substitution_property}')
+                        raise UnknownSubstitutionException(substitution_property)
                     replacement = found_properties[0]
                 else:
-                    raise Exception('It\'s not allowed to reference the property itself')
+                    raise RecursiveSubstitutionException('It\'s not allowed to reference the property itself')
                 return replacement
             
             if isinstance(property.value, str):
@@ -94,6 +163,12 @@ class Config:
     
     @staticmethod
     def _schema() -> Schema:
+        """
+        Returns the config validation schema.
+
+        :return: Config validation schema.
+        :rtype:  Schema
+        """
         return Schema({
             _KEY_LANGUAGES: [{
                 _KEY_TYPE: Use(Config._evaluate_language_type),
@@ -112,6 +187,17 @@ class Config:
     
     @staticmethod
     def _evaluate_data_type(type: str) -> PropertyType:
+        """
+        Evaluates a properties data type.
+
+        :param type: Property type string (e.g., bool | string | ...).
+        :type type:  str
+
+        :raises UnknownPropertyTypeException: Raised if an unsupported property type was used in the config.
+
+        :return: The corresponding PropertyType enum value.
+        :rtype:  PropertyType
+        """
         if type == 'bool':
             type = PropertyType.BOOL
         elif type == 'int':
@@ -125,34 +211,72 @@ class Config:
         elif type == 'regex':
             type = PropertyType.REGEX
         else:
-            # Use string as default type.
-            type = PropertyType.STRING
+            raise UnknownPropertyTypeException(type)
         return type
 
     @staticmethod
     def _evaluate_language_type(language: str) -> LanguageType:
+        """
+        Evaluates the requested language type.
+
+        :param language: Language to generate a config for (e.g., java | typescript | ...).
+        :type language:  str
+
+        :raises UnknownLanguageException:  Raised if an unsupported language was used in the config.
+        :raises SeveralLanguagesException: Raised if several mappings were found for the requested language. If this
+                                           error arises, it's a package error. Please open an issue at
+                                           https://github.com/monstermichl/confluent/issues.
+
+        :return: The corresponding LanguageType enum value.
+        :rtype:  LanguageType
+        """
         found = [mapping.type for mapping in _LANGUAGE_MAPPINGS if mapping.name == language]
         length = len(found)
 
         if length == 0:
-            raise Exception('Unknown language')
+            raise UnknownLanguageException(language)
         elif length > 1:
-            raise Exception('Several languages found')
+            raise SeveralLanguagesException(language)
         return found[0]
     
     @staticmethod
-    def _evaluate_config_type(language_type: LanguageType) -> LanguageType:
+    def _evaluate_config_type(language_type: LanguageType) -> LanguageConfig.__class__:
+        """
+        Evaluates the languages config type to use for further evaluation.
+
+        :param language_type: Language type to search the corresponding language config for (e.g., LanguageType.JAVA).
+        :type language_type:  LanguageType
+
+        :raises NoLanguageConfigException:       Raised if no language config mapping was provided for the specified
+                                                 language type. If this error arises, it's a package error. Please open
+                                                 an issue at https://github.com/monstermichl/confluent/issues.
+        :raises SeveralLanguageConfigsException: Raised if several language config mappings were found for the specified
+                                                 language type. If this error arises, it's a package error. Please open
+                                                 an issue at https://github.com/monstermichl/confluent/issues.
+
+        :return: The corresponding LanguageConfig derivate type (e.g., JavaConfig.__class__).
+        :rtype:  LanguageConfig.__class__
+        """
         found = [mapping.config_type for mapping in _LANGUAGE_MAPPINGS if mapping.type == language_type]
         length = len(found)
 
         if length == 0:
-            raise Exception('Unknown language config')
+            raise NoLanguageConfigException(language_type)
         elif length > 1:
-            raise Exception('Several language configs found')
+            raise SeveralLanguageConfigsException('Several language configs found')
         return found[0]
     
     @staticmethod
     def _evaluate_naming_convention_type(naming_convention: str) -> NamingConventionType:
+        """
+        Evaluates which naming convention type to use for the output file.
+
+        :param naming_convention: Naming convention string (e.g., snake | camel | ...).
+        :type naming_convention:  str
+
+        :return: The corresponding NamingConventionType enum value.
+        :rtype:  NamingConventionType
+        """
         if naming_convention == 'snake':
             naming_convention = NamingConventionType.SNAKE_CASE
         elif naming_convention == 'screaming_snake':
