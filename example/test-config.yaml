@@ -1,17 +1,21 @@
 languages:
-  - type: java                        # Specifies the output language. Supported values are: java | typescript
-    file_naming: pascal               # Specifies the file naming convention. Supported values: snake | screaming_snake | camel | pascal | kebap
-    indent: 4                         # Specifies the amount of spaces before each constant.
-    package: my.test.package          # For Java, a package name must be specified.
+  - type: java                # Specifies the output language. Supported values are: java | javascript | typescript
+    file_naming: pascal       # Specifies the file naming convention. Supported values: snake | screaming_snake | camel | pascal | kebap
+    indent: 4                 # Specifies the amount of spaces before each constant.
+    package: my.test.package  # For Java, a package name must be specified.
+
+  - type: javascript
+    file_naming: screaming_snake
+    indent: 4
 
   - type: typescript
     file_naming: kebap
     indent: 4
 
 properties:
-  - type: bool                        # Specifies the constant data type. Supported values: bool | int | float | double | string | regex
-    name: myBoolean                   # Specifies the constant's name.
-    value: true                       # Specifies the constant's value.
+  - type: bool       # Specifies the constant data type. Supported values: bool | int | float | double | string | regex
+    name: myBoolean  # Specifies the constant's name.
+    value: true      # Specifies the constant's value.
 
   - type: int
     name: myInteger
@@ -19,7 +23,7 @@ properties:
 
   - type: float
     name: myFloat
-    value: 322f                       # Float with float specifier. However, an additional specifier (f) is not required and will be trimmed.
+    value: 322f  # Float with float specifier. However, an additional specifier (f) is not required and will be trimmed.
 
   - type: double
     name: myDouble
@@ -28,12 +32,12 @@ properties:
   - type: string
     name: myString
     value: Hello World
-    hidden: true                      # If a property should act as a helper but should not be written to the generated file, it must be marked as 'hidden'.
+    hidden: true  # If a property should act as a helper but should not be written to the generated file, it must be marked as 'hidden'.
 
   - type: regex
     name: myRegex
     value: Test Reg(E|e)x
-    comment: Just another RegEx.      # Variables can be described using the comment property.
+    comment: Just another RegEx.  # Variables can be described using the comment property.
 
   - type: string
     name: mySubstitutedString

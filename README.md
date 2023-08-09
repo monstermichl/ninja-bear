@@ -1,16 +1,16 @@
-# config-generator
-Generator to build config files in the style of classes for different languages.
+# confluent
+In times of distributed system and en vogue micro-architecture it can get quite cumbersome to keep constants that are required by several components up-to-date and in sync, especially when these components or services are written in different languages. *confluent* targets this issue by using a language neutral YAML configuration that lets you generate language specific config files for several languages.
 
 ## Currently supported languages
 - [x] TypeScript
 - [x] Java
 
 ## Usage
-config-generator can either be used via the commandline or called from within Python and depends on the configuration passed to it.
+It can either be used via the commandline or called from within Python and depends on the configuration passed to it.
 
 ### Commandline
 ```bash
-python3 -m config-generator -c example/test-config.yaml -o example
+python3 -m confluent -c example/test-config.yaml -o example
 ```
 
 ## Configuration
@@ -20,19 +20,23 @@ For details about the configuration file, please check *example/test-config.yaml
 
 ```yaml
 languages:
-  - type: java                        # Specifies the output language. Supported values are: java | typescript
-    file_naming: pascal               # Specifies the file naming convention. Supported values: snake | screaming_snake | camel | pascal | kebap
-    indent: 4                         # Specifies the amount of spaces before each constant.
-    package: my.test.package          # For Java, a package name must be specified.
+  - type: java                # Specifies the output language. Supported values are: java | javascript | typescript
+    file_naming: pascal       # Specifies the file naming convention. Supported values: snake | screaming_snake | camel | pascal | kebap
+    indent: 4                 # Specifies the amount of spaces before each constant.
+    package: my.test.package  # For Java, a package name must be specified.
+
+  - type: javascript
+    file_naming: screaming_snake
+    indent: 4
 
   - type: typescript
     file_naming: kebap
     indent: 4
 
 properties:
-  - type: bool                        # Specifies the constant data type. Supported values: bool | int | float | double | string | regex
-    name: myBoolean                   # Specifies the constant's name.
-    value: true                       # Specifies the constant's value.
+  - type: bool       # Specifies the constant data type. Supported values: bool | int | float | double | string | regex
+    name: myBoolean  # Specifies the constant's name.
+    value: true      # Specifies the constant's value.
 
   - type: int
     name: myInteger
@@ -40,7 +44,7 @@ properties:
 
   - type: float
     name: myFloat
-    value: 322f                       # Float with float specifier. However, an additional specifier (f) is not required and will be trimmed.
+    value: 322f  # Float with float specifier. However, an additional specifier (f) is not required and will be trimmed.
 
   - type: double
     name: myDouble
@@ -49,12 +53,12 @@ properties:
   - type: string
     name: myString
     value: Hello World
-    hidden: true                      # If a property should act as a helper but should not be written to the generated file, it must be marked as 'hidden'.
+    hidden: true  # If a property should act as a helper but should not be written to the generated file, it must be marked as 'hidden'.
 
   - type: regex
     name: myRegex
     value: Test Reg(E|e)x
-    comment: Just another RegEx.      # Variables can be described using the comment property.
+    comment: Just another RegEx.  # Variables can be described using the comment property.
 
   - type: string
     name: mySubstitutedString
@@ -72,7 +76,17 @@ public class TestConfig {
     public final static String myRegex = "Test Reg(E|e)x"; /* Just another RegEx. */
     public final static String mySubstitutedString = "Sometimes I just want to scream Hello World!";
 }
+```
 
+```javascript
+export class TestConfig {
+    static myBoolean = true;
+    static myInteger = 142;
+    static myFloat = 322.0;
+    static myDouble = 233.9;
+    static myRegex = /Test Reg(E|e)x/; /* Just another RegEx. */
+    static mySubstitutedString = 'Sometimes I just want to scream Hello World!';
+}
 ```
 
 ```typescript

@@ -7,8 +7,10 @@ from src.confluent import Generator
 from src.confluent.base.language_config import LanguageConfig
 from src.confluent.base.language_type import LanguageType
 from src.confluent.generators.java_generator import JavaGenerator
+from src.confluent.generators.javascript_generator import JavascriptGenerator
 from src.confluent.generators.typescript_generator import TypescriptGenerator
 from src.confluent.language_configs.java_config import JavaConfig
+from src.confluent.language_configs.javascript_config import JavascriptConfig
 from src.confluent.language_configs.typescript_config import TypescriptConfig
 
 class TestGenerator(unittest.TestCase):
@@ -44,17 +46,23 @@ class TestGenerator(unittest.TestCase):
     def _evaluate_configs(self, configs: List[LanguageConfig]):
         self.assertIsNotNone(configs)
         self.assertIsInstance(configs, list)
-        self.assertEqual(len(configs), 2)
+        self.assertEqual(len(configs), 3)
 
         # Check Java config.
         self._evaluate_java_properties(configs[0], 'TestConfig')
 
-        # Check Typescript config.
-        self._evaluate_typescript_properties(configs[1], 'test-config')
+        # Check JavaScript config.
+        self._evaluate_javascript_properties(configs[1], 'TEST_CONFIG')
+
+        # Check TypeScript config.
+        self._evaluate_typescript_properties(configs[2], 'test-config')
 
     def _evaluate_java_properties(self, config: JavaConfig, name: str):
         self._evaluate_common_properties(config, 'java', name, LanguageType.JAVA, JavaGenerator)
         # TODO: Add package evaluation.
+
+    def _evaluate_javascript_properties(self, config: JavascriptConfig, name: str):
+        self._evaluate_common_properties(config, 'js', name, LanguageType.JAVASCRIPT, JavascriptGenerator)
 
     def _evaluate_typescript_properties(self, config: TypescriptConfig, name: str):
         self._evaluate_common_properties(config, 'ts', name, LanguageType.TYPESCRIPT, TypescriptGenerator)

@@ -12,6 +12,7 @@ from .language_type import LanguageType
 from .language_config import LanguageConfig
 
 from ..language_configs.java_config import JavaConfig
+from ..language_configs.javascript_config import JavascriptConfig
 from ..language_configs.typescript_config import TypescriptConfig
 
 
@@ -82,6 +83,8 @@ class Config:
             match language_type:
                 case LanguageType.JAVA:
                     config_type = JavaConfig
+                case LanguageType.JAVASCRIPT:
+                    config_type = JavascriptConfig
                 case LanguageType.TYPESCRIPT:
                     config_type = TypescriptConfig
                 case _:
@@ -141,6 +144,8 @@ class Config:
     def _evaluate_language_type(language: str) -> LanguageType:
         if language == 'java':
             type = LanguageType.JAVA
+        elif language == 'javascript':
+            type = LanguageType.JAVASCRIPT
         elif language == 'typescript':
             type = LanguageType.TYPESCRIPT
         else:
