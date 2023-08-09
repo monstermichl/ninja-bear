@@ -7,19 +7,31 @@ In times of distributed systems and en vogue micro-architecture it can get quite
 - [x] TypeScript
 - [x] Python
 
-## Usage
-It can either be used via the commandline or called from within Python and depends on the configuration passed to it.
-
-### Commandline
-```bash
-python3 -m confluent -c example/test-config.yaml -o example
-```
-
 ## Configuration
 For details about the configuration file, please check *example/test-config.yaml*. All possible values are described there. Basically the configuration consists of a *languages*- and a *properties*-section. The first one describes language specific properties e.g. for which language to generate, which naming convention to use for the output file or how much indent to use. The *properties*-section defines the actual values whereis the following types are supported: *bool*, *int*, *float*, *double*, *string* and *regex*. Properties can also act as helpers for other properties which don't need to be written to the final config-file. These properties can be marked as *hidden*. Acting as a helper-property means that it defines a value which other properties can use as substitute values referencing them via *${property-name}*.
 
-### Example
+## Usage
+### Commandline
+```bash
+python3 -m confluent -c test-config.yaml -o generated
+```
 
+#### Script
+```python
+from confluent import Generator
+
+# Get configurations from file.
+configs = Generator.read_config('test-config.yaml')
+
+for config in configs:
+    # Write config to the generated directory.
+    with open(f'generated/{config.config_info.file_name_full}', 'w') as f:
+        f.write(config.dump())
+```
+
+## Example
+
+### Configuration
 ```yaml
 languages:
   - type: java                # Specifies the output language. Supported values are: java | javascript | typescript | python
@@ -71,6 +83,7 @@ properties:
     value: Sometimes I just want to scream ${myString}!
 ```
 
+### Output
 ```java
 package my.test.package;
 
