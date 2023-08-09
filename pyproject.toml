@@ -5,3 +5,6 @@ build-backend = "setuptools.build_meta"
 [tool.ruff]
 select = ["E", "F"]
 line-length = 120
+
+[tool.coverage.report]
+fail_under = 90

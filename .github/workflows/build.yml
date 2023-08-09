@@ -32,12 +32,14 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         python -m pip install -r requirements.txt
-        python -m pip install ruff
+        python -m pip install ruff coverage
     - name: Run tests
       run: |
-        echo "I'm in $(pwd)"
-        ls -la
         python -m unittest discover tests || exit -1
+    - name: Check coverage
+      run: |
+        python3 -m coverage run -m unittest || _exit -1
+        python3 -m coverage report || _exit -1
     - name: Lint
       run: |
         python -m ruff check . || exit -1

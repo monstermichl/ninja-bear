@@ -32,7 +32,10 @@ class TestGenerator(unittest.TestCase):
         configs = Generator.read_config(self._test_config_path)
 
         for config in configs:
-            compare_file_path = path.join(self._test_compare_files_path, f'{config.config_name}.{config.config_extension}')
+            compare_file_path = path.join(
+                self._test_compare_files_path,
+                f'{config.config_name}.{config.config_extension}'
+            )
             
             with open(compare_file_path, 'r') as f:
                 content = f.read()
