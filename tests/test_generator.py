@@ -16,6 +16,7 @@ class TestGenerator(unittest.TestCase):
         super().__init__(methodName)
         self._test_path = pathlib.Path(__file__).parent.resolve()
         self._test_config_path = path.join(self._test_path, '..', 'example/test-config.yaml')
+        self._test_compare_files_path = path.join(self._test_path, 'compare_files')
 
     def test_read_config(self):
         configs = Generator.read_config(self._test_config_path)
@@ -26,6 +27,16 @@ class TestGenerator(unittest.TestCase):
             content = f.read()
         configs = Generator.parse_config(content, 'TestConfig')
         self._evaluate_configs(configs)
+
+    def test_run_generators(self):
+        configs = Generator.read_config(self._test_config_path)
+
+        for config in configs:
+            compare_file_path = path.join(self._test_compare_files_path, f'{config.config_name}.{config.config_extension}')
+            
+            with open(compare_file_path, 'r') as f:
+                content = f.read()
+            self.assertEqual(config.dump(), content)
 
     def _evaluate_configs(self, configs: List[LanguageConfig]):
         self.assertIsNotNone(configs)

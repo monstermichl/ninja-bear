@@ -28,6 +28,7 @@ setup(
                 'wheel>=0.41.1',
                 'twine>=4.0.2',
                 'ruff>=0.0.47',
+                'coverage>=7.2.7'
             ],
         },
         python_requires='>=3.10',

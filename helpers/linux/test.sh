@@ -7,7 +7,10 @@ function _exit() {
 }
 
 # Run unit tests.
-python3 -m unittest discover tests || _exit -1
+python3 -m coverage run -m unittest || _exit -1
+
+# Generate coverage report.
+python3 -m coverage html
 
 # Go back to original directory.
 _exit 0
