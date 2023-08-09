@@ -1,4 +1,4 @@
-from typing import List, Self
+from typing import List
 
 from ..generators.typescript_generator import TypescriptGenerator
 
@@ -16,7 +16,7 @@ class TypescriptConfig(LanguageConfig):
         properties: List[Property],
         indent: int = None,
         additional_props = {},
-    ) -> Self:
+    ):
         super().__init__(
             config_name,
             LanguageType.TYPESCRIPT,

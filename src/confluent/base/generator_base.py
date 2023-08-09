@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Self
+from typing import List
 
 from .name_converter import NamingConventionType, NameConverter
 
@@ -15,7 +15,7 @@ class GeneratorBase(ABC):
         properties: List[Property] = [],
         indent = _DEFAULT_INDENT,
         additional_props = {}
-    ) -> Self:
+    ):
         self._properties: List[Property] = []
         self._additional_props = additional_props
 
@@ -24,7 +24,7 @@ class GeneratorBase(ABC):
 
         [self.add_property(property) for property in properties]
 
-    def add_property(self, property: Property) -> Self:
+    def add_property(self, property: Property):
         found_property = len([p for p in self._properties if p.name == property.name]) > 0
 
         # Make sure that the name doesn't already exist.
@@ -32,9 +32,11 @@ class GeneratorBase(ABC):
             raise Exception(f'Property name {property.name} already exists')
 
         self._properties.append(property)
+        return self
 
-    def set_indent(self, indent: int) -> Self:
+    def set_indent(self, indent: int):
         self._indent = indent if indent and indent >= 0 else self._DEFAULT_INDENT
+        return self
 
     def dump(self) -> str:
         s = self._before_class(**self._additional_props)
@@ -70,13 +72,14 @@ class GeneratorBase(ABC):
     def _end_class(self) -> str:
         pass
 
-    def _set_class_name(self, name: str) -> Self:
+    def _set_class_name(self, name: str):
         if not name:
             raise Exception('No class name provided')
 
         self._class_name = NameConverter.convert(name, NamingConventionType.PASCAL_CASE)
+        return self
 
-    def _create_property_string(self, property: Property):
+    def _create_property_string(self, property: Property) -> str:
         s = ' ' * self._indent  # Indent space.
         s += self._create_property(property)
 

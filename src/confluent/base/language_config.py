@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import List, Self, Type
+from typing import List, Type
 
 from .name_converter import NameConverter, NamingConventionType
 from .language_type import LanguageType
@@ -18,7 +18,7 @@ class LanguageConfig:
         properties: List[Property],
         indent: int = None,
         additional_props = {},
-    ) -> Self:
+    ):
         if not config_name:
             raise Exception('No config name provided')
         
