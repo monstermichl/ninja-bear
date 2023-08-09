@@ -17,7 +17,7 @@ setup(
         package_dir={'': 'src'},
         packages=find_packages(where='src'),
         entry_points = {
-            'console_scripts': ['config-generator=src.config_generator:__main__'],
+            'console_scripts': ['confluent=src.config_generator:__main__'],
         },
         install_requires=[
             'pyyaml >= 6.0.1',
@@ -37,10 +37,12 @@ setup(
             'License :: OSI Approved :: MIT License',
             'Operating System :: OS Independent',
         ],
-        url = 'https://github.com/monstermichl/config-generator.git',
+        url = 'https://github.com/monstermichl/confluent.git',
         keywords = [
+            'configuration',
             'generator',
-            'typescript',
             'java',
+            'javascript',
+            'typescript',
         ],
 )
