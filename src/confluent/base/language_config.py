@@ -1,6 +1,7 @@
 from abc import abstractmethod
 from typing import List, Type
 
+from .config_info import ConfigInfo
 from .name_converter import NameConverter, NamingConventionType
 from .language_type import LanguageType
 from .property import Property
@@ -31,8 +32,10 @@ class LanguageConfig:
             indent,
             additional_props,
         )
-        self.config_name = NameConverter.convert(config_name, file_naming_convention)
-        self.config_extension = file_extension
+        self.config_info = ConfigInfo(
+            NameConverter.convert(config_name, file_naming_convention),
+            file_extension,
+        )
         self.language_type = language_type
 
     def dump(self) -> str:

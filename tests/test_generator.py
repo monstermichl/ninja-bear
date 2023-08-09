@@ -39,7 +39,7 @@ class TestGenerator(unittest.TestCase):
         for config in configs:
             compare_file_path = path.join(
                 self._test_compare_files_path,
-                f'{config.config_name}.{config.config_extension}'
+                f'{config.config_info.file_name_full}'
             )
             
             with open(compare_file_path, 'r') as f:
@@ -84,7 +84,7 @@ class TestGenerator(unittest.TestCase):
         type: LanguageType,
         generator_class: Type
     ):
-        self.assertEqual(config.config_extension, extension)
-        self.assertEqual(config.config_name, name)
+        self.assertEqual(config.config_info.file_extension, extension)
+        self.assertEqual(config.config_info.file_name, name)
         self.assertEqual(config.language_type, type)
         self.assertEqual(config.generator.__class__, generator_class)

@@ -26,7 +26,7 @@ def main():
     for language_config in language_configs:
         generatedCode = language_config.dump()
 
-        with open(f'{output_dir}{language_config.config_name}.{language_config.config_extension}', 'w') as f:
+        with open(f'{output_dir}/{language_config.config_info.file_name_full}', 'w') as f:
             f.write(generatedCode)
 
 
