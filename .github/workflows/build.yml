@@ -34,6 +34,8 @@ jobs:
         python -m pip install -r requirements.txt
     - name: Run tests
       run: |
+        echo "I'm in $(pwd)"
+        ls -la
         python -m unittest discover tests || exit -1
     - name: Lint
       run: |
