@@ -3,13 +3,13 @@ import pathlib
 from typing import List, Type
 import unittest
 
-from src import ConfigGenerator
-from src.base.language_config import LanguageConfig
-from src.base.language_type import LanguageType
-from src.generators.java_generator import JavaGenerator
-from src.generators.typescript_generator import TypescriptGenerator
-from src.language_configs.java_config import JavaConfig
-from src.language_configs.typescript_config import TypescriptConfig
+from src.confluent import Generator
+from src.confluent.base.language_config import LanguageConfig
+from src.confluent.base.language_type import LanguageType
+from src.confluent.generators.java_generator import JavaGenerator
+from src.confluent.generators.typescript_generator import TypescriptGenerator
+from src.confluent.language_configs.java_config import JavaConfig
+from src.confluent.language_configs.typescript_config import TypescriptConfig
 
 class TestGenerator(unittest.TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
@@ -18,13 +18,13 @@ class TestGenerator(unittest.TestCase):
         self._test_config_path = path.join(self._test_path, '..', 'example/test-config.yaml')
 
     def test_read_config(self):
-        configs = ConfigGenerator.read_config(self._test_config_path)
+        configs = Generator.read_config(self._test_config_path)
         self._evaluate_configs(configs)
 
     def test_parse_config(self):
         with open(self._test_config_path, 'r') as f:
             content = f.read()
-        configs = ConfigGenerator.parse_config(content, 'TestConfig')
+        configs = Generator.parse_config(content, 'TestConfig')
         self._evaluate_configs(configs)
 
     def _evaluate_configs(self, configs: List[LanguageConfig]):

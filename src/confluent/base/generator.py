@@ -3,7 +3,7 @@ from typing import List
 from .language_config import LanguageConfig
 from .config import Config
 
-class ConfigGenerator:
+class Generator:
     @staticmethod
     def read_config(path: str) -> List[LanguageConfig]:
         with open(path, 'r') as f:
