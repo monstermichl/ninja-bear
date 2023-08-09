@@ -38,8 +38,8 @@ jobs:
         python -m unittest discover tests || exit -1
     - name: Check coverage
       run: |
-        python3 -m coverage run -m unittest || _exit -1
-        python3 -m coverage report || _exit -1
+        python3 -m coverage run -m unittest || exit -1
+        python3 -m coverage report || exit -1
     - name: Lint
       run: |
         python -m ruff check . || exit -1
