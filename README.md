@@ -5,6 +5,7 @@ In times of distributed systems and en vogue micro-architecture it can get quite
 - [x] Java
 - [x] JavaScript
 - [x] TypeScript
+- [x] Python
 
 ## Usage
 It can either be used via the commandline or called from within Python and depends on the configuration passed to it.
@@ -21,7 +22,7 @@ For details about the configuration file, please check *example/test-config.yaml
 
 ```yaml
 languages:
-  - type: java                # Specifies the output language. Supported values are: java | javascript | typescript
+  - type: java                # Specifies the output language. Supported values are: java | javascript | typescript | python
     file_naming: pascal       # Specifies the file naming convention. Supported values: snake | screaming_snake | camel | pascal | kebap
     indent: 4                 # Specifies the amount of spaces before each constant.
     package: my.test.package  # For Java, a package name must be specified.
@@ -32,6 +33,10 @@ languages:
 
   - type: typescript
     file_naming: kebap
+    indent: 4
+
+  - type: python
+    file_naming: snake
     indent: 4
 
 properties:
@@ -99,4 +104,17 @@ export class TestConfig {
     public static readonly myRegex = /Test Reg(E|e)x/; /* Just another RegEx. */
     public static readonly mySubstitutedString = 'Sometimes I just want to scream Hello World!';
 }
+```
+
+```python
+from enum import Enum
+
+
+class TestConfig(Enum):
+    myBoolean = True
+    myInteger = 142
+    myFloat = 322.0
+    myDouble = 233.9
+    myRegex = r'Test Reg(E|e)x'  # Just another RegEx.
+    mySubstitutedString = 'Sometimes I just want to scream Hello World!'
 ```

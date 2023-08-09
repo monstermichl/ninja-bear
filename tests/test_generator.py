@@ -9,9 +9,12 @@ from src.confluent.base.language_type import LanguageType
 from src.confluent.generators.java_generator import JavaGenerator
 from src.confluent.generators.javascript_generator import JavascriptGenerator
 from src.confluent.generators.typescript_generator import TypescriptGenerator
+from src.confluent.generators.python_generator import PythonGenerator
 from src.confluent.language_configs.java_config import JavaConfig
 from src.confluent.language_configs.javascript_config import JavascriptConfig
 from src.confluent.language_configs.typescript_config import TypescriptConfig
+from src.confluent.language_configs.python_config import PythonConfig
+
 
 class TestGenerator(unittest.TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
@@ -46,7 +49,7 @@ class TestGenerator(unittest.TestCase):
     def _evaluate_configs(self, configs: List[LanguageConfig]):
         self.assertIsNotNone(configs)
         self.assertIsInstance(configs, list)
-        self.assertEqual(len(configs), 3)
+        self.assertEqual(len(configs), 4)
 
         # Check Java config.
         self._evaluate_java_properties(configs[0], 'TestConfig')
@@ -57,6 +60,9 @@ class TestGenerator(unittest.TestCase):
         # Check TypeScript config.
         self._evaluate_typescript_properties(configs[2], 'test-config')
 
+        # Check Python config.
+        self._evaluate_python_properties(configs[3], 'test_config')
+
     def _evaluate_java_properties(self, config: JavaConfig, name: str):
         self._evaluate_common_properties(config, 'java', name, LanguageType.JAVA, JavaGenerator)
         # TODO: Add package evaluation.
@@ -66,6 +72,9 @@ class TestGenerator(unittest.TestCase):
 
     def _evaluate_typescript_properties(self, config: TypescriptConfig, name: str):
         self._evaluate_common_properties(config, 'ts', name, LanguageType.TYPESCRIPT, TypescriptGenerator)
+
+    def _evaluate_python_properties(self, config: PythonConfig, name: str):
+        self._evaluate_common_properties(config, 'py', name, LanguageType.PYTHON, PythonGenerator)
 
     def _evaluate_common_properties(
         self,

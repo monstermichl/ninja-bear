@@ -1,5 +1,5 @@
 languages:
-  - type: java                # Specifies the output language. Supported values are: java | javascript | typescript
+  - type: java                # Specifies the output language. Supported values are: java | javascript | typescript | python
     file_naming: pascal       # Specifies the file naming convention. Supported values: snake | screaming_snake | camel | pascal | kebap
     indent: 4                 # Specifies the amount of spaces before each constant.
     package: my.test.package  # For Java, a package name must be specified.
@@ -10,6 +10,10 @@ languages:
 
   - type: typescript
     file_naming: kebap
+    indent: 4
+
+  - type: python
+    file_naming: snake
     indent: 4
 
 properties:

@@ -42,9 +42,14 @@ class GeneratorBase(ABC):
         s = self._before_class(**self._additional_props)
         s += f'{self._start_class()}\n'
         s += '\n'.join([f'{self._create_property_string(property)}' for property in self._properties])
-        s += f'\n{self._end_class()}'
+
+        class_end = self._end_class()
+        s += f'\n{class_end}'
+
+        # Only append additional newline, if class_end is not empty
+        if class_end:
+            s += '\n'
         s += self._after_class(**self._additional_props)
-        s += '\n'
 
         return s
 

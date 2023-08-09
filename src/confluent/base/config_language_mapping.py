@@ -4,6 +4,7 @@ from typing import List
 from ..language_configs.java_config import JavaConfig
 from ..language_configs.javascript_config import JavascriptConfig
 from ..language_configs.typescript_config import TypescriptConfig
+from ..language_configs.python_config import PythonConfig
 
 from .language_config import LanguageConfig
 from .language_type import LanguageType
@@ -21,4 +22,5 @@ class ConfigLanguageMapping:
             ConfigLanguageMapping('java', LanguageType.JAVA, JavaConfig),
             ConfigLanguageMapping('javascript', LanguageType.JAVASCRIPT, JavascriptConfig),
             ConfigLanguageMapping('typescript', LanguageType.TYPESCRIPT, TypescriptConfig),
+            ConfigLanguageMapping('python', LanguageType.PYTHON, PythonConfig),
         ]
