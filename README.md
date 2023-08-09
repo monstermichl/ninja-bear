@@ -2,8 +2,9 @@
 In times of distributed system and en vogue micro-architecture it can get quite cumbersome to keep constants that are required by several components up-to-date and in sync, especially when these components or services are written in different languages. *confluent* targets this issue by using a language neutral YAML configuration that lets you generate language specific config files for several languages.
 
 ## Currently supported languages
-- [x] TypeScript
 - [x] Java
+- [x] JavaScript
+- [x] TypeScript
 
 ## Usage
 It can either be used via the commandline or called from within Python and depends on the configuration passed to it.
