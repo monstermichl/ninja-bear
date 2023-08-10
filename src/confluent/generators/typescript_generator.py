@@ -36,8 +36,8 @@ class TypescriptGenerator(GeneratorBase):
     def _after_class(self, **props) -> str:
         return ''
 
-    def _start_class(self) -> str:
-        return f'export class {self._class_name} {{'
+    def _start_class(self, class_name: str) -> str:
+        return f'export class {class_name} {{'
 
     def _end_class(self) -> str:
         return '}'

@@ -121,7 +121,7 @@ class GeneratorBase(ABC):
 
         s = self._before_class(**self._additional_props)
         s += f'{properties_before_class}\n\n' if properties_before_class else ''
-        s += f'{self._start_class()}\n'
+        s += f'{self._start_class(self._class_name)}\n'
         s += '\n'.join([f'{self._create_property_string(property)}' for property in properties if property])
 
         class_end = self._end_class()
@@ -200,7 +200,7 @@ class GeneratorBase(ABC):
         pass
 
     @abstractmethod
-    def _start_class(self) -> str:
+    def _start_class(self, class_name: str) -> str:
         """
         Abstract method which must be implemented by the deriving class to generate the class'/struct's definition.
 

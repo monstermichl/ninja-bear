@@ -37,8 +37,8 @@ class PythonGenerator(GeneratorBase):
     def _after_class(self, **props) -> str:
         return ''
 
-    def _start_class(self) -> str:
-        return f'class {self._class_name}(Enum):'
+    def _start_class(self, class_name: str) -> str:
+        return f'class {class_name}(Enum):'
 
     def _end_class(self) -> str:
         return ''

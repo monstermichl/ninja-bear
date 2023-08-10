@@ -58,8 +58,8 @@ class MyLanguageGenerator(GeneratorBase):
     def _after_class(self, **props) -> str:
         return ''
 
-    def _start_class(self) -> str:
-        return f'class_start {self._class_name}'
+    def _start_class(self, class_name: str) -> str:
+        return f'class_start {class_name}'
 
     def _end_class(self) -> str:
         return 'class_end'
