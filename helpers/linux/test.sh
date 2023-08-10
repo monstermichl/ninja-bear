@@ -6,6 +6,9 @@ function _exit() {
     exit $1
 }
 
+# Install required test packages.
+python -m pip install coverage
+
 # Run unit tests.
 python3 -m coverage run -m unittest || _exit -1
 
