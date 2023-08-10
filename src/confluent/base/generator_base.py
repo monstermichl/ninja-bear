@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import copy
 from typing import List
 
 from .name_converter import NamingConventionType, NameConverter
@@ -27,23 +28,28 @@ class GeneratorBase(ABC):
         class_name: str,
         properties: List[Property] = [],
         indent: int = _DEFAULT_INDENT,
+        property_naming_convention: NamingConventionType = None,
         additional_props = {}
     ):
         """
         Constructor
 
-        :param class_name:       Name of the generated class. HINT: This acts more like a template than the real name
-                                 as some conventions must be met and therefore the name might be changed in terms of
-                                 casing (see also NameConverter).
-        :type class_name:        str
-        :param properties:       List of properties to generator by the GeneratorBase derivate, defaults to []
-        :type properties:        List[Property], optional
-        :param indent:           Whitespace indent before each property, defaults to _DEFAULT_INDENT
-        :type indent:            int, optional
-        :param additional_props: All props that might need to be used by the derivating class, defaults to {}
-        :type additional_props:  dict, optional
+        :param class_name:                 Name of the generated class. HINT: This acts more like a template than the
+                                           real name as some conventions must be met and therefore the name might be
+                                           changed in terms of casing (see also NameConverter).
+        :type class_name:                  str
+        :param properties:                 List of properties to generator by the GeneratorBase derivate, defaults to []
+        :type properties:                  List[Property], optional
+        :param indent:                     Whitespace indent before each property, defaults to _DEFAULT_INDENT
+        :type indent:                      int, optional
+        :param property_naming_convention: Specifies which case convention to use for the properties. If not provided,
+                                           the name as specified will be used. Defaults to None
+        :type property_naming_convention:  NamingConventionType, optional
+        :param additional_props:           All props that might need to be used by the derivating class, defaults to {}
+        :type additional_props:            dict, optional
         """
         self._properties: List[Property] = []
+        self._property_naming_convention = property_naming_convention
         self._additional_props = additional_props
 
         self._set_class_name(class_name)
@@ -93,20 +99,27 @@ class GeneratorBase(ABC):
         :return: Config file string.
         :rtype:  str
         """
+        # Create copies of the properties to avoid messing around with the originals.
+        properties = [copy.deepcopy(property) for property in self._properties]
+
+        # If provided, use specific property naming convention.
+        if self._property_naming_convention:
+            for property in properties:
+                property.name = NameConverter.convert(property.name, self._property_naming_convention)
 
         # Create the string for properties which shall be added before the class definition.
         properties_before_class = '\n'.join(
             # Loop in a loop. I know, it's a little bit confusing...
             property_string for property_string in [
                 # This loop forms each property into a string.
-                f'{self._property_before_class(property)}' for property in self._properties
+                f'{self._property_before_class(property)}' for property in properties
             ] if property_string  # This clause makes sure that only property strings with a value are used.
         )
 
         s = self._before_class(**self._additional_props)
         s += f'{properties_before_class}\n\n' if properties_before_class else ''
         s += f'{self._start_class()}\n'
-        s += '\n'.join([f'{self._create_property_string(property)}' for property in self._properties if property])
+        s += '\n'.join([f'{self._create_property_string(property)}' for property in properties if property])
 
         class_end = self._end_class()
         s += f'\n{class_end}'

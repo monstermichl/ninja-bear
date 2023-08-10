@@ -19,6 +19,7 @@ class PythonConfig(LanguageConfig):
         file_naming_convention: NamingConventionType,
         properties: List[Property],
         indent: int = None,
+        property_naming_convention: NamingConventionType = None,
         additional_props = {},
     ):
         super().__init__(
@@ -29,6 +30,7 @@ class PythonConfig(LanguageConfig):
             PythonGenerator,
             properties,
             indent,
+            property_naming_convention,
             additional_props,
         )
 

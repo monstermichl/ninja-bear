@@ -1,8 +1,9 @@
 languages:
-  - type: java                # Specifies the output language. Supported values are: java | javascript | typescript | python
-    file_naming: pascal       # Specifies the file naming convention. Supported values: snake | screaming_snake | camel | pascal | kebap
-    indent: 4                 # Specifies the amount of spaces before each constant.
-    package: my.test.package  # For Java, a package name must be specified.
+  - type: java                        # Specifies the output language. Supported values are: java | javascript | typescript | python
+    file_naming: pascal               # (Optional) Specifies the file naming convention. Supported values: snake | screaming_snake | camel | pascal | kebap
+    property_naming: screaming_snake  # (Optional) Specifies the property naming convention. Supported values: snake | screaming_snake | camel | pascal | kebap
+    indent: 4                         # (Optional) Specifies the amount of spaces before each constant.
+    package: my.test.package          # (Java specific) For Java, a package name must be specified.
 
   - type: javascript
     file_naming: screaming_snake
@@ -14,6 +15,7 @@ languages:
 
   - type: python
     file_naming: snake
+    property_naming: screaming_snake
     indent: 4
 
 properties:

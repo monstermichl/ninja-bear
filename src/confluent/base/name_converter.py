@@ -6,7 +6,7 @@ class NamingConventionType(IntEnum):
     """
     Enum of all supported naming conventions.
     """
-    SNAKE_CASE = auto()
+    SNAKE_CASE = 1
     SCREAMING_SNAKE_CASE = auto()
     CAMEL_CASE = auto()
     PASCAL_CASE = auto()

@@ -2,9 +2,9 @@ from enum import Enum
 
 
 class TestConfig(Enum):
-    myBoolean = True
-    myInteger = 142
-    myFloat = 322.0
-    myDouble = 233.9
-    myRegex = r'Test Reg(E|e)x'  # Just another RegEx.
-    mySubstitutedString = 'Sometimes I just want to scream Hello World!'
+    MY_BOOLEAN = True
+    MY_INTEGER = 142
+    MY_FLOAT = 322.0
+    MY_DOUBLE = 233.9
+    MY_REGEX = r'Test Reg(E|e)x'  # Just another RegEx.
+    MY_SUBSTITUTED_STRING = 'Sometimes I just want to scream Hello World!'

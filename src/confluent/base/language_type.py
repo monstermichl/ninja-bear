@@ -5,7 +5,7 @@ class LanguageType(IntEnum):
     """
     Enum of all supported languages.
     """
-    JAVA = auto()
+    JAVA = 1
     JAVASCRIPT = auto()
     TYPESCRIPT = auto()
     PYTHON = auto()

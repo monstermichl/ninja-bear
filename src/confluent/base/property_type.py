@@ -5,7 +5,7 @@ class PropertyType(IntEnum):
     """
     Enum of all supported property types.
     """
-    BOOL = auto()
+    BOOL = 1
     INT = auto()
     FLOAT = auto()
     DOUBLE = auto()
