@@ -11,6 +11,7 @@ from .property import Property
 from .property_type import PropertyType
 from .language_type import LanguageType
 from .language_config import LanguageConfig
+from .language_config_naming_conventions import LanguageConfigNamingConventions
 
 
 _KEY_LANGUAGES = 'languages'
@@ -128,22 +129,26 @@ class Config:
 
         # Evaluate each language setting one by one.
         for language in validated_object[_KEY_LANGUAGES]:
+            naming_conventions = LanguageConfigNamingConventions()
             language_type = language[_KEY_TYPE]
             indent = language[_KEY_INDENT] if _KEY_INDENT in language else None
-            file_naming_convention = Config._evaluate_naming_convention_type(
+
+            # Evaluate file-naming convention.
+            naming_conventions.file_naming_convention = Config._evaluate_naming_convention_type(
                 language[_KEY_FILE_NAMING] if _KEY_FILE_NAMING in language else None
             )
-            property_naming_convention = Config._evaluate_naming_convention_type(
+
+            # Evaluate properties-naming convention.
+            naming_conventions.properties_naming_convention = Config._evaluate_naming_convention_type(
                 language[_KEY_PROPERTY_NAMING] if _KEY_PROPERTY_NAMING in language else None
             )
             config_type = Config._evaluate_config_type(language_type)
 
             language_configs.append(config_type(
                 config_name,
-                file_naming_convention,
                 properties,
                 indent,
-                property_naming_convention,
+                naming_conventions,
 
                 # Pass all language props as additional_props to let the specific
                 # generator decides which props he requires additionally.
