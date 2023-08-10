@@ -44,5 +44,6 @@ setup(
             'java',
             'javascript',
             'typescript',
+            'python'
         ],
 )
