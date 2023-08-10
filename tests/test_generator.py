@@ -49,7 +49,7 @@ class TestGenerator(unittest.TestCase):
     def _evaluate_configs(self, configs: List[LanguageConfig]):
         self.assertIsNotNone(configs)
         self.assertIsInstance(configs, list)
-        self.assertEqual(len(configs), 4)
+        self.assertEqual(len(configs), 4)  # Don't forget to update when adding a new language to test-config.yaml.
 
         # Check Java config.
         self._evaluate_java_properties(configs[0], 'TestConfig')
