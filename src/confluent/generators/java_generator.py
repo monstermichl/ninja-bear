@@ -4,6 +4,9 @@ from ..base.property_type import PropertyType
 
 
 class JavaGenerator(GeneratorBase):
+    """
+    Java specific generator. For more information about the generator methods, refer to GeneratorBase.
+    """
     _ATTRIBUTE_PACKAGE = 'package'
 
     def _create_property(self, property: Property) -> str:

@@ -4,6 +4,9 @@ from ..base.property_type import PropertyType
 
 
 class TypescriptGenerator(GeneratorBase):
+    """
+    TypeScript specific generator. For more information about the generator methods, refer to GeneratorBase.
+    """
 
     def _create_property(self, property: Property) -> str:
         match property.type:

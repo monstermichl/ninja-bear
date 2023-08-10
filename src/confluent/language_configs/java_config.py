@@ -9,6 +9,10 @@ from ..base.property import Property
 
 
 class JavaConfig(LanguageConfig):
+    """
+    Java specific config. For more information about the config methods, refer to LanguageConfig.
+    """
+
     def __init__(
         self,
         config_name: str,

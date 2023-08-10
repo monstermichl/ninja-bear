@@ -9,6 +9,10 @@ from ..base.property import Property
 
 
 class JavascriptConfig(LanguageConfig):
+    """
+    JavaScript specific config. For more information about the config methods, refer to LanguageConfig.
+    """
+
     def __init__(
         self,
         config_name: str,
