@@ -138,4 +138,4 @@ class TestConfig(Enum):
 ```
 
 ## How to participate
-If you feel that there's a need for a specific generator, feel free to add it. For detailed information how to add a new generator, please refer to [README.md](https://github.com/monstermichl/confluent/tree/main/src/confluent/generators/README.md) for detailed information.
+If you feel that there's a need for another language, feel free to add it. For detailed information how to add support for a new language, please refer to [README.md](https://github.com/monstermichl/confluent/tree/main/src/confluent/generators/README.md).
