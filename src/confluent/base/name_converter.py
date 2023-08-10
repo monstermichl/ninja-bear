@@ -3,6 +3,9 @@ import re
 
 
 class NamingConventionType(Enum):
+    """
+    Enum of all supported naming conventions.
+    """
     SNAKE_CASE = 0
     SCREAMING_SNAKE_CASE = 1
     CAMEL_CASE = 2
@@ -10,10 +13,31 @@ class NamingConventionType(Enum):
     KEBAP_CASE = 4
 
 
+class UnknownNamingConventionException(Exception):
+    def __init__(self, naming_convention_type: NamingConventionType):
+        super().__init__(f'Unknown naming convention type {naming_convention_type}')
+
+
 class NameConverter:
+    """
+    Is used to convert a provided string into a specific string case (e.g., snake-case, camel-case, ...).
+    """
 
     @staticmethod
     def convert(name: str, type: NamingConventionType) -> str:
+        """
+        Converts the provided string to the convention specified by type.
+
+        :param name: String to convert.
+        :type name:  str
+        :param type: Naming convention to use.
+        :type type:  NamingConventionType
+
+        :raises UnknownNamingConventionException: Raised if an unknown naming convention type is used.
+
+        :return: Converted string.
+        :rtype:  str
+        """
         UNDERLINE = '_'
 
         # Handle Camel- or Pascal-cased strings by replacing uppercase letters with
@@ -43,6 +67,6 @@ class NameConverter:
             case NamingConventionType.KEBAP_CASE:
                 name = re.sub(rf'{UNDERLINE}+', '-', name)
             case _:
-                raise Exception('Unknown naming type')
+                raise UnknownNamingConventionException(type)
             
         return name

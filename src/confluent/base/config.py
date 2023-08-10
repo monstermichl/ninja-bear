@@ -1,6 +1,6 @@
 from __future__ import annotations
 import re
-from typing import List
+from typing import List, Type
 
 import yaml
 from schema import Schema, Use, Optional, Or
@@ -64,20 +64,6 @@ class SeveralLanguageConfigsException(Exception):
 class Config:
     """
     Handles the config evaluation by parsing the provided YAML string via the parse-method.
-
-    :raises UnknownSubstitutionException:    Raised if the requested substitution property does not exist.
-    :raises RecursiveSubstitutionException:  Raised if a property referenced itself as substitution.
-    :raises UnknownPropertyTypeException:    Raised if an unsupported property type was used in the config.
-    :raises UnknownLanguageException:        Raised if an unsupported language was used in the config.
-    :raises SeveralLanguagesException:       Raised if several mappings were found for the requested language. If this
-                                             error arises, it's a package error. Please open an issue at
-                                             https://github.com/monstermichl/confluent/issues.
-    :raises NoLanguageConfigException:       Raised if no language config mapping was provided for the specified
-                                             language type. If this error arises, it's a package error. Please open an
-                                             issue at https://github.com/monstermichl/confluent/issues.
-    :raises SeveralLanguageConfigsException: Raised if several language config mappings were found for the specified
-                                             language type. If this error arises, it's a package error. Please open an
-                                             issue at https://github.com/monstermichl/confluent/issues.
     """
 
     @staticmethod
@@ -92,8 +78,8 @@ class Config:
                             the specified file_naming rule from the config.
         :type config_name:  str
 
-        :raises UnknownSubstitutionException:    Raised if the requested substitution property does not exist.
-        :raises RecursiveSubstitutionException:  Raised if a property referenced itself as substitution.
+        :raises UnknownSubstitutionException:   Raised if the requested substitution property does not exist.
+        :raises RecursiveSubstitutionException: Raised if a property referenced itself as substitution.
 
         :return: Language configurations which further can be dumped as config files.
         :rtype:  List[LanguageConfig]
@@ -240,7 +226,7 @@ class Config:
         return found[0]
     
     @staticmethod
-    def _evaluate_config_type(language_type: LanguageType) -> LanguageConfig.__class__:
+    def _evaluate_config_type(language_type: LanguageType) -> Type[LanguageConfig]:
         """
         Evaluates the languages config type to use for further evaluation.
 
@@ -254,8 +240,8 @@ class Config:
                                                  language type. If this error arises, it's a package error. Please open
                                                  an issue at https://github.com/monstermichl/confluent/issues.
 
-        :return: The corresponding LanguageConfig derivate type (e.g., JavaConfig.__class__).
-        :rtype:  LanguageConfig.__class__
+        :return: The corresponding LanguageConfig derivate type (e.g., Type[JavaConfig]).
+        :rtype:  Type[LanguageConfig]
         """
         found = [mapping.config_type for mapping in _LANGUAGE_MAPPINGS if mapping.type == language_type]
         length = len(found)

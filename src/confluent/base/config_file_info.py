@@ -6,10 +6,10 @@ class ConfigFileInfo:
         """
         Constructor
 
-        :param file_name: File name (e.g., test-config).
-        :type file_name: str
+        :param file_name:      File name (e.g., test-config).
+        :type file_name:       str
         :param file_extension: File extension (e.g., java).
-        :type file_extension: str
+        :type file_extension:  str
         """
         self.file_name = file_name
         self.file_extension = file_extension.lstrip('.')
