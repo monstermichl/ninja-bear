@@ -39,10 +39,11 @@ for config in configs:
 ### Configuration
 ```yaml
 languages:
-  - type: java                # Specifies the output language. Supported values are: java | javascript | typescript | python
-    file_naming: pascal       # Specifies the file naming convention. Supported values: snake | screaming_snake | camel | pascal | kebap
-    indent: 4                 # Specifies the amount of spaces before each constant.
-    package: my.test.package  # For Java, a package name must be specified.
+  - type: java                        # Specifies the output language. Supported values are: java | javascript | typescript | python
+    file_naming: pascal               # (Optional) Specifies the file naming convention. Supported values: snake | screaming_snake | camel | pascal | kebap
+    property_naming: screaming_snake  # (Optional) Specifies the property naming convention. Supported values: snake | screaming_snake | camel | pascal | kebap
+    indent: 4                         # (Optional) Specifies the amount of spaces before each constant.
+    package: my.test.package          # (Java specific) For Java, a package name must be specified.
 
   - type: javascript
     file_naming: screaming_snake
@@ -54,6 +55,7 @@ languages:
 
   - type: python
     file_naming: snake
+    property_naming: screaming_snake
     indent: 4
 
 properties:
@@ -93,23 +95,23 @@ properties:
 package my.test.package;
 
 public class TestConfig {
-    public final static boolean myBoolean = true;
-    public final static int myInteger = 142;
-    public final static float myFloat = 322.0f;
-    public final static double myDouble = 233.9d;
-    public final static String myRegex = "Test Reg(E|e)x"; /* Just another RegEx. */
-    public final static String mySubstitutedString = "Sometimes I just want to scream Hello World!";
+    public final static boolean MY_BOOLEAN = true;
+    public final static int MY_INTEGER = 142;
+    public final static float MY_FLOAT = 322.0f;
+    public final static double MY_DOUBLE = 233.9d;
+    public final static String MY_REGEX = "Test Reg(E|e)x"; /* Just another RegEx. */
+    public final static String MY_SUBSTITUTED_STRING = "Sometimes I just want to scream Hello World!";
 }
 ```
 
 ```javascript
 export class TestConfig {
-    static myBoolean = true;
-    static myInteger = 142;
-    static myFloat = 322.0;
-    static myDouble = 233.9;
-    static myRegex = /Test Reg(E|e)x/; /* Just another RegEx. */
-    static mySubstitutedString = 'Sometimes I just want to scream Hello World!';
+    static get myBoolean() { return true; }
+    static get myInteger() { return 142; }
+    static get myFloat() { return 322.0; }
+    static get myDouble() { return 233.9; }
+    static get myRegex() { return /Test Reg(E|e)x/; } /* Just another RegEx. */
+    static get mySubstitutedString() { return 'Sometimes I just want to scream Hello World!'; }
 }
 ```
 
@@ -129,12 +131,12 @@ from enum import Enum
 
 
 class TestConfig(Enum):
-    myBoolean = True
-    myInteger = 142
-    myFloat = 322.0
-    myDouble = 233.9
-    myRegex = r'Test Reg(E|e)x'  # Just another RegEx.
-    mySubstitutedString = 'Sometimes I just want to scream Hello World!'
+    MY_BOOLEAN = True
+    MY_INTEGER = 142
+    MY_FLOAT = 322.0
+    MY_DOUBLE = 233.9
+    MY_REGEX = r'Test Reg(E|e)x'  # Just another RegEx.
+    MY_SUBSTITUTED_STRING = 'Sometimes I just want to scream Hello World!'
 ```
 
 ## How to participate
