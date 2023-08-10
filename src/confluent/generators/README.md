@@ -1,4 +1,4 @@
-# How to add a new generator
+# How to add support for a new language
 So there's a language you use which is not yet supported and you want to add it yourself? Alright, lets dive right into it. Here are the steps you need to take to add support for a new language.
 
 ## Fork the project
@@ -16,11 +16,11 @@ class LanguageType(IntEnum):
     JAVASCRIPT = auto()
     TYPESCRIPT = auto()
     PYTHON = auto()
-    MY_LANGUAGE = auto()  # The auto() funtion makes sure that all entries have a unique value.
+    MY_LANGUAGE = auto()  # The auto() function makes sure that all entries have a unique value.
 ```
 
 ## Add a new language generator
-Create a new generator class within *src/confluent/generators* (e.g., *my_language_generator.py*) which inherits from [*GeneratorBase*](https://github.com/monstermichl/confluent/blob/main/src/confluent/base/generator_base.py) and implements the required **abstract** methods. (Hopefully I don't have to mention that you should not name it "my_language..." ;) ). This class is the actual generator which hold the information how the class/struct and the properties look like.
+Create a new generator class within *src/confluent/generators* (e.g., *my_language_generator.py*) which inherits from [*GeneratorBase*](https://github.com/monstermichl/confluent/blob/main/src/confluent/base/generator_base.py) and implements the required **abstract** methods. (Hopefully I don't have to mention that you should not name it "my_language..." ;) ). This class is the actual generator which holds the information how the class/struct and the properties will look like.
 
 ```python
 class MyLanguageGenerator(GeneratorBase):
@@ -141,16 +141,16 @@ languages:
     file_naming: snake
     indent: 4
 
-  - type: my_language
+  - type: my_language  # IMPORTANT: Also add my_language to the list of supported languages (see line where "type: java").
     file_naming: camel
     indent: 4
 ```
 
-Afterwards, install *confluent* from this project to test if your implementation works as expected (you might need to uninstall your current installation of *confluent* first). This can either be done by building and running the project manually or by running the *install.sh/bat* script from the *helpers* directory. If you want to setup everything manually, please have a look into the *install.sh/bat* script how it's done there.
+Afterwards, install *confluent* from the local project to test if your implementation works as expected (you might need to uninstall your current installation of *confluent* first). This can either be done by building and running the project manually or by running the *install.sh/bat* script from the *helpers* directory. If you want to setup everything manually, please have a look into the *install.sh/bat* script how it's done there.
 
-If the installation passed successfully, run your prefered version of the example script from the *example* folder to generate example files with your freshly added language.
+If the installation passed successfully, run your prefered version of the example script from the *example* folder to generate the example config files from *test-config.yaml* with your freshly added language.
 
-If your desired config file was created, CONGRATULATIONS! your implementation was successful :) If it didn't work, usually an error gets thrown which provides a clear description where the generation process went wrong. Just recapitulate the steps how to create support for a new language. If you're still having troubles getting it to work, feel free to open an issue at https://github.com/monstermichl/confluent/issues.
+If your desired config file was created, CONGRATULATIONS! your implementation was successful :) If it wasn't, usually an error gets thrown which provides a clear description where the generation process went wrong. Just recapitulate the steps how to create support for a new language. If you're still having troubles getting it to work, feel free to open an issue at https://github.com/monstermichl/confluent/issues.
 
 ### Add your language to the unit tests
 If everything went well so far, copy the generated example config for your language from *example* to *tests/compare_files*. This serves as the blueprint for testing your language. Therefore, **please make absolutely sure, that this is how you want your language output to look like.** Then open up *tests/test_generator.py* and add your language validation to the *_evaluate_configs* function.
@@ -184,10 +184,10 @@ def _evaluate_my_language_properties(self, config: MyLanguageConfig, name: str):
     self._evaluate_common_properties(config, 'ml', name, LanguageType.MY_LANGUAGE, MyLanguageConfig)
 ```
 
-Run *test.sh/bat* from the *helpers* directory and make sure all tests pass.
+Run *test.sh/bat* from the *helpers* directory and make sure all tests pass and the coverage is over 90%.
 
 ## Add your language to README.md
-Make sure users know that the language is being supported by adding it to the list of supported languages, updating the test-config and adding the example output to the README.md file (have a look how it's done for other languages).
+Make sure users know that the language is supported by adding it to the list of supported languages, updating the test-config and adding the example output to the README.md file (have a look how it's done for other languages).
 
 ## Create a Pull-Request
 Merge the main branch into your branch, resolve possibly arising merge conflicts and create a pull-request on Github.
