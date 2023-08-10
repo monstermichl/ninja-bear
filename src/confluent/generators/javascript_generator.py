@@ -1,3 +1,4 @@
+from typing import List
 from ..base.generator_base import GeneratorBase
 from ..base.property import Property
 from ..base.property_type import PropertyType
@@ -8,7 +9,10 @@ class JavascriptGenerator(GeneratorBase):
     JavaScript specific generator. For more information about the generator methods, refer to GeneratorBase.
     """
 
-    def _create_property(self, property: Property) -> str:
+    def _property_before_class(self, _: Property) -> str:
+        return ''
+
+    def _property_in_class(self, property: Property) -> List[str]:
         match property.type:
             case PropertyType.BOOL:
                 value = 'true' if property.value else 'false'
@@ -21,10 +25,11 @@ class JavascriptGenerator(GeneratorBase):
                 value = f'/{property.value}/'  # Wrap in single quotes.
             case _:
                 raise Exception('Unknown type')
-
-        return f'static {property.name} = {value};'
+            
+        # Realize JavaScript constant by defining a Getter.
+        return f'static get {property.name}() {{ return {value}; }}'
     
-    def _create_comment(self, comment: str) -> str:
+    def _property_comment(self, comment: str) -> str:
         return f' /* {comment} */'
     
     def _before_class(self, **props) -> str:

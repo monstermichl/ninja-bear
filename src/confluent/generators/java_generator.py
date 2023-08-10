@@ -9,7 +9,10 @@ class JavaGenerator(GeneratorBase):
     """
     _ATTRIBUTE_PACKAGE = 'package'
 
-    def _create_property(self, property: Property) -> str:
+    def _property_before_class(self, _: Property) -> str:
+        return ''
+
+    def _property_in_class(self, property: Property) -> str:
         match property.type:
             case PropertyType.BOOL:
                 type = 'boolean'
@@ -32,7 +35,7 @@ class JavaGenerator(GeneratorBase):
 
         return f'public final static {type} {property.name} = {value};'
 
-    def _create_comment(self, comment: str) -> str:
+    def _property_comment(self, comment: str) -> str:
         return f' /* {comment} */'
     
     def _before_class(self, **props) -> str:

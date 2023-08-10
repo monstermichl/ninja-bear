@@ -93,9 +93,20 @@ class GeneratorBase(ABC):
         :return: Config file string.
         :rtype:  str
         """
+
+        # Create the string for properties which shall be added before the class definition.
+        properties_before_class = '\n'.join(
+            # Loop in a loop. I know, it's a little bit confusing...
+            property_string for property_string in [
+                # This loop forms each property into a string.
+                f'{self._property_before_class(property)}' for property in self._properties
+            ] if property_string  # This clause makes sure that only property strings with a value are used.
+        )
+
         s = self._before_class(**self._additional_props)
+        s += f'{properties_before_class}\n\n' if properties_before_class else ''
         s += f'{self._start_class()}\n'
-        s += '\n'.join([f'{self._create_property_string(property)}' for property in self._properties])
+        s += '\n'.join([f'{self._create_property_string(property)}' for property in self._properties if property])
 
         class_end = self._end_class()
         s += f'\n{class_end}'
@@ -106,22 +117,39 @@ class GeneratorBase(ABC):
         s += self._after_class(**self._additional_props)
 
         return s
+    
+    @abstractmethod
+    def _property_before_class(self, property: Property) -> str:
+        """
+        Abstract method which must be implemented by the deriving class to generate a single property string before the
+        class definition starts. This might be useful in some cases to do some extra processing of the properties. If
+        it's not required, an empty string shall be returned.
+
+        :param property: Property to generate a property string from.
+        :type property:  Property
+
+        :return: A language specific property string which is added in front of the class definition (e.g.,
+                 "const MY_BOOLEAN = true;").
+        :rtype:  str
+        """
+        pass
 
     @abstractmethod
-    def _create_property(self, property: Property) -> str:
+    def _property_in_class(self, property: Property) -> str | List[str]:
         """
         Abstract method which must be implemented by the deriving class to generate a single property string.
 
         :param property: Property to generate a property string from.
         :type property:  Property
 
-        :return: A language specific property string (e.g., "public static readonly myBoolean = true;").
-        :rtype:  str
+        :return: A language specific property string (e.g., "public static readonly myBoolean = true;") or list of
+                 strings (if the property should span several lines).
+        :rtype:  str | List[str]
         """
         pass
 
     @abstractmethod
-    def _create_comment(self, comment: str) -> str:
+    def _property_comment(self, comment: str) -> str:
         """
         Abstract method which must be implemented by the deriving class to generate a comment string.
 
@@ -193,9 +221,16 @@ class GeneratorBase(ABC):
                  "public static readonly myBoolean = true;" /* This is a comment. */).
         :rtype:  str
         """
-        s = ' ' * self._indent  # Indent space.
-        s += self._create_property(property)
+        INDENT = ' ' * self._indent  # Indent space.
+        property_in_class = self._property_in_class(property)
+        comment = self._property_comment(property.comment) if property.comment else ''
 
-        if property.comment:
-            s += self._create_comment(property.comment)
+        # If the property is delivered as list, add the comment before it and indent each line.
+        if isinstance(property_in_class, list):#
+            comment = comment.strip()
+
+            s = f'{INDENT}{comment}\n' if comment else ''
+            s += '\n'.join([f'{INDENT}{value}' for value in property_in_class])
+        else:
+            s = f'{INDENT}{property_in_class}{comment if comment else ""}'
         return s

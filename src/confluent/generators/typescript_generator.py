@@ -8,7 +8,10 @@ class TypescriptGenerator(GeneratorBase):
     TypeScript specific generator. For more information about the generator methods, refer to GeneratorBase.
     """
 
-    def _create_property(self, property: Property) -> str:
+    def _property_before_class(self, _: Property) -> str:
+        return ''
+
+    def _property_in_class(self, property: Property) -> str:
         match property.type:
             case PropertyType.BOOL:
                 value = 'true' if property.value else 'false'
@@ -24,7 +27,7 @@ class TypescriptGenerator(GeneratorBase):
 
         return f'public static readonly {property.name} = {value};'
     
-    def _create_comment(self, comment: str) -> str:
+    def _property_comment(self, comment: str) -> str:
         return f' /* {comment} */'
     
     def _before_class(self, **props) -> str:
