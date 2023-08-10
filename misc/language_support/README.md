@@ -20,7 +20,7 @@ class LanguageType(IntEnum):
 ```
 
 ## Add a new language generator
-Create a new generator class within *src/confluent/generators* (e.g., *my_language_generator.py*) which inherits from [*GeneratorBase*](https://github.com/monstermichl/confluent/blob/main/src/confluent/base/generator_base.py) and implements the required **abstract** methods (a template can be found under [*misc/language_support/templates*](https://github.com/monstermichl/confluent/misc/language_support/templates). (Hopefully I don't have to mention that you should not name it "my_language..." ;) ). This class is the actual generator which holds the information how the class/struct and the properties will look like.
+Create a new generator class within *src/confluent/generators* (e.g., *my_language_generator.py*) which inherits from [*GeneratorBase*](https://github.com/monstermichl/confluent/blob/main/src/confluent/base/generator_base.py) and implements the required **abstract** methods (a template can be found under [*misc/language_support/templates*](https://github.com/monstermichl/confluent/tree/main/misc/language_support/templates). (Hopefully I don't have to mention that you should not name it "my_language..." ;) ). This class is the actual generator which holds the information how the class/struct and the properties will look like.
 
 ```python
 class MyLanguageGenerator(GeneratorBase):
@@ -66,7 +66,7 @@ class MyLanguageGenerator(GeneratorBase):
 ```
 
 ## Add a new language config
-Create a new config class within *src/confluent/language_configs* (e.g., *my_language_configs.py*) which inherits from [*LanguageConfig*](https://github.com/monstermichl/confluent/blob/main/src/confluent/base/language_config.py) and implements the required **abstract** methods (a template can be found under [*misc/language_support/templates*](https://github.com/monstermichl/confluent/misc/language_support/templates)). The language config encapsulates all the necessary information to create a config file (e.g., the language type,the config extension, which generator to use, ...).
+Create a new config class within *src/confluent/language_configs* (e.g., *my_language_configs.py*) which inherits from [*LanguageConfig*](https://github.com/monstermichl/confluent/blob/main/src/confluent/base/language_config.py) and implements the required **abstract** methods (a template can be found under [*misc/language_support/templates*](https://github.com/monstermichl/confluent/tree/main/misc/language_support/templates)). The language config encapsulates all the necessary information to create a config file (e.g., the language type,the config extension, which generator to use, ...).
 
 ```python
 class MyLanguageConfig(LanguageConfig):
