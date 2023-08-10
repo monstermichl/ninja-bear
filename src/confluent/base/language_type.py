@@ -1,11 +1,11 @@
-from enum import Enum
+from enum import IntEnum, auto
 
 
-class LanguageType(Enum):
+class LanguageType(IntEnum):
     """
     Enum of all supported languages.
     """
-    JAVA = 0
-    JAVASCRIPT = 1
-    TYPESCRIPT = 2
-    PYTHON = 3
+    JAVA = auto()
+    JAVASCRIPT = auto()
+    TYPESCRIPT = auto()
+    PYTHON = auto()

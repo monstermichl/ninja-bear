@@ -1,13 +1,13 @@
-from enum import Enum
+from enum import IntEnum, auto
 
 
-class PropertyType(Enum):
+class PropertyType(IntEnum):
     """
     Enum of all supported property types.
     """
-    BOOL = 0
-    INT = 1
-    FLOAT = 2
-    DOUBLE = 3
-    STRING = 4
-    REGEX = 5
+    BOOL = auto()
+    INT = auto()
+    FLOAT = auto()
+    DOUBLE = auto()
+    STRING = auto()
+    REGEX = auto()

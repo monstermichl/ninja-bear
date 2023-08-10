@@ -1,16 +1,16 @@
-from enum import Enum
+from enum import IntEnum, auto
 import re
 
 
-class NamingConventionType(Enum):
+class NamingConventionType(IntEnum):
     """
     Enum of all supported naming conventions.
     """
-    SNAKE_CASE = 0
-    SCREAMING_SNAKE_CASE = 1
-    CAMEL_CASE = 2
-    PASCAL_CASE = 3
-    KEBAP_CASE = 4
+    SNAKE_CASE = auto()
+    SCREAMING_SNAKE_CASE = auto()
+    CAMEL_CASE = auto()
+    PASCAL_CASE = auto()
+    KEBAP_CASE = auto()
 
 
 class UnknownNamingConventionException(Exception):
