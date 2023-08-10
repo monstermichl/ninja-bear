@@ -28,7 +28,10 @@ class MyLanguageGenerator(GeneratorBase):
     MyLanguage specific generator. For more information about the generator methods, refer to GeneratorBase.
     """
 
-    def _create_property(self, property: Property) -> str:
+    def _property_before_class(self, property: Property) -> str:
+        return ''
+
+    def _property_in_class(self, property: Property) -> str:
         match property.type:
             case PropertyType.BOOL:
                 type = 'boolean'
@@ -46,7 +49,7 @@ class MyLanguageGenerator(GeneratorBase):
 
         return f'const {property.name}: {type} = {value};'
 
-    def _create_comment(self, comment: str) -> str:
+    def _property_comment(self, comment: str) -> str:
         return f' comment: {comment}'
     
     def _before_class(self, **props) -> str:
@@ -74,19 +77,19 @@ class MyLanguageConfig(LanguageConfig):
     def __init__(
         self,
         config_name: str,
-        file_naming_convention: NamingConventionType,
         properties: List[Property],
         indent: int = None,
+        naming_conventions: LanguageConfigNamingConventions = None,
         additional_props = {},
     ):
         super().__init__(
             config_name,
             LanguageType.MY_LANGUAGE,  # Use the language type (LanguageType) set up two steps before.
-            file_naming_convention,
             'ml',
             MyLanguageGenerator,  # Use the generator class created in the previous step.
             properties,
             indent,
+            naming_conventions,
             additional_props,
         )
 
@@ -124,10 +127,11 @@ As test-config.yaml serves as the documentation for what's supported, make sure 
 
 ```yaml
 languages:
-  - type: java                # Specifies the output language. Supported values are: java | javascript | typescript | python | my_language
-    file_naming: pascal       # Specifies the file naming convention. Supported values: snake | screaming_snake | camel | pascal | kebap
-    indent: 4                 # Specifies the amount of spaces before each constant.
-    package: my.test.package  # For Java, a package name must be specified.
+  - type: java                        # Specifies the output language. Supported values are: java | javascript | typescript | python | my_language
+    file_naming: pascal               # (Optional) Specifies the file naming convention. Supported values: snake | screaming_snake | camel | pascal | kebap
+    property_naming: screaming_snake  # (Optional) Specifies the property naming convention. Supported values: snake | screaming_snake | camel | pascal | kebap
+    indent: 4                         # (Optional) Specifies the amount of spaces before each constant.
+    package: my.test.package          # (Java specific) For Java, a package name must be specified.
 
   - type: javascript
     file_naming: screaming_snake
@@ -139,6 +143,7 @@ languages:
 
   - type: python
     file_naming: snake
+    property_naming: screaming_snake
     indent: 4
 
   - type: my_language  # IMPORTANT: Also add my_language to the list of supported languages (see line where "type: java").
@@ -173,12 +178,16 @@ def _evaluate_configs(self, configs: List[LanguageConfig]):
     # Check Python config.
     self._evaluate_python_properties(configs[3], 'test_config')
 
-    ...
+    .
+    .
+    .
 
     # Check MyLanguage config.
-    self._evaluate_my_language_properties(configs[3], 'testConfig')
+    self._evaluate_my_language_properties(configs[4], 'testConfig')
 
-...
+.
+.
+.
 
 def _evaluate_my_language_properties(self, config: MyLanguageConfig, name: str):
     self._evaluate_common_properties(config, 'ml', name, LanguageType.MY_LANGUAGE, MyLanguageConfig)
