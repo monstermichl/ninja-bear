@@ -1,8 +1,5 @@
-from enum import Enum
-
-
 # Generated with confluent v0.0.1 (https://pypi.org/project/confluent/).
-class TestConfig(any, Enum):
+class TestConfig:
     MY_BOOLEAN = True
     MY_INTEGER = 142
     MY_FLOAT = 322.0

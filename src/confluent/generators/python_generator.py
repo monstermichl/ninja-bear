@@ -35,14 +35,13 @@ class PythonGenerator(GeneratorBase):
         return f'  # {comment}'
     
     def _before_type(self) -> str:
-        newlines = 3 * '\n'
-        return f'from enum import Enum{newlines}'
+        return ''
 
     def _after_type(self) -> str:
         return ''
 
     def _start_type(self, type_name: str) -> str:
-        return f'class {type_name}(any, Enum):'
+        return f'class {type_name}:'
 
     def _end_type(self) -> str:
         return ''
