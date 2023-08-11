@@ -48,6 +48,7 @@ languages:
   - type: javascript
     file_naming: screaming_snake
     indent: 4
+    export: common_js  # (Optional + JavaScript/TypeScript specific) Defines how to export the class. Supported values are: esm | common_js | none. Defaults to esm.
 
   - type: typescript
     file_naming: kebap
@@ -105,7 +106,7 @@ public class TestConfig {
 ```
 
 ```javascript
-export class TestConfig {
+class TestConfig {
     static get myBoolean() { return true; }
     static get myInteger() { return 142; }
     static get myFloat() { return 322.0; }
@@ -113,6 +114,7 @@ export class TestConfig {
     static get myRegex() { return /Test Reg(E|e)x/; } /* Just another RegEx. */
     static get mySubstitutedString() { return 'Sometimes I just want to scream Hello World!'; }
 }
+module.exports = TestConfig
 ```
 
 ```typescript

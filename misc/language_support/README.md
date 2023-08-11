@@ -127,7 +127,7 @@ As test-config.yaml serves as the documentation for what's supported, make sure 
 
 ```yaml
 languages:
-  - type: java                        # Specifies the output language. Supported values are: java | javascript | typescript | python | my_language
+  - type: java                        # Specifies the output language. Supported values are: java | javascript | typescript | python
     file_naming: pascal               # (Optional) Specifies the file naming convention. Supported values: snake | screaming_snake | camel | pascal | kebap
     property_naming: screaming_snake  # (Optional) Specifies the property naming convention. Supported values: snake | screaming_snake | camel | pascal | kebap
     indent: 4                         # (Optional) Specifies the amount of spaces before each constant.
@@ -136,6 +136,7 @@ languages:
   - type: javascript
     file_naming: screaming_snake
     indent: 4
+    export: common_js  # (Optional + JavaScript/TypeScript specific) Defines how to export the class. Supported values are: esm | common_js | none. Defaults to esm.
 
   - type: typescript
     file_naming: kebap
