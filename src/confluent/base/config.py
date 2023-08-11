@@ -13,19 +13,24 @@ from .language_type import LanguageType
 from .language_config_base import LanguageConfigBase
 from .language_config_naming_conventions import LanguageConfigNamingConventions
 
-
+# Main categories.
 _KEY_LANGUAGES = 'languages'
 _KEY_PROPERTIES = 'properties'
+
+# Language keys.
 _KEY_FILE_NAMING = 'file_naming'
 _KEY_PROPERTY_NAMING = 'property_naming'
 _KEY_TYPE_NAMING = 'type_naming'
 _KEY_INDENT = 'indent'
 _KEY_TYPE = 'type'
 _KEY_NAME = 'name'
+
+# Property keys.
 _KEY_VALUE = 'value'
 _KEY_HIDDEN = 'hidden'
 _KEY_COMMENT = 'comment'
 
+# Load the glue.
 _LANGUAGE_MAPPINGS = ConfigLanguageMapping.get_mappings()
 
 
