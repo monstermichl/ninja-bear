@@ -96,35 +96,38 @@ properties:
 ```java
 package my.test.package;
 
+// Generated with confluent v0.0.1 (https://pypi.org/project/confluent/).
 public class TestConfig {
     public final static boolean MY_BOOLEAN = true;
     public final static int MY_INTEGER = 142;
     public final static float MY_FLOAT = 322.0f;
     public final static double MY_DOUBLE = 233.9d;
-    public final static String MY_REGEX = "Test Reg(E|e)x"; /* Just another RegEx. */
+    public final static String MY_REGEX = "Test Reg(E|e)x"; // Just another RegEx.
     public final static String MY_SUBSTITUTED_STRING = "Sometimes I just want to scream Hello World!";
 }
 ```
 
 ```javascript
+// Generated with confluent v0.0.1 (https://pypi.org/project/confluent/).
 class TestConfig {
     static get myBoolean() { return true; }
     static get myInteger() { return 142; }
     static get myFloat() { return 322.0; }
     static get myDouble() { return 233.9; }
-    static get myRegex() { return /Test Reg(E|e)x/; } /* Just another RegEx. */
+    static get myRegex() { return /Test Reg(E|e)x/; } // Just another RegEx.
     static get mySubstitutedString() { return 'Sometimes I just want to scream Hello World!'; }
 }
 module.exports = TestConfig
 ```
 
 ```typescript
+// Generated with confluent v0.0.1 (https://pypi.org/project/confluent/).
 export class TestConfig {
     public static readonly myBoolean = true;
     public static readonly myInteger = 142;
     public static readonly myFloat = 322.0;
     public static readonly myDouble = 233.9;
-    public static readonly myRegex = /Test Reg(E|e)x/; /* Just another RegEx. */
+    public static readonly myRegex = /Test Reg(E|e)x/; // Just another RegEx.
     public static readonly mySubstitutedString = 'Sometimes I just want to scream Hello World!';
 }
 ```
@@ -133,7 +136,8 @@ export class TestConfig {
 from enum import Enum
 
 
-class TestConfig(Enum):
+# Generated with confluent v0.0.1 (https://pypi.org/project/confluent/).
+class TestConfig(any, Enum):
     MY_BOOLEAN = True
     MY_INTEGER = 142
     MY_FLOAT = 322.0
