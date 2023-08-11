@@ -65,7 +65,7 @@ class TestGenerator(unittest.TestCase):
 
     def _evaluate_java_properties(self, config: JavaConfig, name: str):
         self._evaluate_common_properties(config, 'java', name, LanguageType.JAVA, JavaGenerator)
-        # TODO: Add package evaluation.
+        self.assertEqual(config.generator.package, 'my.test.package')
 
     def _evaluate_javascript_properties(self, config: JavascriptConfig, name: str):
         self._evaluate_common_properties(config, 'js', name, LanguageType.JAVASCRIPT, JavascriptGenerator)

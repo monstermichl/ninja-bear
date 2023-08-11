@@ -1,6 +1,19 @@
-from ..base.generator_base import GeneratorBase
+from typing import List
+
+from ..base.generator_naming_conventions import GeneratorNamingConventions
+from ..base.generator_base import _DEFAULT_INDENT, GeneratorBase
 from ..base.property import Property
 from ..base.property_type import PropertyType
+
+
+class NoPackageNameException(Exception):
+    def __init__(self):
+        super().__init__('No package name provided')
+
+
+class EmptyPackageNameException(Exception):
+    def __init__(self):
+        super().__init__('Package name is empty')
 
 
 class JavaGenerator(GeneratorBase):
@@ -8,6 +21,19 @@ class JavaGenerator(GeneratorBase):
     Java specific generator. For more information about the generator methods, refer to GeneratorBase.
     """
     _ATTRIBUTE_PACKAGE = 'package'
+
+    def __init__(
+        self,
+        class_name: str,
+        properties: List[Property] = [],
+        indent: int = _DEFAULT_INDENT,
+        naming_conventions: GeneratorNamingConventions = None,
+        additional_props = {}
+    ):
+        super().__init__(class_name, properties, indent, naming_conventions, additional_props)
+
+        # Evaluate the config's package name.
+        self.package = self._evaluate_package_name()
 
     def _property_before_class(self, _: Property) -> str:
         return ''
@@ -39,14 +65,7 @@ class JavaGenerator(GeneratorBase):
         return f' /* {comment} */'
     
     def _before_class(self, **props) -> str:
-        if self._ATTRIBUTE_PACKAGE not in props:
-            raise Exception('Java requires a package definition')
-        else:
-            package = props[self._ATTRIBUTE_PACKAGE]
-        
-        if not package:
-            raise Exception('No package name provided')
-        return f'package {package};\n\n'
+        return f'package {self.package};\n\n'
 
     def _after_class(self, **props) -> str:
         return ''
@@ -56,3 +75,13 @@ class JavaGenerator(GeneratorBase):
 
     def _end_class(self) -> str:
         return '}'
+    
+    def _evaluate_package_name(self):
+        if self._ATTRIBUTE_PACKAGE not in self._additional_props:
+            raise NoPackageNameException()
+        else:
+            package = self._additional_props[self._ATTRIBUTE_PACKAGE]
+        
+        if not package:
+            raise EmptyPackageNameException()
+        return package
