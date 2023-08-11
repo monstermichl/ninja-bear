@@ -126,34 +126,44 @@ That's it! You successfully added support for a new language. Now here is where 
 As test-config.yaml serves as the documentation for what's supported, make sure your language is added to it.
 
 ```yaml
-languages:
-  # Specify an output for Java.
-  - type: java                        # Specifies the output language. Supported values are: java | javascript | typescript | python
-    file_naming: pascal               # (Optional) Specifies the file naming convention. Defaults to the file-name without the extension.
-                                      #            Supported values: snake | screaming_snake | camel | pascal | kebap.
-    property_naming: screaming_snake  # (Optional) Specifies the property naming convention. Supported values: snake | screaming_snake | camel | pascal | kebap
-    type_naming: pascal               # (Optional) Specifies the naming convention for the generated type. The default value is language specific.
-                                      #            Supported values: snake | screaming_snake | camel | pascal | kebap
-    indent: 4                         # (Optional) Specifies the amount of spaces before each constant. Defaults to 4.
-    package: my.test.package          # (Java specific) For Java, a package name must be specified.
+  # --- Common properties ---------------------------------------------------
+  #  type            (required): Specifies the output language (java | javascript | typescript | python).
+  #
+  #  file_naming     (optional): Specifies the file naming convention (snake | screaming_snake | camel | pascal | kebap). Defaults to the file-name without the extension.
+  #  property_naming (optional): Specifies the property naming convention (snake | screaming_snake | camel | pascal | kebap).
+  #  type_naming     (optional): Specifies the naming convention for the generated type (snake | screaming_snake | camel | pascal | kebap). The default value is language specific.
+  #  indent          (optional): Specifies the amount of spaces before each constant. Defaults to 4.
+  # -------------------------------------------------------------------------
 
-  # Specify an output for JavaScript.
+  # --- Java specific properties --------------------------------------------
+  #  package (required): Specifies the Java package name.
+  # -------------------------------------------------------------------------
+  - type: java
+    file_naming: pascal
+    type_naming: pascal
+    package: my.test.package
+
+  # --- JavaScript/TypeScript specific properties ---------------------------
+  #  export (optional): Specifies how to export the class (esm | common_js | none). Defaults to esm.
+  # -------------------------------------------------------------------------
   - type: javascript
     file_naming: screaming_snake
-    export: common_js  # (Optional + JavaScript/TypeScript specific) Defines how to export the class. Supported values are: esm | common_js | none. Defaults to esm.
+    export: common_js
 
-  # Specify an output for TypeScript.
   - type: typescript
+    indent: 4
 
-  # Specify an output for Python.
   - type: python
     file_naming: snake
     property_naming: screaming_snake
 
-  # Specify an output for MyLanguage.
-  - type: my_language  # IMPORTANT: Also add my_language to the list of supported languages (see line where "type: java").
+  # --- MyLanguage specific properties --------------------------------------
+  #  fun_factor (optional): Define how much fun the generated config shall be.
+  # -------------------------------------------------------------------------
+  - type: my_language  # IMPORTANT: Also add my_language to the list of supported languages (see Common properties -> type).
     file_naming: camel
     indent: 4
+    fun_factor: 5
 ```
 
 Afterwards, install *confluent* from the local project to test if your implementation works as expected (you might need to uninstall your current installation of *confluent* first). This can either be done by building and running the project manually or by running the *install.sh/bat* script from the *helpers* directory. If you want to setup everything manually, please have a look into the *install.sh/bat* script how it's done there.
