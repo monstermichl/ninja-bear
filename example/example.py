@@ -1,9 +1,7 @@
-from confluent import Generator
+from confluent import Arranger
 
-# Get configurations from file.
-configs = Generator.read_config('test-config.yaml')
+# Create arranger instance from file.
+arranger = Arranger.read_config('test-config.yaml')
 
-for config in configs:
-    # Write config to the generated directory.
-    with open(f'generated/{config.config_info.file_name_full}', 'w') as f:
-        f.write(config.dump())
+# Write configs to 'generated* directory.
+arranger.write('generated')

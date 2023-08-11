@@ -1,7 +1,7 @@
 import argparse
 from os import path
 
-from .base.generator import Generator
+from .base.arranger import Arranger
 
 _CONFIG_PARAMETER = 'config'
 _OUTPUT_PARAMETER = 'output'
@@ -21,13 +21,7 @@ def main():
     if output_dir and not path.isdir(output_dir):
         raise Exception(f'Output directory {output_dir} does not exist')
     
-    language_configs = Generator.read_config(getattr(args, _CONFIG_PARAMETER))
-    
-    for language_config in language_configs:
-        generatedCode = language_config.dump()
-
-        with open(f'{output_dir}/{language_config.config_info.file_name_full}', 'w') as f:
-            f.write(generatedCode)
+    Arranger.read_config(getattr(args, _CONFIG_PARAMETER)).write(output_dir)
 
 
 if __name__ == '__main__':

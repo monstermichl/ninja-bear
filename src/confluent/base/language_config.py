@@ -1,3 +1,4 @@
+from __future__ import annotations
 from abc import ABC
 from typing import List, Type
 
@@ -92,3 +93,11 @@ class LanguageConfig(ABC):
         :rtype:  str
         """
         return self.generator.dump()
+    
+    def write(self, path: str = '') -> LanguageConfig:
+        path = path.rstrip('/').rstrip('\\')  # Strip right-side slashes.
+        path = f'{path}/{self.config_info.file_name_full}'
+
+        with open(path, 'w') as f:
+            f.write(self.dump())
+        return self

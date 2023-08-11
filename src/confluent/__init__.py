@@ -1,1 +1,1 @@
-from .base.generator import Generator  # noqa: F401
+from .base.arranger import Arranger  # noqa: F401
