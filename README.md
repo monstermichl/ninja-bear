@@ -23,13 +23,13 @@ python3 -m confluent -c test-config.yaml -o generated
 
 ### Script
 ```python
-from confluent import Arranger
+from confluent import Orchestrator
 
-# Create arranger instance from file.
-arranger = Arranger.read_config('test-config.yaml')
+# Create Orchestrator instance from file.
+orchestrator = Orchestrator.read_config('test-config.yaml')
 
 # Write configs to 'generated* directory.
-arranger.write('generated')
+orchestrator.write('generated')
 ```
 
 ## Example

@@ -5,7 +5,7 @@ import shutil
 from typing import List, Type
 import unittest
 
-from src.confluent import Arranger
+from src.confluent import Orchestrator
 from src.confluent.base.language_config import LanguageConfig
 from src.confluent.base.language_type import LanguageType
 from src.confluent.generators.java_generator import JavaGenerator
@@ -26,19 +26,19 @@ class TestGenerator(unittest.TestCase):
         self._test_compare_files_path = path.join(self._test_path, 'compare_files')
 
     def test_read_config(self):
-        arranger = Arranger.read_config(self._test_config_path)
-        self._evaluate_configs(arranger.language_configs)
+        orchestrator = Orchestrator.read_config(self._test_config_path)
+        self._evaluate_configs(orchestrator.language_configs)
 
     def test_parse_config(self):
         with open(self._test_config_path, 'r') as f:
             content = f.read()
-        arranger = Arranger.parse_config(content, 'test-config')
-        self._evaluate_configs(arranger.language_configs)
+        orchestrator = Orchestrator.parse_config(content, 'test-config')
+        self._evaluate_configs(orchestrator.language_configs)
 
     def test_run_generators(self):
-        arranger = Arranger.read_config(self._test_config_path)
+        orchestrator = Orchestrator.read_config(self._test_config_path)
 
-        for config in arranger.language_configs:
+        for config in orchestrator.language_configs:
             compare_file_path = path.join(
                 self._test_compare_files_path,
                 f'{config.config_info.file_name_full}'
@@ -50,13 +50,13 @@ class TestGenerator(unittest.TestCase):
 
     def test_write_configs(self):
         OUTPUT_DIR = path.join(self._test_path, 'test_output')
-        arranger = Arranger.read_config(self._test_config_path)
+        orchestrator = Orchestrator.read_config(self._test_config_path)
 
         if not os.path.isdir(OUTPUT_DIR):
             os.mkdir(OUTPUT_DIR)
         
         # Write all configs to the output folder.
-        arranger.write(OUTPUT_DIR)
+        orchestrator.write(OUTPUT_DIR)
 
         # Collect the output file names.
         files = os.listdir(OUTPUT_DIR)
@@ -65,7 +65,7 @@ class TestGenerator(unittest.TestCase):
         shutil.rmtree(OUTPUT_DIR)
 
         # Compare files.
-        for config in arranger.language_configs:
+        for config in orchestrator.language_configs:
             self.assertIn(config.config_info.file_name_full, files)
 
     def _evaluate_configs(self, configs: List[LanguageConfig]):

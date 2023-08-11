@@ -4,7 +4,7 @@ from typing import List
 from .language_config import LanguageConfig
 from .config import Config
 
-class Arranger:
+class Orchestrator:
 
     def __init__(self, language_configs: List[LanguageConfig]):
         # Make sure the configs-list is available.
@@ -22,29 +22,29 @@ class Arranger:
         """
         return [config.dump() for config in self.language_configs]
     
-    def write(self, path: str = '') -> Arranger:
+    def write(self, path: str = '') -> Orchestrator:
         """
         Writes all language configs to the specified output path.
 
         :param path: Path to write the configs to (the directory must exist), defaults to ''
         :type path:  str, optional
 
-        :return: The current Arranger instance.
-        :rtype:  Arranger
+        :return: The current Orchestrator instance.
+        :rtype:  Orchestrator
         """
         [config.write(path) for config in self.language_configs]
         return self
 
     @staticmethod
-    def read_config(path: str) -> Arranger:
+    def read_config(path: str) -> Orchestrator:
         """
         Reads the provided YAML configuration file and generates a list of language configurations.
 
         :param path: Path to load the YAML file from (see example/test-config.yaml for configuration details).
         :type path:  str
 
-        :return: Arranger instance.
-        :rtype:  Arranger
+        :return: Orchestrator instance.
+        :rtype:  Orchestrator
         """
         with open(path, 'r') as f:
             content = f.read()
@@ -56,10 +56,10 @@ class Arranger:
             config_name = '.'.join(last_part.split('.')[0:-1])
         else:
             config_name = last_part
-        return Arranger.parse_config(content, config_name)
+        return Orchestrator.parse_config(content, config_name)
 
     @staticmethod
-    def parse_config(config: str, config_name: str) -> Arranger:
+    def parse_config(config: str, config_name: str) -> Orchestrator:
         """
         Parses the provided YAML configuration string and generates a list of language configurations. 
 
@@ -72,7 +72,7 @@ class Arranger:
                             GeneratorBase._default_type_naming_convention).
         :type config_name:  str
 
-        :return: Arranger instance.
-        :rtype:  Arranger
+        :return: Orchestrator instance.
+        :rtype:  Orchestrator
         """
-        return Arranger(Config.parse(config, config_name))
+        return Orchestrator(Config.parse(config, config_name))

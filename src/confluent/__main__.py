@@ -1,7 +1,7 @@
 import argparse
 from os import path
 
-from .base.arranger import Arranger
+from .base.orchestrator import Orchestrator
 
 _CONFIG_PARAMETER = 'config'
 _OUTPUT_PARAMETER = 'output'
@@ -21,7 +21,7 @@ def main():
     if output_dir and not path.isdir(output_dir):
         raise Exception(f'Output directory {output_dir} does not exist')
     
-    Arranger.read_config(getattr(args, _CONFIG_PARAMETER)).write(output_dir)
+    Orchestrator.read_config(getattr(args, _CONFIG_PARAMETER)).write(output_dir)
 
 
 if __name__ == '__main__':
