@@ -6,7 +6,7 @@ from ..language_configs.javascript_config import JavascriptConfig
 from ..language_configs.typescript_config import TypescriptConfig
 from ..language_configs.python_config import PythonConfig
 
-from .language_config import LanguageConfig
+from .language_config_base import LanguageConfigBase
 from .language_type import LanguageType
 
 
@@ -15,7 +15,7 @@ class ConfigLanguageMapping:
     Container to create a link between a language name, a language type and the appropriate
     language config class.
     """
-    def __init__(self, name: str, type: LanguageType, config_type: Type[LanguageConfig]):
+    def __init__(self, name: str, type: LanguageType, config_type: Type[LanguageConfigBase]):
         """
         Constructor
 
@@ -23,8 +23,8 @@ class ConfigLanguageMapping:
         :type name:         str
         :param type:        Language type (e.g., LanguageType.JAVA).
         :type type:         LanguageType
-        :param config_type: Language config (derivate of the LanguageConfig class) (e.g., JavaConfig).
-        :type config_type:  Type[LanguageConfig]
+        :param config_type: Language config (derivate of the LanguageConfigBase class) (e.g., JavaConfig).
+        :type config_type:  Type[LanguageConfigBase]
         """
         self.name = name
         self.type = type

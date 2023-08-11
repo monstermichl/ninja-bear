@@ -1,12 +1,12 @@
 from __future__ import annotations
 from typing import List
 
-from .language_config import LanguageConfig
+from .language_config_base import LanguageConfigBase
 from .config import Config
 
 class Orchestrator:
 
-    def __init__(self, language_configs: List[LanguageConfig]):
+    def __init__(self, language_configs: List[LanguageConfigBase]):
         # Make sure the configs-list is available.
         if not language_configs:
             language_configs = []

@@ -69,12 +69,12 @@ class MyLanguageGenerator(GeneratorBase):
 ```
 
 ## Add a new language config
-Create a new config class within *src/confluent/language_configs* (e.g., *my_language_configs.py*) which inherits from [*LanguageConfig*](https://github.com/monstermichl/confluent/blob/main/src/confluent/base/language_config.py) and implements the required **abstract** methods (a template can be found under [*misc/language_support/templates*](https://github.com/monstermichl/confluent/tree/main/misc/language_support/templates)). The language config encapsulates all the necessary information to create a config file (e.g., the language type,the config extension, which generator to use, ...).
+Create a new config class within *src/confluent/language_configs* (e.g., *my_language_configs.py*) which inherits from [*LanguageConfigBase*](https://github.com/monstermichl/confluent/blob/main/src/confluent/base/language_config_base.py) and implements the required **abstract** methods (a template can be found under [*misc/language_support/templates*](https://github.com/monstermichl/confluent/tree/main/misc/language_support/templates)). The language config encapsulates all the necessary information to create a config file (e.g., the language type,the config extension, which generator to use, ...).
 
 ```python
-class MyLanguageConfig(LanguageConfig):
+class MyLanguageConfig(LanguageConfigBase):
     """
-    MyLanguage specific config. For more information about the config methods, refer to LanguageConfig.
+    MyLanguage specific config. For more information about the config methods, refer to LanguageConfigBase.
     """
 
     def __init__(
@@ -166,7 +166,7 @@ If your desired config file was created, CONGRATULATIONS! your implementation wa
 If everything went well so far, copy the generated example config for your language from *example* to *tests/compare_files*. This serves as the blueprint for testing your language. Therefore, **please make absolutely sure, that this is how you want your language output to look like.** Then open up *tests/test_generator.py* and add your language validation to the *_evaluate_configs* function.
 
 ```python
-def _evaluate_configs(self, configs: List[LanguageConfig]):
+def _evaluate_configs(self, configs: List[LanguageConfigBase]):
     self.assertIsNotNone(configs)
     self.assertIsInstance(configs, list)
     self.assertEqual(len(configs), 5)  # Don't forget to update when adding a new language to test-config.yaml.

@@ -15,9 +15,9 @@ class NoConfigNameProvidedException(Exception):
         super().__init__('No config name has been provided')
 
 
-class LanguageConfig(ABC):
+class LanguageConfigBase(ABC):
     """
-    Abstract class which serves as the base for all language specific config classes. The LanguageConfig holds all
+    Abstract class which serves as the base for all language specific config classes. The LanguageConfigBase holds all
     required information (language type, naming convention, generator, ...) to generate a config file.
     """
 
@@ -94,7 +94,7 @@ class LanguageConfig(ABC):
         """
         return self.generator.dump()
     
-    def write(self, path: str = '') -> LanguageConfig:
+    def write(self, path: str = '') -> LanguageConfigBase:
         path = path.rstrip('/').rstrip('\\')  # Strip right-side slashes.
         path = f'{path}/{self.config_info.file_name_full}'
 

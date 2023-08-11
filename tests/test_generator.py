@@ -6,7 +6,7 @@ from typing import List, Type
 import unittest
 
 from src.confluent import Orchestrator
-from src.confluent.base.language_config import LanguageConfig
+from confluent.base.language_config_base import LanguageConfigBase
 from src.confluent.base.language_type import LanguageType
 from src.confluent.generators.java_generator import JavaGenerator
 from src.confluent.generators.javascript_generator import JavascriptGenerator
@@ -68,7 +68,7 @@ class TestGenerator(unittest.TestCase):
         for config in orchestrator.language_configs:
             self.assertIn(config.config_info.file_name_full, files)
 
-    def _evaluate_configs(self, configs: List[LanguageConfig]):
+    def _evaluate_configs(self, configs: List[LanguageConfigBase]):
         self.assertIsNotNone(configs)
         self.assertIsInstance(configs, list)
         self.assertEqual(len(configs), 4)  # Don't forget to update when adding a new language to test-config.yaml.
@@ -100,7 +100,7 @@ class TestGenerator(unittest.TestCase):
 
     def _evaluate_common_properties(
         self,
-        config: LanguageConfig,
+        config: LanguageConfigBase,
         extension: str,
         name: str,
         type: LanguageType,

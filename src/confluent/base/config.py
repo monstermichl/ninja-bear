@@ -10,7 +10,7 @@ from .name_converter import NamingConventionType
 from .property import Property
 from .property_type import PropertyType
 from .language_type import LanguageType
-from .language_config import LanguageConfig
+from .language_config_base import LanguageConfigBase
 from .language_config_naming_conventions import LanguageConfigNamingConventions
 
 
@@ -70,7 +70,7 @@ class Config:
     """
 
     @staticmethod
-    def parse(content: str, config_name: str) -> List[LanguageConfig]:
+    def parse(content: str, config_name: str) -> List[LanguageConfigBase]:
         """
         Parses the provided YAML configuration string and returns the corresponding language configurations.
 
@@ -85,12 +85,12 @@ class Config:
         :raises RecursiveSubstitutionException: Raised if a property referenced itself as substitution.
 
         :return: Language configurations which further can be dumped as config files.
-        :rtype:  List[LanguageConfig]
+        :rtype:  List[LanguageConfigBase]
         """
         yaml_object = yaml.safe_load(content)
         validated_object = Config._schema().validate(yaml_object)
         properties: List[Property] = []
-        language_configs: List[LanguageConfig] = []
+        language_configs: List[LanguageConfigBase] = []
 
         # Collect properties as they are the same for all languages.
         for property in validated_object[_KEY_PROPERTIES]:
@@ -242,7 +242,7 @@ class Config:
         return found[0]
     
     @staticmethod
-    def _evaluate_config_type(language_type: LanguageType) -> Type[LanguageConfig]:
+    def _evaluate_config_type(language_type: LanguageType) -> Type[LanguageConfigBase]:
         """
         Evaluates the languages config type to use for further evaluation.
 
@@ -256,8 +256,8 @@ class Config:
                                                  language type. If this error arises, it's a package error. Please open
                                                  an issue at https://github.com/monstermichl/confluent/issues.
 
-        :return: The corresponding LanguageConfig derivate type (e.g., Type[JavaConfig]).
-        :rtype:  Type[LanguageConfig]
+        :return: The corresponding LanguageConfigBase derivate type (e.g., Type[JavaConfig]).
+        :rtype:  Type[LanguageConfigBase]
         """
         found = [mapping.config_type for mapping in _LANGUAGE_MAPPINGS if mapping.type == language_type]
         length = len(found)
