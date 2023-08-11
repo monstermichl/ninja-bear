@@ -66,7 +66,7 @@ class JavaGenerator(GeneratorBase):
         return f'public final static {type} {property.name} = {value};'
 
     def _property_comment(self, comment: str) -> str:
-        return f' /* {comment} */'
+        return f' // {comment}'
     
     def _before_type(self) -> str:
         return f'package {self.package};\n\n'
