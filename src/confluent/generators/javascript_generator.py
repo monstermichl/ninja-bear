@@ -8,7 +8,7 @@ from ..base.property import Property
 from ..base.property_type import PropertyType
 
 
-class ExportType(Enum):
+class ExportType(str, Enum):
     ESM = 'esm'
     COMMON_JS = 'common_js'
     NONE = 'none'
