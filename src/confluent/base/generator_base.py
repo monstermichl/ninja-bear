@@ -121,7 +121,7 @@ class GeneratorBase(ABC):
             ] if property_string  # This clause makes sure that only property strings with a value are used.
         )
 
-        s = self._before_type(**self._additional_props)
+        s = self._before_type()
         s += f'{properties_before_type}\n\n' if properties_before_type else ''
         s += f'{self._start_type(self._type_name)}\n'
         s += '\n'.join([f'{self._create_property_string(property)}' for property in properties if property])
@@ -132,7 +132,7 @@ class GeneratorBase(ABC):
         # Only append additional newline, if class_end is not empty
         if class_end:
             s += '\n'
-        s += self._after_type(**self._additional_props)
+        s += self._after_type()
 
         # Add trailing newline if required.
         if s[-1] != '\n':
@@ -183,7 +183,7 @@ class GeneratorBase(ABC):
         pass
 
     @abstractmethod
-    def _before_type(self, **props) -> str:
+    def _before_type(self) -> str:
         """
         Abstract method which must be implemented by the deriving class to generate a possible string which will
         be added in front of the generated class/struct. If not required, this method shall return an empty string.
@@ -194,7 +194,7 @@ class GeneratorBase(ABC):
         pass
 
     @abstractmethod
-    def _after_type(self, **props) -> str:
+    def _after_type(self) -> str:
         """
         Abstract method which must be implemented by the deriving class to generate a possible string which will
         be added after the generated class/struct. If not required, this method shall return an empty string.

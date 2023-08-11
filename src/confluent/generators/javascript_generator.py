@@ -60,10 +60,10 @@ class JavascriptGenerator(GeneratorBase):
     def _property_comment(self, comment: str) -> str:
         return f' /* {comment} */'
     
-    def _before_type(self, **props) -> str:
+    def _before_type(self) -> str:
         return ''
 
-    def _after_type(self, **props) -> str:
+    def _after_type(self) -> str:
         # Add module export only if CommonJS is used.
         return f'module.exports = {self._type_name}' if self.export_type == ExportType.COMMON_JS else ''
 

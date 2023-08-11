@@ -64,10 +64,10 @@ class JavaGenerator(GeneratorBase):
     def _property_comment(self, comment: str) -> str:
         return f' /* {comment} */'
     
-    def _before_type(self, **props) -> str:
+    def _before_type(self) -> str:
         return f'package {self.package};\n\n'
 
-    def _after_type(self, **props) -> str:
+    def _after_type(self) -> str:
         return ''
 
     def _start_type(self, type_name: str) -> str:

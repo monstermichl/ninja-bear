@@ -30,11 +30,11 @@ class PythonGenerator(GeneratorBase):
     def _property_comment(self, comment: str) -> str:
         return f'  # {comment}'
     
-    def _before_type(self, **props) -> str:
+    def _before_type(self) -> str:
         newlines = 3 * '\n'
         return f'from enum import Enum{newlines}'
 
-    def _after_type(self, **props) -> str:
+    def _after_type(self) -> str:
         return ''
 
     def _start_type(self, type_name: str) -> str:

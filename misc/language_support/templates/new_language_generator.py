@@ -17,10 +17,10 @@ class NewLanguageGenerator(GeneratorBase):
     def _property_comment(self, comment: str) -> str:
         pass  # TODO: Implement according to the new language.
     
-    def _before_type(self, **props) -> str:
+    def _before_type(self) -> str:
         pass  # TODO: Implement according to the new language.
 
-    def _after_type(self, **props) -> str:
+    def _after_type(self) -> str:
         pass  # TODO: Implement according to the new language.
 
     def _start_type(self, type_name: str) -> str:
