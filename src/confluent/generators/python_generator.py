@@ -42,7 +42,7 @@ class PythonGenerator(GeneratorBase):
         return ''
 
     def _start_type(self, type_name: str) -> str:
-        return f'class {type_name}(Enum):'
+        return f'class {type_name}(any, Enum):'
 
     def _end_type(self) -> str:
         return ''
