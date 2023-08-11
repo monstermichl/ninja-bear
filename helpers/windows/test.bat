@@ -13,8 +13,8 @@ python -m coverage html
 rem Print coverage report to stdout.
 python -m coverage report
 
-rem Go back to original directory.
-_exit 0
+rem Exit script successfully.
+call :_exit 0
 
 :_exit
     popd    

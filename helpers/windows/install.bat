@@ -4,13 +4,17 @@ rem Make sure the script is executed in the example directory even if it's calle
 pushd %~dp0\..\..
 
 rem Install required build packages.
-python -m pip install build wheel
+python -m pip install build wheel || call :_exit -1
 
 rem Build locally.
-python setup.py sdist bdist_wheel
+python setup.py sdist bdist_wheel || call :_exit -2
 
 rem Install this module.
-python -m pip install .
+python -m pip install . || call :_exit -3
 
-rem Go back to original directory.
-popd
+rem Exit script successfully.
+call :_exit 0
+
+:_exit
+    popd    
+    exit %1

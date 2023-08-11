@@ -1,8 +1,13 @@
 # Make sure the script is executed from the current directory even if it's called from somewhere else.
 pushd "${0%/*}" # https://stackoverflow.com/a/207966
 
-./install.sh
-./test.sh
+function _exit() {
+    popd
+    exit $1
+}
 
-# Go back to original directory.
-popd
+./install.sh || _exit -1
+./test.sh || _exit -2
+
+# Exit script successfully.
+_exit 0
