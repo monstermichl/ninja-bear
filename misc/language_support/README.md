@@ -126,17 +126,18 @@ That's it! You successfully added support for a new language. Now here is where 
 As test-config.yaml serves as the documentation for what's supported, make sure your language is added to it.
 
 ```yaml
-  # --- Common properties ---------------------------------------------------
-  #  type            (required): Specifies the output language (java | javascript | typescript | python).
+languages:
+  # --- Common properties (valid for all languages) -------------------------
+  # type            (required): Specifies the output language (java | javascript | typescript | python).
   #
-  #  file_naming     (optional): Specifies the file naming convention (snake | screaming_snake | camel | pascal | kebap). Defaults to the file-name without the extension.
-  #  property_naming (optional): Specifies the property naming convention (snake | screaming_snake | camel | pascal | kebap).
-  #  type_naming     (optional): Specifies the naming convention for the generated type (snake | screaming_snake | camel | pascal | kebap). The default value is language specific.
-  #  indent          (optional): Specifies the amount of spaces before each constant. Defaults to 4.
+  # file_naming     (optional): Specifies the file naming convention (snake | screaming_snake | camel | pascal | kebap). Defaults to the file-name without the extension.
+  # property_naming (optional): Specifies the property naming convention (snake | screaming_snake | camel | pascal | kebap).
+  # type_naming     (optional): Specifies the naming convention for the generated type (snake | screaming_snake | camel | pascal | kebap). The default value is language specific.
+  # indent          (optional): Specifies the amount of spaces before each constant. Defaults to 4.
   # -------------------------------------------------------------------------
 
   # --- Java specific properties --------------------------------------------
-  #  package (required): Specifies the Java package name.
+  # package (required): Specifies the Java package name.
   # -------------------------------------------------------------------------
   - type: java
     file_naming: pascal
@@ -144,21 +145,24 @@ As test-config.yaml serves as the documentation for what's supported, make sure 
     package: my.test.package
 
   # --- JavaScript/TypeScript specific properties ---------------------------
-  #  export (optional): Specifies how to export the class (esm | common_js | none). Defaults to esm.
+  # export (optional): Specifies how to export the class (esm | common_js | none). Defaults to esm.
   # -------------------------------------------------------------------------
   - type: javascript
     file_naming: screaming_snake
+    indent: 4
     export: common_js
 
   - type: typescript
     indent: 4
+    export: esm
 
+  # -------------------------------------------------------------------------
   - type: python
     file_naming: snake
     property_naming: screaming_snake
 
   # --- MyLanguage specific properties --------------------------------------
-  #  fun_factor (optional): Define how much fun the generated config shall be.
+  # fun_factor (optional): Define how much fun the generated config shall be.
   # -------------------------------------------------------------------------
   - type: my_language  # IMPORTANT: Also add my_language to the list of supported languages (see Common properties -> type).
     file_naming: camel

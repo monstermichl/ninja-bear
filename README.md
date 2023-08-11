@@ -37,17 +37,17 @@ orchestrator.write('generated')
 ### Configuration
 ```yaml
 languages:
-  # --- Common properties ---------------------------------------------------
-  #  type            (required): Specifies the output language (java | javascript | typescript | python).
+  # --- Common properties (valid for all languages) -------------------------
+  # type            (required): Specifies the output language (java | javascript | typescript | python).
   #
-  #  file_naming     (optional): Specifies the file naming convention (snake | screaming_snake | camel | pascal | kebap). Defaults to the file-name without the extension.
-  #  property_naming (optional): Specifies the property naming convention (snake | screaming_snake | camel | pascal | kebap).
-  #  type_naming     (optional): Specifies the naming convention for the generated type (snake | screaming_snake | camel | pascal | kebap). The default value is language specific.
-  #  indent          (optional): Specifies the amount of spaces before each constant. Defaults to 4.
+  # file_naming     (optional): Specifies the file naming convention (snake | screaming_snake | camel | pascal | kebap). Defaults to the file-name without the extension.
+  # property_naming (optional): Specifies the property naming convention (snake | screaming_snake | camel | pascal | kebap).
+  # type_naming     (optional): Specifies the naming convention for the generated type (snake | screaming_snake | camel | pascal | kebap). The default value is language specific.
+  # indent          (optional): Specifies the amount of spaces before each constant. Defaults to 4.
   # -------------------------------------------------------------------------
 
   # --- Java specific properties --------------------------------------------
-  #  package (required): Specifies the Java package name.
+  # package (required): Specifies the Java package name.
   # -------------------------------------------------------------------------
   - type: java
     file_naming: pascal
@@ -55,27 +55,30 @@ languages:
     package: my.test.package
 
   # --- JavaScript/TypeScript specific properties ---------------------------
-  #  export (optional): Specifies how to export the class (esm | common_js | none). Defaults to esm.
+  # export (optional): Specifies how to export the class (esm | common_js | none). Defaults to esm.
   # -------------------------------------------------------------------------
   - type: javascript
     file_naming: screaming_snake
+    indent: 4
     export: common_js
 
   - type: typescript
     indent: 4
+    export: esm
 
+  # -------------------------------------------------------------------------
   - type: python
     file_naming: snake
     property_naming: screaming_snake
 
 properties:
-  # --- Common properties ---------------------------------------------------
-  #  type    (required): Specifies the constant data type (bool | int | float | double | string | regex).
-  #  name    (required): Specifies the constant's name.
-  #  value   (required): Specifies the constant's value.
+  # -------------------------------------------------------------------------
+  # type    (required): Specifies the constant data type (bool | int | float | double | string | regex).
+  # name    (required): Specifies the constant's name.
+  # value   (required): Specifies the constant's value.
   #
-  #  comment (optional): Adds an extra comment to the constant.
-  #  hidden  (optional): Constants serves as helper and will not be written to the final result.
+  # comment (optional): Adds an extra comment to the constant.
+  # hidden  (optional): Constants serves as helper and will not be written to the final result.
   # -------------------------------------------------------------------------
 
   - type: bool
