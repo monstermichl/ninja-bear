@@ -23,7 +23,7 @@ class NewLanguageGenerator(GeneratorBase):
     def _after_type(self, **props) -> str:
         pass  # TODO: Implement according to the new language.
 
-    def _start_type(self, class_name: str) -> str:
+    def _start_type(self, type_name: str) -> str:
         pass  # TODO: Implement according to the new language.
 
     def _end_type(self) -> str:

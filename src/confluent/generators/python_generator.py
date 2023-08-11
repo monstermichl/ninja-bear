@@ -37,8 +37,8 @@ class PythonGenerator(GeneratorBase):
     def _after_type(self, **props) -> str:
         return ''
 
-    def _start_type(self, class_name: str) -> str:
-        return f'class {class_name}(Enum):'
+    def _start_type(self, type_name: str) -> str:
+        return f'class {type_name}(Enum):'
 
     def _end_type(self) -> str:
         return ''

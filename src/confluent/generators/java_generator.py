@@ -24,13 +24,13 @@ class JavaGenerator(GeneratorBase):
 
     def __init__(
         self,
-        class_name: str,
+        type_name: str,
         properties: List[Property] = [],
         indent: int = _DEFAULT_INDENT,
         naming_conventions: GeneratorNamingConventions = None,
         additional_props = {}
     ):
-        super().__init__(class_name, properties, indent, naming_conventions, additional_props)
+        super().__init__(type_name, properties, indent, naming_conventions, additional_props)
 
         # Evaluate the config's package name.
         self.package = self._evaluate_package_name()
@@ -70,8 +70,8 @@ class JavaGenerator(GeneratorBase):
     def _after_type(self, **props) -> str:
         return ''
 
-    def _start_type(self, class_name: str) -> str:
-        return f'public class {class_name} {{'
+    def _start_type(self, type_name: str) -> str:
+        return f'public class {type_name} {{'
 
     def _end_type(self) -> str:
         return '}'

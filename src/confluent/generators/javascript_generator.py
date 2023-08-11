@@ -27,13 +27,13 @@ class JavascriptGenerator(GeneratorBase):
 
     def __init__(
         self,
-        class_name: str,
+        type_name: str,
         properties: List[Property] = [],
         indent: int = _DEFAULT_INDENT,
         naming_conventions: GeneratorNamingConventions = None,
         additional_props = {}
     ):
-        super().__init__(class_name, properties, indent, naming_conventions, additional_props)
+        super().__init__(type_name, properties, indent, naming_conventions, additional_props)
 
         # Evaluate which export type to use.
         self.export_type = self._evaluate_export_type()
@@ -67,11 +67,11 @@ class JavascriptGenerator(GeneratorBase):
         # Add module export only if CommonJS is used.
         return f'module.exports = {self._type_name}' if self.export_type == ExportType.COMMON_JS else ''
 
-    def _start_type(self, class_name: str) -> str:
+    def _start_type(self, type_name: str) -> str:
         # Export class only directly if ESM is used.
         export = 'export ' if self.export_type == ExportType.ESM else ''
 
-        return f'{export}class {class_name} {{'
+        return f'{export}class {type_name} {{'
 
     def _end_type(self) -> str:
         return '}'

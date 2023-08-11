@@ -17,7 +17,7 @@ class PropertyAlreadyExistsException(Exception):
 
 class NoTypeNameProvidedException(Exception):
     def __init__(self):
-        super().__init__('No class name has been provided')
+        super().__init__('No type name has been provided')
 
 
 class GeneratorBase(ABC):
@@ -27,7 +27,7 @@ class GeneratorBase(ABC):
 
     def __init__(
         self,
-        class_name: str,
+        type_name: str,
         properties: List[Property] = [],
         indent: int = _DEFAULT_INDENT,
         naming_conventions: GeneratorNamingConventions = None,
@@ -36,10 +36,10 @@ class GeneratorBase(ABC):
         """
         Constructor
 
-        :param class_name:                Name of the generated class. HINT: This acts more like a template than the
+        :param type_name:                 Name of the generated class. HINT: This acts more like a template than the
                                           real name as some conventions must be met and therefore the name might be
                                           changed in terms of casing (see also NameConverter).
-        :type class_name:                 str
+        :type type_name:                  str
         :param properties:                List of properties to generator by the GeneratorBase derivate, defaults to []
         :type properties:                 List[Property], optional
         :param indent:                    Whitespace indent before each property, defaults to _DEFAULT_INDENT
@@ -54,7 +54,7 @@ class GeneratorBase(ABC):
         self._naming_conventions = naming_conventions if naming_conventions else GeneratorNamingConventions()
         self._additional_props = additional_props
 
-        self._set_type_name(class_name)
+        self._set_type_name(type_name)
         self.set_indent(indent)
 
         # Add properties one by one.
@@ -205,7 +205,7 @@ class GeneratorBase(ABC):
         pass
 
     @abstractmethod
-    def _start_type(self, class_name: str) -> str:
+    def _start_type(self, type_name: str) -> str:
         """
         Abstract method which must be implemented by the deriving class to generate the class'/struct's definition.
 
