@@ -35,9 +35,11 @@ class Generator:
 
         :param config:      YAML configuration string (see example/test-config.yaml for configuration details).
         :type config:       str
-        :param config_name: Name of the generated class and config. HINT: This acts more like a template than the real
-                            name as some conventions must be met and therefore the name might be changed in terms of
-                            casing (see also GeneratorBase and NameConverter).
+        :param config_name: Name of the generated type and config. HINT: This acts more like a template for the
+                            type name than the real name as some conventions must be met and therefore the default
+                            convention specified by the deriving class of GeneratorBase will be used if no naming
+                            convention for the type name was provided (see
+                            GeneratorBase._default_type_naming_convention).
         :type config_name:  str
 
         :return: List of language configurations.

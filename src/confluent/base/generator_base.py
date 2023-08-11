@@ -36,9 +36,10 @@ class GeneratorBase(ABC):
         """
         Constructor
 
-        :param type_name:                 Name of the generated class. HINT: This acts more like a template than the
-                                          real name as some conventions must be met and therefore the name might be
-                                          changed in terms of casing (see also NameConverter).
+        :param type_name:                 Name of the generated type. HINT: This acts more like a template than the
+                                          real name as some conventions must be met and therefore the default convention
+                                          specified by the deriving class will be used if no naming convention for the
+                                          type name was provided (see _default_type_naming_convention).
         :type type_name:                  str
         :param properties:                List of properties to generator by the GeneratorBase derivate, defaults to []
         :type properties:                 List[Property], optional

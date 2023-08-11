@@ -1,9 +1,9 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import List, Type
 
 from .language_config_naming_conventions import LanguageConfigNamingConventions
 from .config_file_info import ConfigFileInfo
-from .name_converter import NameConverter, NamingConventionType
+from .name_converter import NameConverter
 from .language_type import LanguageType
 from .property import Property
 from .generator_base import GeneratorBase
@@ -34,10 +34,11 @@ class LanguageConfig(ABC):
         """
         Constructor
 
-        :param config_name:               Name of the generated class and config. HINT: This acts more like a template
-                                          than the real name as some conventions must be met and therefore the name
-                                          might be changed in terms of casing (see also GeneratorBase
-                                          and NameConverter).
+        :param config_name:               Name of the generated type and config. HINT: This acts more like a template
+                                          for the type name than the real name as some conventions must be met and
+                                          therefore the default convention specified by the deriving class of
+                                          GeneratorBase will be used if no naming convention for the type name
+                                          was provided (see GeneratorBase._default_type_naming_convention).
         :type config_name:                str
         :param language_type:             Which language type is this config for.
         :type language_type:              LanguageType
@@ -65,10 +66,6 @@ class LanguageConfig(ABC):
         if not naming_conventions:
             naming_conventions = LanguageConfigNamingConventions()
         
-        # Make sure that the file-naming convention is set to default if not provided.
-        if not naming_conventions.file_naming_convention:
-            naming_conventions.file_naming_convention = self._default_naming_convention()
-        
         self.generator = generator(
             config_name,
             properties,
@@ -77,7 +74,12 @@ class LanguageConfig(ABC):
             additional_props,
         )
         self.config_info = ConfigFileInfo(
-            NameConverter.convert(config_name, naming_conventions.file_naming_convention),
+            # Convert config file name according to naming convention if a convention was provided. Otherwise, just use
+            # the config name directly.
+            NameConverter.convert(config_name, naming_conventions.file_naming_convention) if
+                naming_conventions.file_naming_convention else
+                config_name,
+
             file_extension,
         )
         self.language_type = language_type
@@ -90,13 +92,3 @@ class LanguageConfig(ABC):
         :rtype:  str
         """
         return self.generator.dump()
-    
-    @abstractmethod
-    def _default_naming_convention(self) -> NamingConventionType:
-        """
-        Abstract method which must be implemented by the deriving class that returns the default file naming convention.
-
-        :return: Default file naming convention.
-        :rtype:  NamingConventionType
-        """
-        pass

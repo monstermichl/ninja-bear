@@ -30,7 +30,7 @@ class TestGenerator(unittest.TestCase):
     def test_parse_config(self):
         with open(self._test_config_path, 'r') as f:
             content = f.read()
-        configs = Generator.parse_config(content, 'TestConfig')
+        configs = Generator.parse_config(content, 'test-config')
         self._evaluate_configs(configs)
 
     def test_run_generators(self):
