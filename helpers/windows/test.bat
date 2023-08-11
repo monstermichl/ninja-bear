@@ -7,7 +7,10 @@ python -m pip install coverage
 rem Run unit tests.
 python -m coverage run -m unittest || goto :_exit -1
 
-rem Generate coverage report.
+rem Generate HTML coverage report.
+python -m coverage html
+
+rem Print coverage report to stdout.
 python -m coverage report
 
 rem Go back to original directory.

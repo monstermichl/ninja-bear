@@ -12,7 +12,10 @@ python -m pip install coverage
 # Run unit tests.
 python3 -m coverage run -m unittest || _exit -1
 
-# Generate coverage report.
+# Generate HTML coverage report.
+python3 -m coverage html
+
+# Print coverage report to stdout.
 python3 -m coverage report
 
 # Go back to original directory.
