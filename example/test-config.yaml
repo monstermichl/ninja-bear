@@ -8,6 +8,7 @@ languages:
   - type: javascript
     file_naming: screaming_snake
     indent: 4
+    export: common_js  # (Optional + JavaScript/TypeScript specific) Defines how to export the class. Supported values are: esm | common_js | none. Defaults to esm.
 
   - type: typescript
     file_naming: kebap

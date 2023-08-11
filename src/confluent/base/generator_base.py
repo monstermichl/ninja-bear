@@ -7,6 +7,9 @@ from .name_converter import NamingConventionType, NameConverter
 from .property import Property
 
 
+_DEFAULT_INDENT = 3
+
+
 class PropertyAlreadyExistsException(Exception):
     def __init__(self, property: str):
         super().__init__(f'Property {property} already exists')
@@ -21,7 +24,6 @@ class GeneratorBase(ABC):
     """
     Abstract class that acts as the base for all Generator implementations.
     """
-    _DEFAULT_INDENT = 3
 
     def __init__(
         self,
@@ -132,6 +134,9 @@ class GeneratorBase(ABC):
             s += '\n'
         s += self._after_class(**self._additional_props)
 
+        # Add trailing newline if required.
+        if s[-1] != '\n':
+            s += '\n'
         return s
     
     @abstractmethod
