@@ -1,31 +1,48 @@
 languages:
-  # Specify an output for Java.
-  - type: java                        # Specifies the output language. Supported values are: java | javascript | typescript | python
-    file_naming: pascal               # (Optional) Specifies the file naming convention. Defaults to the file-name without the extension.
-                                      #            Supported values: snake | screaming_snake | camel | pascal | kebap.
-    property_naming: screaming_snake  # (Optional) Specifies the property naming convention. Supported values: snake | screaming_snake | camel | pascal | kebap
-    type_naming: pascal               # (Optional) Specifies the naming convention for the generated type. The default value is language specific.
-                                      #            Supported values: snake | screaming_snake | camel | pascal | kebap
-    indent: 4                         # (Optional) Specifies the amount of spaces before each constant. Defaults to 4.
-    package: my.test.package          # (Java specific) For Java, a package name must be specified.
+  # --- Common properties ---------------------------------------------------
+  # type            (required): Specifies the output language (java | javascript | typescript | python).
+  #
+  # file_naming     (optional): Specifies the file naming convention (snake | screaming_snake | camel | pascal | kebap). Defaults to the file-name without the extension.
+  # property_naming (optional): Specifies the property naming convention (snake | screaming_snake | camel | pascal | kebap).
+  # type_naming     (optional): Specifies the naming convention for the generated type (snake | screaming_snake | camel | pascal | kebap). The default value is language specific.
+  # indent          (optional): Specifies the amount of spaces before each constant. Defaults to 4.
+  # -------------------------------------------------------------------------
 
-  # Specify an output for JavaScript.
+  # --- Java specific properties --------------------------------------------
+  # package (required): Specifies the Java package name.
+  # -------------------------------------------------------------------------
+  - type: java
+    file_naming: pascal
+    type_naming: pascal
+    package: my.test.package
+
+  # --- JavaScript/TypeScript specific properties ---------------------------
+  # export (optional): Specifies how to export the class (esm | common_js | none). Defaults to esm.
+  # -------------------------------------------------------------------------
   - type: javascript
     file_naming: screaming_snake
-    export: common_js  # (Optional + JavaScript/TypeScript specific) Defines how to export the class. Supported values are: esm | common_js | none. Defaults to esm.
+    export: common_js
 
-  # Specify an output for TypeScript.
   - type: typescript
+    indent: 4
 
-  # Specify an output for Python.
   - type: python
     file_naming: snake
     property_naming: screaming_snake
 
 properties:
-  - type: bool       # Specifies the constant data type. Supported values: bool | int | float | double | string | regex
-    name: myBoolean  # Specifies the constant's name.
-    value: true      # Specifies the constant's value.
+  # --- Common properties ---------------------------------------------------
+  # type    (required): Specifies the constant data type (bool | int | float | double | string | regex).
+  # name    (required): Specifies the constant's name.
+  # value   (required): Specifies the constant's value.
+  #
+  # comment (optional): Adds an extra comment to the constant.
+  # hidden  (optional): Constants serves as helper and will not be written to the final result.
+  # -------------------------------------------------------------------------
+
+  - type: bool
+    name: myBoolean
+    value: true
 
   - type: int
     name: myInteger
