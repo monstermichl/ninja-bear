@@ -65,7 +65,7 @@ class JavascriptGenerator(GeneratorBase):
 
     def _after_class(self, **props) -> str:
         # Add module export only if CommonJS is used.
-        return f'\nmodule.exports = {self._class_name}' if self.export_type == ExportType.COMMON_JS else ''
+        return f'module.exports = {self._class_name}' if self.export_type == ExportType.COMMON_JS else ''
 
     def _start_class(self, class_name: str) -> str:
         # Export class only directly if ESM is used.
