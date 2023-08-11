@@ -1,4 +1,4 @@
-from enum import StrEnum
+from enum import Enum
 from typing import List
 
 from ..base.name_converter import NamingConventionType
@@ -8,7 +8,7 @@ from ..base.property import Property
 from ..base.property_type import PropertyType
 
 
-class ExportType(StrEnum):
+class ExportType(Enum):
     ESM = 'esm'
     COMMON_JS = 'common_js'
     NONE = 'none'
