@@ -6,7 +6,7 @@ from typing import List, Type
 import unittest
 
 from src.confluent import Orchestrator
-from confluent.base.language_config_base import LanguageConfigBase
+from src.confluent.base.language_config_base import LanguageConfigBase
 from src.confluent.base.language_type import LanguageType
 from src.confluent.generators.java_generator import JavaGenerator
 from src.confluent.generators.javascript_generator import JavascriptGenerator
