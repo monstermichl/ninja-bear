@@ -15,7 +15,7 @@ class PropertyAlreadyExistsException(Exception):
         super().__init__(f'Property {property} already exists')
 
 
-class NoClassNameProvidedException(Exception):
+class NoTypeNameProvidedException(Exception):
     def __init__(self):
         super().__init__('No class name has been provided')
 
@@ -54,7 +54,7 @@ class GeneratorBase(ABC):
         self._naming_conventions = naming_conventions if naming_conventions else GeneratorNamingConventions()
         self._additional_props = additional_props
 
-        self._set_class_name(class_name)
+        self._set_type_name(class_name)
         self.set_indent(indent)
 
         # Add properties one by one.
@@ -113,26 +113,26 @@ class GeneratorBase(ABC):
                 )
 
         # Create the string for properties which shall be added before the class definition.
-        properties_before_class = '\n'.join(
+        properties_before_type = '\n'.join(
             # Loop in a loop. I know, it's a little bit confusing...
             property_string for property_string in [
                 # This loop forms each property into a string.
-                f'{self._property_before_class(property)}' for property in properties
+                f'{self._property_before_type(property)}' for property in properties
             ] if property_string  # This clause makes sure that only property strings with a value are used.
         )
 
-        s = self._before_class(**self._additional_props)
-        s += f'{properties_before_class}\n\n' if properties_before_class else ''
-        s += f'{self._start_class(self._class_name)}\n'
+        s = self._before_type(**self._additional_props)
+        s += f'{properties_before_type}\n\n' if properties_before_type else ''
+        s += f'{self._start_type(self._type_name)}\n'
         s += '\n'.join([f'{self._create_property_string(property)}' for property in properties if property])
 
-        class_end = self._end_class()
+        class_end = self._end_type()
         s += f'\n{class_end}'
 
         # Only append additional newline, if class_end is not empty
         if class_end:
             s += '\n'
-        s += self._after_class(**self._additional_props)
+        s += self._after_type(**self._additional_props)
 
         # Add trailing newline if required.
         if s[-1] != '\n':
@@ -140,7 +140,7 @@ class GeneratorBase(ABC):
         return s
     
     @abstractmethod
-    def _property_before_class(self, property: Property) -> str:
+    def _property_before_type(self, property: Property) -> str:
         """
         Abstract method which must be implemented by the deriving class to generate a single property string before the
         class definition starts. This might be useful in some cases to do some extra processing of the properties. If
@@ -156,7 +156,7 @@ class GeneratorBase(ABC):
         pass
 
     @abstractmethod
-    def _property_in_class(self, property: Property) -> str | List[str]:
+    def _property_in_type(self, property: Property) -> str | List[str]:
         """
         Abstract method which must be implemented by the deriving class to generate a single property string.
 
@@ -183,7 +183,7 @@ class GeneratorBase(ABC):
         pass
 
     @abstractmethod
-    def _before_class(self, **props) -> str:
+    def _before_type(self, **props) -> str:
         """
         Abstract method which must be implemented by the deriving class to generate a possible string which will
         be added in front of the generated class/struct. If not required, this method shall return an empty string.
@@ -194,7 +194,7 @@ class GeneratorBase(ABC):
         pass
 
     @abstractmethod
-    def _after_class(self, **props) -> str:
+    def _after_type(self, **props) -> str:
         """
         Abstract method which must be implemented by the deriving class to generate a possible string which will
         be added after the generated class/struct. If not required, this method shall return an empty string.
@@ -205,7 +205,7 @@ class GeneratorBase(ABC):
         pass
 
     @abstractmethod
-    def _start_class(self, class_name: str) -> str:
+    def _start_type(self, class_name: str) -> str:
         """
         Abstract method which must be implemented by the deriving class to generate the class'/struct's definition.
 
@@ -215,7 +215,7 @@ class GeneratorBase(ABC):
         pass
 
     @abstractmethod
-    def _end_class(self) -> str:
+    def _end_type(self) -> str:
         """
         Abstract method which must be implemented by the deriving class to generate the class'/struct's body end.
 
@@ -224,11 +224,11 @@ class GeneratorBase(ABC):
         """
         pass
 
-    def _set_class_name(self, name: str):
+    def _set_type_name(self, name: str):
         if not name:
-            raise NoClassNameProvidedException()
+            raise NoTypeNameProvidedException()
 
-        self._class_name = NameConverter.convert(name, NamingConventionType.PASCAL_CASE)
+        self._type_name = NameConverter.convert(name, NamingConventionType.PASCAL_CASE)
         return self
 
     def _create_property_string(self, property: Property) -> str:
@@ -243,15 +243,15 @@ class GeneratorBase(ABC):
         :rtype:  str
         """
         INDENT = ' ' * self._indent  # Indent space.
-        property_in_class = self._property_in_class(property)
+        property_in_type = self._property_in_type(property)
         comment = self._property_comment(property.comment) if property.comment else ''
 
         # If the property is delivered as list, add the comment before it and indent each line.
-        if isinstance(property_in_class, list):#
+        if isinstance(property_in_type, list):#
             comment = comment.strip()
 
             s = f'{INDENT}{comment}\n' if comment else ''
-            s += '\n'.join([f'{INDENT}{value}' for value in property_in_class])
+            s += '\n'.join([f'{INDENT}{value}' for value in property_in_type])
         else:
-            s = f'{INDENT}{property_in_class}{comment if comment else ""}'
+            s = f'{INDENT}{property_in_type}{comment if comment else ""}'
         return s

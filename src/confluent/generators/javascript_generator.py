@@ -38,10 +38,10 @@ class JavascriptGenerator(GeneratorBase):
         # Evaluate which export type to use.
         self.export_type = self._evaluate_export_type()
 
-    def _property_before_class(self, _: Property) -> str:
+    def _property_before_type(self, _: Property) -> str:
         return ''
 
-    def _property_in_class(self, property: Property) -> str:
+    def _property_in_type(self, property: Property) -> str:
         match property.type:
             case PropertyType.BOOL:
                 value = 'true' if property.value else 'false'
@@ -60,20 +60,20 @@ class JavascriptGenerator(GeneratorBase):
     def _property_comment(self, comment: str) -> str:
         return f' /* {comment} */'
     
-    def _before_class(self, **props) -> str:
+    def _before_type(self, **props) -> str:
         return ''
 
-    def _after_class(self, **props) -> str:
+    def _after_type(self, **props) -> str:
         # Add module export only if CommonJS is used.
-        return f'module.exports = {self._class_name}' if self.export_type == ExportType.COMMON_JS else ''
+        return f'module.exports = {self._type_name}' if self.export_type == ExportType.COMMON_JS else ''
 
-    def _start_class(self, class_name: str) -> str:
+    def _start_type(self, class_name: str) -> str:
         # Export class only directly if ESM is used.
         export = 'export ' if self.export_type == ExportType.ESM else ''
 
         return f'{export}class {class_name} {{'
 
-    def _end_class(self) -> str:
+    def _end_type(self) -> str:
         return '}'
     
     def _evaluate_export_type(self) -> ExportType:

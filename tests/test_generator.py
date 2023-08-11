@@ -82,9 +82,9 @@ class TestGenerator(unittest.TestCase):
         extension: str,
         name: str,
         type: LanguageType,
-        generator_class: Type
+        generator_type: Type
     ):
         self.assertEqual(config.config_info.file_extension, extension)
         self.assertEqual(config.config_info.file_name, name)
         self.assertEqual(config.language_type, type)
-        self.assertEqual(config.generator.__class__, generator_class)
+        self.assertEqual(config.generator.__class__, generator_type)

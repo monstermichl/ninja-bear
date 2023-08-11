@@ -8,10 +8,10 @@ class PythonGenerator(GeneratorBase):
     Python specific generator. For more information about the generator methods, refer to GeneratorBase.
     """
 
-    def _property_before_class(self, _: Property) -> str:
+    def _property_before_type(self, _: Property) -> str:
         return ''
 
-    def _property_in_class(self, property: Property) -> str:
+    def _property_in_type(self, property: Property) -> str:
         match property.type:
             case PropertyType.BOOL:
                 value = 'True' if property.value else 'False'
@@ -30,15 +30,15 @@ class PythonGenerator(GeneratorBase):
     def _property_comment(self, comment: str) -> str:
         return f'  # {comment}'
     
-    def _before_class(self, **props) -> str:
+    def _before_type(self, **props) -> str:
         newlines = 3 * '\n'
         return f'from enum import Enum{newlines}'
 
-    def _after_class(self, **props) -> str:
+    def _after_type(self, **props) -> str:
         return ''
 
-    def _start_class(self, class_name: str) -> str:
+    def _start_type(self, class_name: str) -> str:
         return f'class {class_name}(Enum):'
 
-    def _end_class(self) -> str:
+    def _end_type(self) -> str:
         return ''
