@@ -12,7 +12,7 @@ class JavascriptGenerator(GeneratorBase):
     def _property_before_class(self, _: Property) -> str:
         return ''
 
-    def _property_in_class(self, property: Property) -> List[str]:
+    def _property_in_class(self, property: Property) -> str:
         match property.type:
             case PropertyType.BOOL:
                 value = 'true' if property.value else 'false'
@@ -26,8 +26,7 @@ class JavascriptGenerator(GeneratorBase):
             case _:
                 raise Exception('Unknown type')
             
-        # Realize JavaScript constant by defining a Getter.
-        return f'static get {property.name}() {{ return {value}; }}'
+        return self._create_property(property.name, value)
     
     def _property_comment(self, comment: str) -> str:
         return f' /* {comment} */'
@@ -43,3 +42,7 @@ class JavascriptGenerator(GeneratorBase):
 
     def _end_class(self) -> str:
         return '}'
+
+    def _create_property(self, name: str, value: str):
+        # Realize JavaScript constant by defining a Getter.
+        return f'static get {name}() {{ return {value}; }}'
