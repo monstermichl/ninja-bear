@@ -7,7 +7,7 @@ from .name_converter import NamingConventionType, NameConverter
 from .property import Property
 
 
-_DEFAULT_INDENT = 3
+_DEFAULT_INDENT = 4
 
 
 class PropertyAlreadyExistsException(Exception):
