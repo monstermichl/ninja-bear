@@ -19,7 +19,7 @@ except Exception as e:
 setup(
         name='confluent', 
         version=VERSION,
-        author='Michel Vouillarmet',
+        author='monstermichl',
         description=DESCRIPTION,
         long_description=LONG_DESCRIPTION,
         long_description_content_type='text/markdown',
@@ -50,6 +50,9 @@ setup(
         keywords = [
             'configuration',
             'generator',
+            'confluent',
+            'languages',
+            'distribution',
             'java',
             'javascript',
             'typescript',
