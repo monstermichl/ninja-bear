@@ -1,3 +1,4 @@
+from ..base.name_converter import NamingConventionType
 from ..base.generator_base import GeneratorBase
 from ..base.property import Property
 from ..base.property_type import PropertyType
@@ -8,8 +9,11 @@ class NewLanguageGenerator(GeneratorBase):
     NewLanguage specific generator. For more information about the generator methods, refer to GeneratorBase.
     """
 
+    def _default_type_naming_convention(self) -> NamingConventionType:
+        pass  # TODO: Implement according to the new language.
+
     def _property_before_type(self, property: Property) -> str:
-        return ''
+        pass  # TODO: Implement according to the new language.
 
     def _property_in_type(self, property: Property) -> str:
         pass  # TODO: Implement according to the new language.

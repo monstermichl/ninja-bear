@@ -1,5 +1,6 @@
 from typing import List
 
+from ..base.name_converter import NamingConventionType
 from ..base.generator_naming_conventions import GeneratorNamingConventions
 from ..base.generator_base import _DEFAULT_INDENT, GeneratorBase
 from ..base.property import Property
@@ -34,6 +35,9 @@ class JavaGenerator(GeneratorBase):
 
         # Evaluate the config's package name.
         self.package = self._evaluate_package_name()
+
+    def _default_type_naming_convention(self) -> NamingConventionType:
+        return NamingConventionType.PASCAL_CASE
 
     def _property_before_type(self, _: Property) -> str:
         return ''

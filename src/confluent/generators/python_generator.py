@@ -1,3 +1,4 @@
+from ..base.name_converter import NamingConventionType
 from ..base.generator_base import GeneratorBase
 from ..base.property import Property
 from ..base.property_type import PropertyType
@@ -7,6 +8,9 @@ class PythonGenerator(GeneratorBase):
     """
     Python specific generator. For more information about the generator methods, refer to GeneratorBase.
     """
+
+    def _default_type_naming_convention(self) -> NamingConventionType:
+        return NamingConventionType.PASCAL_CASE
 
     def _property_before_type(self, _: Property) -> str:
         return ''

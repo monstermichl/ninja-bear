@@ -18,6 +18,7 @@ _KEY_LANGUAGES = 'languages'
 _KEY_PROPERTIES = 'properties'
 _KEY_FILE_NAMING = 'file_naming'
 _KEY_PROPERTY_NAMING = 'property_naming'
+_KEY_TYPE_NAMING = 'type_naming'
 _KEY_INDENT = 'indent'
 _KEY_TYPE = 'type'
 _KEY_NAME = 'name'
@@ -133,14 +134,19 @@ class Config:
             language_type = language[_KEY_TYPE]
             indent = language[_KEY_INDENT] if _KEY_INDENT in language else None
 
-            # Evaluate file-naming convention.
+            # Evaluate file naming-convention.
             naming_conventions.file_naming_convention = Config._evaluate_naming_convention_type(
                 language[_KEY_FILE_NAMING] if _KEY_FILE_NAMING in language else None
             )
 
-            # Evaluate properties-naming convention.
+            # Evaluate properties naming-convention.
             naming_conventions.properties_naming_convention = Config._evaluate_naming_convention_type(
                 language[_KEY_PROPERTY_NAMING] if _KEY_PROPERTY_NAMING in language else None
+            )
+
+            # Evaluate type naming-convention.
+            naming_conventions.type_naming_convention = Config._evaluate_naming_convention_type(
+                language[_KEY_TYPE_NAMING] if _KEY_TYPE_NAMING in language else None
             )
             config_type = Config._evaluate_config_type(language_type)
 

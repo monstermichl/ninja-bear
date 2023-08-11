@@ -20,13 +20,16 @@ class LanguageType(IntEnum):
 ```
 
 ## Add a new language generator
-Create a new generator class within *src/confluent/generators* (e.g., *my_language_generator.py*) which inherits from [*GeneratorBase*](https://github.com/monstermichl/confluent/blob/main/src/confluent/base/generator_base.py) and implements the required **abstract** methods (a template can be found under [*misc/language_support/templates*](https://github.com/monstermichl/confluent/tree/main/misc/language_support/templates). (Hopefully I don't have to mention that you should not name it "my_language..." ;) ). This class is the actual generator which holds the information how the class/struct and the properties will look like.
+Create a new generator class within *src/confluent/generators* (e.g., *my_language_generator.py*) which inherits from [*GeneratorBase*](https://github.com/monstermichl/confluent/blob/main/src/confluent/base/generator_base.py) and implements the required **abstract** methods (a template can be found under [*misc/language_support/templates*](https://github.com/monstermichl/confluent/tree/main/misc/language_support/templates). (Hopefully I don't have to mention that you should not name it "my_language..." ;) ). This class is the actual generator which holds the information how the class/struct and the properties will look like. **HINT:** If special handling for specific properties is required (e.g., see 'package' in JavaGenerator), implement it in the constructor, not in the methods responsible for the dump (abstract methods).
 
 ```python
 class MyLanguageGenerator(GeneratorBase):
     """
     MyLanguage specific generator. For more information about the generator methods, refer to GeneratorBase.
     """
+
+    def _default_type_naming_convention(self) -> NamingConventionType:
+        return NamingConventionType.PASCAL_CASE
 
     def _property_before_type(self, property: Property) -> str:
         return ''
@@ -130,22 +133,21 @@ languages:
   - type: java                        # Specifies the output language. Supported values are: java | javascript | typescript | python
     file_naming: pascal               # (Optional) Specifies the file naming convention. Supported values: snake | screaming_snake | camel | pascal | kebap
     property_naming: screaming_snake  # (Optional) Specifies the property naming convention. Supported values: snake | screaming_snake | camel | pascal | kebap
-    indent: 4                         # (Optional) Specifies the amount of spaces before each constant.
+    type_naming: pascal               # (Optional) Specifies the naming convention for the generated type. The default value is language specific.
+                                      #            Supported values: snake | screaming_snake | camel | pascal | kebap
+    indent: 4                         # (Optional) Specifies the amount of spaces before each constant. Defaults to 4.
     package: my.test.package          # (Java specific) For Java, a package name must be specified.
 
   - type: javascript
     file_naming: screaming_snake
-    indent: 4
     export: common_js  # (Optional + JavaScript/TypeScript specific) Defines how to export the class. Supported values are: esm | common_js | none. Defaults to esm.
 
   - type: typescript
     file_naming: kebap
-    indent: 4
 
   - type: python
     file_naming: snake
     property_naming: screaming_snake
-    indent: 4
 
   - type: my_language  # IMPORTANT: Also add my_language to the list of supported languages (see line where "type: java").
     file_naming: camel

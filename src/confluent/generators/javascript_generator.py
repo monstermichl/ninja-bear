@@ -1,6 +1,7 @@
 from enum import StrEnum
 from typing import List
 
+from ..base.name_converter import NamingConventionType
 from ..base.generator_naming_conventions import GeneratorNamingConventions
 from ..base.generator_base import _DEFAULT_INDENT, GeneratorBase
 from ..base.property import Property
@@ -37,6 +38,9 @@ class JavascriptGenerator(GeneratorBase):
 
         # Evaluate which export type to use.
         self.export_type = self._evaluate_export_type()
+
+    def _default_type_naming_convention(self) -> NamingConventionType:
+        return NamingConventionType.PASCAL_CASE
 
     def _property_before_type(self, _: Property) -> str:
         return ''

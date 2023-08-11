@@ -91,7 +91,7 @@ class GeneratorBase(ABC):
         :return: The current generator instance.
         :rtype:  Self
         """
-        self._indent = indent if indent and indent >= 0 else self._DEFAULT_INDENT
+        self._indent = indent if indent and indent >= 0 else _DEFAULT_INDENT
         return self
 
     def dump(self) -> str:
@@ -138,6 +138,10 @@ class GeneratorBase(ABC):
         if s[-1] != '\n':
             s += '\n'
         return s
+    
+    @abstractmethod
+    def _default_type_naming_convention(self) -> NamingConventionType:
+        pass
     
     @abstractmethod
     def _property_before_type(self, property: Property) -> str:
@@ -227,8 +231,14 @@ class GeneratorBase(ABC):
     def _set_type_name(self, name: str):
         if not name:
             raise NoTypeNameProvidedException()
+        naming_convention = self._naming_conventions.type_naming_convention
 
-        self._type_name = NameConverter.convert(name, NamingConventionType.PASCAL_CASE)
+        self._type_name = NameConverter.convert(
+            name,
+
+            # Evaluate type naming convention. Use default if none was provided.
+            naming_convention if naming_convention else self._default_type_naming_convention()
+        )
         return self
 
     def _create_property_string(self, property: Property) -> str:

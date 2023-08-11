@@ -42,22 +42,21 @@ languages:
   - type: java                        # Specifies the output language. Supported values are: java | javascript | typescript | python
     file_naming: pascal               # (Optional) Specifies the file naming convention. Supported values: snake | screaming_snake | camel | pascal | kebap
     property_naming: screaming_snake  # (Optional) Specifies the property naming convention. Supported values: snake | screaming_snake | camel | pascal | kebap
-    indent: 4                         # (Optional) Specifies the amount of spaces before each constant.
+    type_naming: pascal               # (Optional) Specifies the naming convention for the generated type. The default value is language specific.
+                                      #            Supported values: snake | screaming_snake | camel | pascal | kebap
+    indent: 4                         # (Optional) Specifies the amount of spaces before each constant. Defaults to 4.
     package: my.test.package          # (Java specific) For Java, a package name must be specified.
 
   - type: javascript
     file_naming: screaming_snake
-    indent: 4
     export: common_js  # (Optional + JavaScript/TypeScript specific) Defines how to export the class. Supported values are: esm | common_js | none. Defaults to esm.
 
   - type: typescript
     file_naming: kebap
-    indent: 4
 
   - type: python
     file_naming: snake
     property_naming: screaming_snake
-    indent: 4
 
 properties:
   - type: bool       # Specifies the constant data type. Supported values: bool | int | float | double | string | regex
