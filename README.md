@@ -28,7 +28,7 @@ from confluent import Orchestrator
 # Create Orchestrator instance from file.
 orchestrator = Orchestrator.read_config('test-config.yaml')
 
-# Write configs to 'generated* directory.
+# Write configs to 'generated' directory.
 orchestrator.write('generated')
 ```
 
