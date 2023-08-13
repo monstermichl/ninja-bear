@@ -113,6 +113,7 @@ properties:
 ```
 
 ### Output
+#### Java
 ```java
 package my.test.package;
 
@@ -127,6 +128,7 @@ public class TestConfig {
 }
 ```
 
+#### JavaScript
 ```javascript
 // Generated with confluent v0.0.1 (https://pypi.org/project/confluent/).
 class TestConfig {
@@ -140,6 +142,7 @@ class TestConfig {
 module.exports = TestConfig
 ```
 
+#### TypeScript
 ```typescript
 // Generated with confluent v0.0.1 (https://pypi.org/project/confluent/).
 export class TestConfig {
@@ -152,6 +155,7 @@ export class TestConfig {
 }
 ```
 
+#### Python
 ```python
 # Generated with confluent v0.0.1 (https://pypi.org/project/confluent/).
 class TestConfig:
