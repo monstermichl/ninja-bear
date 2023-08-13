@@ -161,6 +161,10 @@ languages:
     file_naming: snake
     property_naming: screaming_snake
 
+  .
+  .
+  .
+
   # --- MyLanguage specific properties --------------------------------------
   # fun_factor (optional): Define how much fun the generated config shall be.
   # -------------------------------------------------------------------------
