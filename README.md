@@ -6,6 +6,7 @@ In times of distributed systems and en vogue micro-architecture it can get quite
 - [x] JavaScript
 - [x] TypeScript
 - [x] Python
+- [x] C
 
 ## Installation
 ```bash
@@ -70,6 +71,11 @@ languages:
   - type: python
     file_naming: snake
     property_naming: screaming_snake
+
+  # -------------------------------------------------------------------------
+  - type: c
+    file_naming: snake
+    property_naming: pascal
 
 properties:
   # -------------------------------------------------------------------------
@@ -165,6 +171,31 @@ class TestConfig:
     MY_DOUBLE = 233.9
     MY_REGEX = r'Test Reg(E|e)x'  # Just another RegEx.
     MY_SUBSTITUTED_STRING = 'Sometimes I just want to scream Hello World!'
+```
+
+#### C
+```c
+#ifndef TEST_CONFIG_H
+#define TEST_CONFIG_H
+
+/* Generated with confluent v0.0.1 (https://pypi.org/project/confluent/). */
+const struct {
+    unsigned char myBoolean;
+    int myInteger;
+    float myFloat;
+    double myDouble;
+    char* myRegex; /* Just another RegEx. */
+    char* mySubstitutedString;
+} TestConfig = {
+    1,
+    142,
+    322.0f,
+    233.9,
+    "Test Reg(E|e)x",
+    "Sometimes I just want to scream Hello World!",
+};
+
+#endif  /* TEST_CONFIG_H */
 ```
 
 ## How to participate

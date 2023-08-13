@@ -1,6 +1,7 @@
+from __future__ import annotations
 from abc import ABC, abstractmethod
 import copy
-from typing import List
+from typing import Callable, List
 
 from .info import VERSION
 from .generator_naming_conventions import GeneratorNamingConventions
@@ -103,43 +104,32 @@ class GeneratorBase(ABC):
         :return: Config file string.
         :rtype:  str
         """
-        # Create copies of the properties to avoid messing around with the originals.
-        properties = [copy.deepcopy(property) for property in self._properties]
-
-        # If provided, use specific property naming convention.
-        if self._naming_conventions.properties_naming_convention:
-            for property in properties:
-                property.name = NameConverter.convert(
-                    property.name, 
-                    self._naming_conventions.properties_naming_convention
-                )
+        def add_newline(s):
+            # Add trailing newline if required.
+            if s[-1] != '\n':
+                s += '\n'
+            return s
 
         # Create the string for properties which shall be added before the class definition.
-        properties_before_type = '\n'.join(
-            # Loop in a loop. I know, it's a little bit confusing...
-            property_string for property_string in [
-                # This loop forms each property into a string.
-                f'{self._property_before_type(property)}' for property in properties
-            ] if property_string  # This clause makes sure that only property strings with a value are used.
-        )
+        properties_before_type = self._create_properties_string(self._property_before_type)
+
+        # Create the string for properties which shall be added after the class definition.
+        properties_after_type = self._create_properties_string(self._property_after_type)
 
         s = self._before_type()
-        s += f'{properties_before_type}\n\n' if properties_before_type else ''
+        s += f'{properties_before_type}\n' if properties_before_type else ''
         s += f'{self._property_comment(f"Generated with confluent v{VERSION} (https://pypi.org/project/confluent/).").strip()}\n'
         s += f'{self._start_type(self._type_name)}\n'
-        s += '\n'.join([f'{self._create_property_string(property)}' for property in properties if property])
+        s += self._create_properties_string(self._create_property_in_type)
 
         class_end = self._end_type()
         s += f'\n{class_end}'
+        s = add_newline(s)
 
-        # Only append additional newline, if class_end is not empty
-        if class_end:
-            s += '\n'
+        s += f'{properties_after_type}\n' if properties_after_type else ''
         s += self._after_type()
+        s = add_newline(s)
 
-        # Add trailing newline if required.
-        if s[-1] != '\n':
-            s += '\n'
         return s
     
     @abstractmethod
@@ -150,13 +140,13 @@ class GeneratorBase(ABC):
     def _property_before_type(self, property: Property) -> str:
         """
         Abstract method which must be implemented by the deriving class to generate a single property string before the
-        class definition starts. This might be useful in some cases to do some extra processing of the properties. If
+        type definition starts. This might be useful in some cases to do some extra processing of the properties. If
         it's not required, an empty string shall be returned.
 
         :param property: Property to generate a property string from.
         :type property:  Property
 
-        :return: A language specific property string which is added in front of the class definition (e.g.,
+        :return: A language specific property string which is added in front of the type definition (e.g.,
                  "const MY_BOOLEAN = true;").
         :rtype:  str
         """
@@ -173,6 +163,21 @@ class GeneratorBase(ABC):
         :return: A language specific property string (e.g., "public static readonly myBoolean = true;") or list of
                  strings (if the property should span several lines).
         :rtype:  str | List[str]
+        """
+        pass
+
+    @abstractmethod
+    def _property_after_type(self, property: Property) -> str:
+        """
+        Abstract method which must be implemented by the deriving class to generate a single property string after the
+        type definition. This might be useful in some cases to do some extra processing of the properties. If it's not
+        required, an empty string shall be returned.
+
+        :param property: Property to generate a property string from.
+        :type property:  Property
+
+        :return: A language specific property string which is added in after the type definition.
+        :rtype:  str
         """
         pass
 
@@ -231,7 +236,22 @@ class GeneratorBase(ABC):
         """
         pass
 
-    def _set_type_name(self, name: str):
+    def _set_type_name(self, name: str) -> GeneratorBase:
+        """
+        Sets the type name to the specified name. If no naming convention was set, the default
+        naming convention, specified by the deriving class, will be used.
+
+        :param name: Name of the generated type. HINT: This acts more like a template than the
+                     real name as some conventions must be met and therefore the default convention
+                     specified by the deriving class will be used if no naming convention for the
+                     type name was provided (see _default_type_naming_convention).
+        :type name:  str
+
+        :raises NoTypeNameProvidedException: Raised if no name has been provided.
+
+        :return: The current generator instance.
+        :rtype:  Self
+        """
         if not name:
             raise NoTypeNameProvidedException()
         naming_convention = self._naming_conventions.type_naming_convention
@@ -243,8 +263,20 @@ class GeneratorBase(ABC):
             naming_convention if naming_convention else self._default_type_naming_convention()
         )
         return self
+    
+    def _create_properties_string(self, callout: Callable[[Property], str]) -> str:
+        # Create copies of the properties to avoid messing around with the originals.
+        properties = [copy.deepcopy(property) for property in self._properties]
 
-    def _create_property_string(self, property: Property) -> str:
+        return '\n'.join(
+            # Loop in a loop. I know, it's a little bit confusing...
+            property_string for property_string in [
+                # This loop forms each property into a string.
+                f'{callout(property)}' for property in properties
+            ] if property_string  # This clause makes sure that only property strings with a value are used.
+        )
+
+    def _create_property_in_type(self, property: Property) -> str:
         """
         Creates a property string from a property.
 
@@ -256,6 +288,13 @@ class GeneratorBase(ABC):
         :rtype:  str
         """
         INDENT = ' ' * self._indent  # Indent space.
+
+        # If provided, use specific property naming convention.
+        if self._naming_conventions.properties_naming_convention:
+            property.name = NameConverter.convert(
+                property.name, 
+                self._naming_conventions.properties_naming_convention
+            )
         property_in_type = self._property_in_type(property)
         comment = self._property_comment(property.comment) if property.comment else ''
 

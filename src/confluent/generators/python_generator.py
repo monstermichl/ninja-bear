@@ -31,6 +31,9 @@ class PythonGenerator(GeneratorBase):
 
         return f'{property.name} = {value}'
     
+    def _property_after_type(self, _: Property) -> str:
+        return ''
+    
     def _property_comment(self, comment: str) -> str:
         return f'  # {comment}'
     

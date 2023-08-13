@@ -5,6 +5,7 @@ from ..language_configs.java_config import JavaConfig
 from ..language_configs.javascript_config import JavascriptConfig
 from ..language_configs.typescript_config import TypescriptConfig
 from ..language_configs.python_config import PythonConfig
+from ..language_configs.c_config import CConfig
 
 from .language_config_base import LanguageConfigBase
 from .language_type import LanguageType
@@ -44,4 +45,5 @@ class ConfigLanguageMapping:
             ConfigLanguageMapping('javascript', LanguageType.JAVASCRIPT, JavascriptConfig),
             ConfigLanguageMapping('typescript', LanguageType.TYPESCRIPT, TypescriptConfig),
             ConfigLanguageMapping('python', LanguageType.PYTHON, PythonConfig),
+            ConfigLanguageMapping('c', LanguageType.C, CConfig),
         ]

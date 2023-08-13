@@ -9,3 +9,4 @@ class LanguageType(IntEnum):
     JAVASCRIPT = auto()
     TYPESCRIPT = auto()
     PYTHON = auto()
+    C = auto()

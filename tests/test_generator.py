@@ -13,10 +13,12 @@ from src.confluent.generators.java_generator import JavaGenerator
 from src.confluent.generators.javascript_generator import JavascriptGenerator
 from src.confluent.generators.typescript_generator import TypescriptGenerator
 from src.confluent.generators.python_generator import PythonGenerator
+from src.confluent.generators.c_generator import CGenerator
 from src.confluent.language_configs.java_config import JavaConfig
 from src.confluent.language_configs.javascript_config import JavascriptConfig
 from src.confluent.language_configs.typescript_config import TypescriptConfig
 from src.confluent.language_configs.python_config import PythonConfig
+from src.confluent.language_configs.c_config import CConfig
 
 
 _CONFLUENT_REFERENCE_REGEX = r'Generated with confluent v\d+\.\d+\.\d+'
@@ -50,11 +52,15 @@ class TestGenerator(unittest.TestCase):
             
             with open(compare_file_path, 'r') as f:
                 content = f.read()
+
+            original_max_diff = self.maxDiff
+            self.maxDiff = None
             self.assertEqual(
                 # Remove versions to keep tests working if version changed.
                 re.sub(_CONFLUENT_REFERENCE_REGEX, '', config.dump()), 
                 re.sub(_CONFLUENT_REFERENCE_REGEX, '', content),
             )
+            self.maxDiff = original_max_diff
 
     def test_write_configs(self):
         OUTPUT_DIR = path.join(self._test_path, 'test_output')
@@ -77,21 +83,30 @@ class TestGenerator(unittest.TestCase):
             self.assertIn(config.config_info.file_name_full, files)
 
     def _evaluate_configs(self, configs: List[LanguageConfigBase]):
+        checks = [
+            # Check Java config.
+            [self._evaluate_java_properties, 'TestConfig'],
+
+            # Check JavaScript config.
+            [self._evaluate_javascript_properties, 'TEST_CONFIG'],
+
+            # Check TypeScript config.
+            [self._evaluate_typescript_properties, 'test-config'],
+
+            # Check Python config.
+            [self._evaluate_python_properties, 'test_config'],
+
+            # Check C config.
+            [self._evaluate_c_properties, 'test_config'],
+        ]
+
         self.assertIsNotNone(configs)
         self.assertIsInstance(configs, list)
-        self.assertEqual(len(configs), 4)  # Don't forget to update when adding a new language to test-config.yaml.
+        self.assertEqual(len(configs), len(checks))
 
-        # Check Java config.
-        self._evaluate_java_properties(configs[0], 'TestConfig')
-
-        # Check JavaScript config.
-        self._evaluate_javascript_properties(configs[1], 'TEST_CONFIG')
-
-        # Check TypeScript config.
-        self._evaluate_typescript_properties(configs[2], 'test-config')
-
-        # Check Python config.
-        self._evaluate_python_properties(configs[3], 'test_config')
+        # Check the languages.
+        for i, check in enumerate(checks):
+            check[0](configs[i], check[1])
 
     def _evaluate_java_properties(self, config: JavaConfig, name: str):
         self._evaluate_common_properties(config, 'java', name, LanguageType.JAVA, JavaGenerator)
@@ -105,6 +120,9 @@ class TestGenerator(unittest.TestCase):
 
     def _evaluate_python_properties(self, config: PythonConfig, name: str):
         self._evaluate_common_properties(config, 'py', name, LanguageType.PYTHON, PythonGenerator)
+
+    def _evaluate_c_properties(self, config: CConfig, name: str):
+        self._evaluate_common_properties(config, 'h', name, LanguageType.C, CGenerator)
 
     def _evaluate_common_properties(
         self,

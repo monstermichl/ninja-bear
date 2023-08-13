@@ -181,28 +181,26 @@ If everything went well so far, copy the generated example config for your langu
 
 ```python
 def _evaluate_configs(self, configs: List[LanguageConfigBase]):
-    self.assertIsNotNone(configs)
-    self.assertIsInstance(configs, list)
-    self.assertEqual(len(configs), 5)  # Don't forget to update when adding a new language to test-config.yaml.
+    checks = [
+        # Check Java config.
+        [self._evaluate_java_properties, 'TestConfig'],
 
-    # Check Java config.
-    self._evaluate_java_properties(configs[0], 'TestConfig')
+        # Check JavaScript config.
+        [self._evaluate_javascript_properties, 'TEST_CONFIG'],
 
-    # Check JavaScript config.
-    self._evaluate_javascript_properties(configs[1], 'TEST_CONFIG')
+        # Check TypeScript config.
+        [self._evaluate_typescript_properties, 'test-config'],
 
-    # Check TypeScript config.
-    self._evaluate_typescript_properties(configs[2], 'test-config')
+        # Check Python config.
+        [self._evaluate_python_properties, 'test_config'],
 
-    # Check Python config.
-    self._evaluate_python_properties(configs[3], 'test_config')
+        .
+        .
+        .
 
-    .
-    .
-    .
-
-    # Check MyLanguage config.
-    self._evaluate_my_language_properties(configs[4], 'testConfig')
+        # Check MyLanguage config.
+        [self._evaluate_my_language_properties, 'testConfig'],
+    ]
 
 .
 .

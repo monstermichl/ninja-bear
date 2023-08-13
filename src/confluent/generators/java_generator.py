@@ -64,6 +64,9 @@ class JavaGenerator(GeneratorBase):
                 raise Exception('Unknown type')
 
         return f'public final static {type} {property.name} = {value};'
+    
+    def _property_after_type(self, _: Property) -> str:
+        return ''
 
     def _property_comment(self, comment: str) -> str:
         return f' // {comment}'
