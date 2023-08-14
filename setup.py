@@ -48,6 +48,8 @@ setup(
         ],
         url = 'https://github.com/monstermichl/confluent.git',
         keywords = [
+            'multi',
+            'distributed',
             'configuration',
             'generator',
             'confluent',
@@ -56,6 +58,8 @@ setup(
             'java',
             'javascript',
             'typescript',
-            'python'
+            'python',
+            'c',
+            'go',
         ],
 )
