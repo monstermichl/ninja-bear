@@ -7,6 +7,7 @@ In times of distributed systems and en vogue micro-architecture it can get quite
 - [x] TypeScript
 - [x] Python
 - [x] C
+- [x] Go
 
 ## Installation
 ```bash
@@ -39,7 +40,7 @@ orchestrator.write('generated')
 ```yaml
 languages:
   # --- Common properties (valid for all languages) -------------------------
-  # type            (required): Specifies the output language (java | javascript | typescript | python).
+  # type            (required): Specifies the output language (java | javascript | typescript | python | c | go).
   #
   # file_naming     (optional): Specifies the file naming convention (snake | screaming_snake | camel | pascal | kebap). Defaults to the file-name without the extension.
   # property_naming (optional): Specifies the property naming convention (snake | screaming_snake | camel | pascal | kebap).
@@ -76,6 +77,13 @@ languages:
   - type: c
     file_naming: snake
     property_naming: pascal
+
+  # --- Go specific properties ----------------------------------------------
+  # package (required): Specifies the Go package name.
+  # -------------------------------------------------------------------------
+  - type: go
+    file_naming: snake
+    package: myconfig
 
 properties:
   # -------------------------------------------------------------------------

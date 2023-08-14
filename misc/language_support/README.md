@@ -123,12 +123,12 @@ def get_mappings() -> List[ConfigLanguageMapping]:
 That's it! You successfully added support for a new language. Now here is where it gets tedious but yes, this stuff has also to be done.
 
 ### Add your language to test-config.yaml
-As test-config.yaml serves as the documentation for what's supported, make sure your language is added to it.
+As test-config.yaml serves as the documentation for what's supported, make sure your language is added to it (as an example and under common language properties' type, where the supported languages are listed).
 
 ```yaml
 languages:
   # --- Common properties (valid for all languages) -------------------------
-  # type            (required): Specifies the output language (java | javascript | typescript | python).
+  # type            (required): Specifies the output language (java | javascript | typescript | python | c | go).
   #
   # file_naming     (optional): Specifies the file naming convention (snake | screaming_snake | camel | pascal | kebap). Defaults to the file-name without the extension.
   # property_naming (optional): Specifies the property naming convention (snake | screaming_snake | camel | pascal | kebap).
@@ -160,6 +160,10 @@ languages:
   - type: python
     file_naming: snake
     property_naming: screaming_snake
+
+  .
+  .
+  .
 
   # --- MyLanguage specific properties --------------------------------------
   # fun_factor (optional): Define how much fun the generated config shall be.

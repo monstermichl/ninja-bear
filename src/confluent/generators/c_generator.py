@@ -41,7 +41,7 @@ class CGenerator(GeneratorBase):
             case PropertyType.FLOAT:
                 value = f'{property.value}f'
             case PropertyType.DOUBLE:
-                value = f'{property.value}'
+                value = property.value
             case PropertyType.STRING | PropertyType.REGEX:
                 value = property.value.replace('\\', '\\\\')  # TODO: Might need to be refined.
                 value = f'"{value}"'  # Wrap in quotes.

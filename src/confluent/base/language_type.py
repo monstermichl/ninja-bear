@@ -10,3 +10,4 @@ class LanguageType(IntEnum):
     TYPESCRIPT = auto()
     PYTHON = auto()
     C = auto()
+    GO = auto()

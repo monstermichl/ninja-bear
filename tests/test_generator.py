@@ -14,11 +14,13 @@ from src.confluent.generators.javascript_generator import JavascriptGenerator
 from src.confluent.generators.typescript_generator import TypescriptGenerator
 from src.confluent.generators.python_generator import PythonGenerator
 from src.confluent.generators.c_generator import CGenerator
+from src.confluent.generators.go_generator import GoGenerator
 from src.confluent.language_configs.java_config import JavaConfig
 from src.confluent.language_configs.javascript_config import JavascriptConfig
 from src.confluent.language_configs.typescript_config import TypescriptConfig
 from src.confluent.language_configs.python_config import PythonConfig
 from src.confluent.language_configs.c_config import CConfig
+from src.confluent.language_configs.go_config import GoConfig
 
 
 _CONFLUENT_REFERENCE_REGEX = r'Generated with confluent v\d+\.\d+\.\d+'
@@ -98,6 +100,9 @@ class TestGenerator(unittest.TestCase):
 
             # Check C config.
             [self._evaluate_c_properties, 'test_config'],
+
+            # Check Go config.
+            [self._evaluate_go_properties, 'test_config'],
         ]
 
         self.assertIsNotNone(configs)
@@ -123,6 +128,10 @@ class TestGenerator(unittest.TestCase):
 
     def _evaluate_c_properties(self, config: CConfig, name: str):
         self._evaluate_common_properties(config, 'h', name, LanguageType.C, CGenerator)
+
+    def _evaluate_go_properties(self, config: GoConfig, name: str):
+        self._evaluate_common_properties(config, 'go', name, LanguageType.GO, GoGenerator)
+        self.assertEqual(config.generator.package, 'myconfig')
 
     def _evaluate_common_properties(
         self,
