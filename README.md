@@ -206,5 +206,27 @@ const struct {
 #endif  /* TEST_CONFIG_H */
 ```
 
+#### Go
+```go
+package myconfig
+
+// Generated with confluent v0.0.1 (https://pypi.org/project/confluent/).
+var TestConfig = struct {
+    myBoolean           bool
+    myInteger           int
+    myFloat             float64
+    myDouble            float64
+    myRegex             string // Just another RegEx.
+    mySubstitutedString string
+} {
+    myBoolean:           true,
+    myInteger:           142,
+    myFloat:             322.0,
+    myDouble:            233.9,
+    myRegex:             "Test Reg(E|e)x",
+    mySubstitutedString: "Sometimes I just want to scream Hello World!",
+}
+```
+
 ## How to participate
 If you feel that there's a need for another language, feel free to add it. For detailed information how to add support for a new language, please refer to [README.md](https://github.com/monstermichl/confluent/tree/main/misc/language_support/README.md).
