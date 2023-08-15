@@ -1,5 +1,7 @@
 from typing import List
 
+from ..helpers.package_handling import evaluate_package
+
 from ..base.name_converter import NamingConventionType
 from ..base.generator_naming_conventions import GeneratorNamingConventions
 from ..base.generator_base import _DEFAULT_INDENT, GeneratorBase
@@ -7,21 +9,10 @@ from ..base.property import Property
 from ..base.property_type import PropertyType
 
 
-class NoPackageNameException(Exception):
-    def __init__(self):
-        super().__init__('No package name provided')
-
-
-class EmptyPackageNameException(Exception):
-    def __init__(self):
-        super().__init__('Package name is empty')
-
-
 class GoGenerator(GeneratorBase):
     """
     Go specific generator. For more information about the generator methods, refer to GeneratorBase.
     """
-    _ATTRIBUTE_PACKAGE = 'package'
 
     def __init__(
         self,
@@ -34,7 +25,11 @@ class GoGenerator(GeneratorBase):
         super().__init__(type_name, properties, indent, naming_conventions, additional_props)
 
         # Evaluate the config's package name.
-        self.package = self._evaluate_package_name()
+        self.package = evaluate_package(
+            r'^[a-z][a-z0-9]+$',
+            'See also https://go.dev/doc/effective_go#package-names',
+            **self._additional_props,
+        )
 
     def _default_type_naming_convention(self) -> NamingConventionType:
         return NamingConventionType.PASCAL_CASE
@@ -89,16 +84,6 @@ class GoGenerator(GeneratorBase):
 
     def _end_type(self) -> str:
         return '} {'
-    
-    def _evaluate_package_name(self):
-        if self._ATTRIBUTE_PACKAGE not in self._additional_props:
-            raise NoPackageNameException()
-        else:
-            package = self._additional_props[self._ATTRIBUTE_PACKAGE]
-        
-        if not package:
-            raise EmptyPackageNameException()
-        return package
     
     def _evaluate_longest_property(self) -> int:
         """

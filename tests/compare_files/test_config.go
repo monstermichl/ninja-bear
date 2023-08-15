@@ -1,6 +1,6 @@
 package myconfig
 
-// Generated with confluent v0.0.1 (https://pypi.org/project/confluent/).
+// Generated with confluent v0.0.2 (https://pypi.org/project/confluent/).
 var TestConfig = struct {
     myBoolean           bool
     myInteger           int

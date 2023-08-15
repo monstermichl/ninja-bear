@@ -1,7 +1,7 @@
 #ifndef TEST_CONFIG_H
 #define TEST_CONFIG_H
 
-/* Generated with confluent v0.0.1 (https://pypi.org/project/confluent/). */
+/* Generated with confluent v0.0.2 (https://pypi.org/project/confluent/). */
 const struct {
     unsigned char MyBoolean;
     int MyInteger;

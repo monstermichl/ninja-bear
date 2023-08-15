@@ -1,6 +1,6 @@
 package my.test.package;
 
-// Generated with confluent v0.0.1 (https://pypi.org/project/confluent/).
+// Generated with confluent v0.0.2 (https://pypi.org/project/confluent/).
 public class TestConfig {
     public final static boolean myBoolean = true;
     public final static int myInteger = 142;

@@ -16,6 +16,9 @@ class LanguageType(IntEnum):
     JAVASCRIPT = auto()
     TYPESCRIPT = auto()
     PYTHON = auto()
+    .
+    .
+    .
     MY_LANGUAGE = auto()  # The auto() function makes sure that all entries have a unique value.
 ```
 
