@@ -43,7 +43,7 @@ class PythonGenerator(GeneratorBase):
     def _end_type(self) -> str:
         return ''
     
-    def _property_after_type_end(self, _: Property) -> str:
+    def _property_after_type(self, _: Property) -> str:
         return ''
     
     def _after_type(self) -> str:

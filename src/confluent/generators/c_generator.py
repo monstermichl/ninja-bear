@@ -44,7 +44,7 @@ class CGenerator(GeneratorBase):
     def _end_type(self) -> str:
         return f'}} {self._type_name} = {{'
     
-    def _property_after_type_end(self, property: Property) -> str:
+    def _property_after_type(self, property: Property) -> str:
         match property.type:
             case PropertyType.BOOL:
                 value = '1' if property.value else '0'

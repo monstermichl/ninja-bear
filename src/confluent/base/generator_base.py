@@ -114,7 +114,7 @@ class GeneratorBase(ABC):
         properties_before_type = self._create_properties_string(self._property_before_type)
 
         # Create the string for properties which shall be added after the class definition.
-        properties_after_type = self._create_properties_string(self._property_after_type_end)
+        properties_after_type = self._create_properties_string(self._property_after_type)
 
         s = self._before_type()
         s += f'{properties_before_type}\n' if properties_before_type else ''
@@ -188,6 +188,19 @@ class GeneratorBase(ABC):
         pass
 
     @abstractmethod
+    def _property_comment(self, comment: str) -> str:
+        """
+        Abstract method which must be implemented by the deriving class to generate a comment string.
+
+        :param comment: Comment value.
+        :type comment:  str
+
+        :return: A language specific comment string (e.g., /* This is a comment. */).
+        :rtype:  str
+        """
+        pass
+
+    @abstractmethod
     def _end_type(self) -> str:
         """
         Abstract method which must be implemented by the deriving class to generate the class'/struct's body end.
@@ -198,7 +211,7 @@ class GeneratorBase(ABC):
         pass
 
     @abstractmethod
-    def _property_after_type_end(self, property: Property) -> str:
+    def _property_after_type(self, property: Property) -> str:
         """
         Abstract method which must be implemented by the deriving class to generate a single property string after the
         type definition. This might be useful in some cases to do some extra processing of the properties. If it's not
@@ -219,19 +232,6 @@ class GeneratorBase(ABC):
         be added after the generated class/struct. If not required, this method shall return an empty string.
 
         :return: String to insert after the generated class/struct.
-        :rtype:  str
-        """
-        pass
-
-    @abstractmethod
-    def _property_comment(self, comment: str) -> str:
-        """
-        Abstract method which must be implemented by the deriving class to generate a comment string.
-
-        :param comment: Comment value.
-        :type comment:  str
-
-        :return: A language specific comment string (e.g., /* This is a comment. */).
         :rtype:  str
         """
         pass

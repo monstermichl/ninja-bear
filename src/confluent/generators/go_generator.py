@@ -65,7 +65,7 @@ class GoGenerator(GeneratorBase):
     def _end_type(self) -> str:
         return '} {'
     
-    def _property_after_type_end(self, property: Property) -> str:
+    def _property_after_type(self, property: Property) -> str:
         match property.type:
             case PropertyType.BOOL:
                 value = 'true' if property.value else 'false'
