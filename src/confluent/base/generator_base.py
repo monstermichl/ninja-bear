@@ -114,7 +114,7 @@ class GeneratorBase(ABC):
         properties_before_type = self._create_properties_string(self._property_before_type)
 
         # Create the string for properties which shall be added after the class definition.
-        properties_after_type = self._create_properties_string(self._property_after_type)
+        properties_after_type = self._create_properties_string(self._property_after_type_end)
 
         s = self._before_type()
         s += f'{properties_before_type}\n' if properties_before_type else ''
@@ -135,6 +135,17 @@ class GeneratorBase(ABC):
     @abstractmethod
     def _default_type_naming_convention(self) -> NamingConventionType:
         pass
+
+    @abstractmethod
+    def _before_type(self) -> str:
+        """
+        Abstract method which must be implemented by the deriving class to generate a possible string which will
+        be added in front of the generated class/struct. If not required, this method shall return an empty string.
+
+        :return: String to insert before the generated class/struct.
+        :rtype:  str
+        """
+        pass
     
     @abstractmethod
     def _property_before_type(self, property: Property) -> str:
@@ -148,6 +159,16 @@ class GeneratorBase(ABC):
 
         :return: A language specific property string which is added in front of the type definition (e.g.,
                  "const MY_BOOLEAN = true;").
+        :rtype:  str
+        """
+        pass
+
+    @abstractmethod
+    def _start_type(self, type_name: str) -> str:
+        """
+        Abstract method which must be implemented by the deriving class to generate the class'/struct's definition.
+
+        :return: The generated class/struct definition (e.g., "export class TestConfig {").
         :rtype:  str
         """
         pass
@@ -167,7 +188,17 @@ class GeneratorBase(ABC):
         pass
 
     @abstractmethod
-    def _property_after_type(self, property: Property) -> str:
+    def _end_type(self) -> str:
+        """
+        Abstract method which must be implemented by the deriving class to generate the class'/struct's body end.
+
+        :return: The generated class'/struct's body end (e.g., "}").
+        :rtype:  str
+        """
+        pass
+
+    @abstractmethod
+    def _property_after_type_end(self, property: Property) -> str:
         """
         Abstract method which must be implemented by the deriving class to generate a single property string after the
         type definition. This might be useful in some cases to do some extra processing of the properties. If it's not
@@ -177,30 +208,6 @@ class GeneratorBase(ABC):
         :type property:  Property
 
         :return: A language specific property string which is added in after the type definition.
-        :rtype:  str
-        """
-        pass
-
-    @abstractmethod
-    def _property_comment(self, comment: str) -> str:
-        """
-        Abstract method which must be implemented by the deriving class to generate a comment string.
-
-        :param comment: Comment value.
-        :type comment:  str
-
-        :return: A language specific comment string (e.g., /* This is a comment. */).
-        :rtype:  str
-        """
-        pass
-
-    @abstractmethod
-    def _before_type(self) -> str:
-        """
-        Abstract method which must be implemented by the deriving class to generate a possible string which will
-        be added in front of the generated class/struct. If not required, this method shall return an empty string.
-
-        :return: String to insert before the generated class/struct.
         :rtype:  str
         """
         pass
@@ -217,21 +224,14 @@ class GeneratorBase(ABC):
         pass
 
     @abstractmethod
-    def _start_type(self, type_name: str) -> str:
+    def _property_comment(self, comment: str) -> str:
         """
-        Abstract method which must be implemented by the deriving class to generate the class'/struct's definition.
+        Abstract method which must be implemented by the deriving class to generate a comment string.
 
-        :return: The generated class/struct definition (e.g., "export class TestConfig {").
-        :rtype:  str
-        """
-        pass
+        :param comment: Comment value.
+        :type comment:  str
 
-    @abstractmethod
-    def _end_type(self) -> str:
-        """
-        Abstract method which must be implemented by the deriving class to generate the class'/struct's body end.
-
-        :return: The generated class'/struct's body end (e.g., "}").
+        :return: A language specific comment string (e.g., /* This is a comment. */).
         :rtype:  str
         """
         pass

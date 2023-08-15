@@ -11,9 +11,15 @@ class CGenerator(GeneratorBase):
 
     def _default_type_naming_convention(self) -> NamingConventionType:
         return NamingConventionType.PASCAL_CASE
+    
+    def _before_type(self) -> str:
+        return f'#ifndef {self._guard_name()}\n#define {self._guard_name()}\n\n'
 
     def _property_before_type(self, _: Property) -> str:
         return ''
+    
+    def _start_type(self, _: str) -> str:
+        return 'const struct {'
 
     def _property_in_type(self, property: Property) -> str:
         match property.type:
@@ -32,7 +38,13 @@ class CGenerator(GeneratorBase):
 
         return f'{type} {property.name};'
     
-    def _property_after_type(self, property: Property) -> str:
+    def _property_comment(self, comment: str) -> str:
+        return f' /* {comment} */'
+    
+    def _end_type(self) -> str:
+        return f'}} {self._type_name} = {{'
+    
+    def _property_after_type_end(self, property: Property) -> str:
         match property.type:
             case PropertyType.BOOL:
                 value = '1' if property.value else '0'
@@ -49,21 +61,9 @@ class CGenerator(GeneratorBase):
                 raise Exception('Unknown type')
 
         return f'{" " * self._indent}{value},'
-
-    def _property_comment(self, comment: str) -> str:
-        return f' /* {comment} */'
     
-    def _before_type(self) -> str:
-        return f'#ifndef {self._guard_name()}\n#define {self._guard_name()}\n\n'
-
     def _after_type(self) -> str:
         return f'}};\n\n#endif{self._property_comment(self._guard_name())}'
-
-    def _start_type(self, _: str) -> str:
-        return 'const struct {'
-
-    def _end_type(self) -> str:
-        return f'}} {self._type_name} = {{'
     
     def _guard_name(self):
         return f'{NameConverter.convert(self._type_name, NamingConventionType.SCREAMING_SNAKE_CASE)}_H'

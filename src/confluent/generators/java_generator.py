@@ -33,9 +33,15 @@ class JavaGenerator(GeneratorBase):
 
     def _default_type_naming_convention(self) -> NamingConventionType:
         return NamingConventionType.PASCAL_CASE
+    
+    def _before_type(self) -> str:
+        return f'package {self.package};\n\n'
 
     def _property_before_type(self, _: Property) -> str:
         return ''
+    
+    def _start_type(self, type_name: str) -> str:
+        return f'public class {type_name} {{'
 
     def _property_in_type(self, property: Property) -> str:
         match property.type:
@@ -60,20 +66,14 @@ class JavaGenerator(GeneratorBase):
 
         return f'public final static {type} {property.name} = {value};'
     
-    def _property_after_type(self, _: Property) -> str:
-        return ''
-
     def _property_comment(self, comment: str) -> str:
         return f' // {comment}'
     
-    def _before_type(self) -> str:
-        return f'package {self.package};\n\n'
-
-    def _after_type(self) -> str:
-        return ''
-
-    def _start_type(self, type_name: str) -> str:
-        return f'public class {type_name} {{'
-
     def _end_type(self) -> str:
         return '}'
+
+    def _property_after_type_end(self, _: Property) -> str:
+        return ''
+    
+    def _after_type(self) -> str:
+        return ''

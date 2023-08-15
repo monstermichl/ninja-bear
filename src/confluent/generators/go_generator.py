@@ -33,9 +33,15 @@ class GoGenerator(GeneratorBase):
 
     def _default_type_naming_convention(self) -> NamingConventionType:
         return NamingConventionType.PASCAL_CASE
+    
+    def _before_type(self) -> str:
+        return f'package {self.package}\n\n'
 
     def _property_before_type(self, _: Property) -> str:
         return ''
+    
+    def _start_type(self, _: str) -> str:
+        return f'var {self._type_name} = struct {{'
 
     def _property_in_type(self, property: Property) -> str:
         match property.type:
@@ -53,7 +59,13 @@ class GoGenerator(GeneratorBase):
         REMAINING_SPACE_LENGTH = self._evaluate_longest_property() - len(property.name)
         return f'{property.name}{" " * REMAINING_SPACE_LENGTH} {type}'
     
-    def _property_after_type(self, property: Property) -> str:
+    def _property_comment(self, comment: str) -> str:
+        return f' // {comment}'
+    
+    def _end_type(self) -> str:
+        return '} {'
+    
+    def _property_after_type_end(self, property: Property) -> str:
         match property.type:
             case PropertyType.BOOL:
                 value = 'true' if property.value else 'false'
@@ -70,20 +82,8 @@ class GoGenerator(GeneratorBase):
         REMAINING_SPACE_LENGTH = self._evaluate_longest_property() - len(property.name)
         return f'{" " * self._indent}{property.name}:{" " * REMAINING_SPACE_LENGTH} {value},'
 
-    def _property_comment(self, comment: str) -> str:
-        return f' // {comment}'
-    
-    def _before_type(self) -> str:
-        return f'package {self.package}\n\n'
-
     def _after_type(self) -> str:
         return '}'
-
-    def _start_type(self, _: str) -> str:
-        return f'var {self._type_name} = struct {{'
-
-    def _end_type(self) -> str:
-        return '} {'
     
     def _evaluate_longest_property(self) -> int:
         """

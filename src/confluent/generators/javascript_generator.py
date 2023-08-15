@@ -41,9 +41,18 @@ class JavascriptGenerator(GeneratorBase):
 
     def _default_type_naming_convention(self) -> NamingConventionType:
         return NamingConventionType.PASCAL_CASE
+    
+    def _before_type(self) -> str:
+        return ''
 
     def _property_before_type(self, _: Property) -> str:
         return ''
+    
+    def _start_type(self, type_name: str) -> str:
+        # Export class only directly if ESM is used.
+        export = 'export ' if self.export_type == ExportType.ESM else ''
+
+        return f'{export}class {type_name} {{'
 
     def _property_in_type(self, property: Property) -> str:
         match property.type:
@@ -61,27 +70,18 @@ class JavascriptGenerator(GeneratorBase):
             
         return self._create_property(property.name, value)
     
-    def _property_after_type(self, _: Property) -> str:
-        return ''
-    
     def _property_comment(self, comment: str) -> str:
         return f' // {comment}'
     
-    def _before_type(self) -> str:
+    def _end_type(self) -> str:
+        return '}'
+    
+    def _property_after_type_end(self, _: Property) -> str:
         return ''
-
+    
     def _after_type(self) -> str:
         # Add module export only if CommonJS is used.
         return f'module.exports = {self._type_name}' if self.export_type == ExportType.COMMON_JS else ''
-
-    def _start_type(self, type_name: str) -> str:
-        # Export class only directly if ESM is used.
-        export = 'export ' if self.export_type == ExportType.ESM else ''
-
-        return f'{export}class {type_name} {{'
-
-    def _end_type(self) -> str:
-        return '}'
     
     def _evaluate_export_type(self) -> ExportType:
         export_type = ExportType.ESM  # Default to ESM.
