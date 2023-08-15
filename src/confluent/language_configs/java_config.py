@@ -31,3 +31,6 @@ class JavaConfig(LanguageConfigBase):
             naming_conventions,
             additional_props,
         )
+
+    def _allowed_file_name_pattern(self) -> str:
+        return fr'^{self.generator.get_type_name()}$'

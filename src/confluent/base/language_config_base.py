@@ -1,5 +1,6 @@
 from __future__ import annotations
-from abc import ABC
+from abc import ABC, abstractmethod
+import re
 from typing import List, Type
 
 from .language_config_naming_conventions import LanguageConfigNamingConventions
@@ -13,6 +14,11 @@ from .generator_base import GeneratorBase
 class NoConfigNameProvidedException(Exception):
     def __init__(self):
         super().__init__('No config name has been provided')
+
+
+class InvalidFileNameException(Exception):
+    def __init__(self, file_name: str, pattern: str):
+        super().__init__(f'The file name "{file_name}" does not conform to the validation pattern "{pattern}"')
 
 
 class LanguageConfigBase(ABC):
@@ -85,6 +91,9 @@ class LanguageConfigBase(ABC):
         )
         self.language_type = language_type
 
+        # Check output file naming.
+        self._check_file_name()
+
     def dump(self) -> str:
         """
         Generates a config file string.
@@ -101,3 +110,20 @@ class LanguageConfigBase(ABC):
         with open(path, 'w') as f:
             f.write(self.dump())
         return self
+    
+    @abstractmethod
+    def _allowed_file_name_pattern(self) -> str:
+        """
+        Abstract method which must be implemented by the deriving class to provide a RegEx string which describes which
+        file name patterns are allowed for the output file name (without extension).
+
+        :return: Allowed file name pattern.
+        :rtype:  str
+        """
+        pass
+
+    def _check_file_name(self) -> None:
+        pattern = self._allowed_file_name_pattern()
+
+        if not re.match(pattern, self.config_info.file_name):
+            raise InvalidFileNameException(self.config_info.file_name, pattern)

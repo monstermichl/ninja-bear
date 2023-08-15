@@ -132,6 +132,15 @@ class GeneratorBase(ABC):
 
         return s
     
+    def get_type_name(self) -> str:
+        """
+        Returns the evaluated type name.
+
+        :return: Evaluated type name.
+        :rtype:  str
+        """
+        return self._type_name
+    
     @abstractmethod
     def _default_type_naming_convention(self) -> NamingConventionType:
         pass

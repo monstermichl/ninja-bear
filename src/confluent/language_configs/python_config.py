@@ -31,3 +31,6 @@ class PythonConfig(LanguageConfigBase):
             naming_conventions,
             additional_props,
         )
+
+    def _allowed_file_name_pattern(self) -> str:
+        return r'^\w+$'
