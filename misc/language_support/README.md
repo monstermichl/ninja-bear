@@ -34,8 +34,14 @@ class MyLanguageGenerator(GeneratorBase):
     def _default_type_naming_convention(self) -> NamingConventionType:
         return NamingConventionType.PASCAL_CASE
 
+    def _before_type(self) -> str:
+        return f'comment: My langauge specific struct, bruh.\n\n'
+
     def _property_before_type(self, property: Property) -> str:
         return ''
+
+    def _start_type(self, type_name: str) -> str:
+        return f'class_start {type_name}'
 
     def _property_in_type(self, property: Property) -> str:
         match property.type:
@@ -57,18 +63,15 @@ class MyLanguageGenerator(GeneratorBase):
 
     def _property_comment(self, comment: str) -> str:
         return f' comment: {comment}'
-    
-    def _before_type(self) -> str:
-        return f'comment: My langauge specific struct, bruh.\n\n'
-
-    def _after_type(self) -> str:
-        return ''
-
-    def _start_type(self, type_name: str) -> str:
-        return f'class_start {type_name}'
 
     def _end_type(self) -> str:
         return 'class_end'
+
+    def _property_after_type(self, property: Property) -> str:
+        return ''
+
+    def _after_type(self) -> str:
+        return ''
 ```
 
 ## Add a new language config
