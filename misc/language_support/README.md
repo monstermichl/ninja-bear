@@ -137,7 +137,7 @@ As test-config.yaml serves as the documentation for what's supported, make sure 
 ```yaml
 languages:
   # --- Common properties (valid for all languages) -------------------------
-  # type            (required): Specifies the output language (java | javascript | typescript | python | c | go).
+  # type            (required): Specifies the output language (java | javascript | typescript | python | ... | my_language).
   #
   # file_naming     (optional): Specifies the file naming convention (snake | screaming_snake | camel | pascal | kebap). Defaults to the file-name without the extension.
   # property_naming (optional): Specifies the property naming convention (snake | screaming_snake | camel | pascal | kebap).
