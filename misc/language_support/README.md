@@ -121,6 +121,9 @@ def get_mappings() -> List[ConfigLanguageMapping]:
         ConfigLanguageMapping('javascript', LanguageType.JAVASCRIPT, JavascriptConfig),
         ConfigLanguageMapping('typescript', LanguageType.TYPESCRIPT, TypescriptConfig),
         ConfigLanguageMapping('python', LanguageType.PYTHON, PythonConfig),
+        .
+        .
+        .
         ConfigLanguageMapping('my_language', LanguageType.MY_LANGUAGE, MyLanguageConfig),
     ]
 ```
