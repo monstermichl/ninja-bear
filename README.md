@@ -228,5 +228,67 @@ var TestConfig = struct {
 }
 ```
 
+## Possible use case
+
+### Configuration
+```yaml
+languages:
+  - type: java
+    file_naming: pascal
+    package: com.app.endpoints
+
+  - type: typescript
+    file_naming: kebap
+
+properties:
+  # === Helper properties ===============
+  - type: string
+    name: PATH_PARAM_ID
+    value: :id
+    hidden: true
+
+  # === Exported properties =============
+  - type: string
+    name: API_ENDPOINT
+    value: /api
+
+  - type: string
+    name: USERS_ENDPOINT
+    value: ${API_ENDPOINT}/users
+
+  - type: string
+    name: USER_PERMISSIONS_ENDPOINT
+    value: ${USERS_ENDPOINT}/${PATH_PARAM_ID}/permissions
+
+  - type: string
+    name: CUSTOMERS_ENDPOINT
+    value: ${API_ENDPOINT}/customers
+```
+
+### Output
+#### Java
+```java
+package com.app.endpoints;
+
+// Generated with confluent v0.0.2 (https://pypi.org/project/confluent/).
+public class Endpoints {
+    public final static String API_ENDPOINT = "/api";
+    public final static String USERS_ENDPOINT = "/api/users";
+    public final static String USER_PERMISSIONS_ENDPOINT = "/api/users/:id/permissions";
+    public final static String CUSTOMERS_ENDPOINT = "/api/customers";
+}
+```
+
+#### TypeScript
+```typescript
+// Generated with confluent v0.0.2 (https://pypi.org/project/confluent/).
+export class Endpoints {
+    public static readonly API_ENDPOINT = '/api';
+    public static readonly USERS_ENDPOINT = '/api/users';
+    public static readonly USER_PERMISSIONS_ENDPOINT = '/api/users/:id/permissions';
+    public static readonly CUSTOMERS_ENDPOINT = '/api/customers';
+}
+```
+
 ## How to participate
 If you feel that there's a need for another language, feel free to add it. For detailed information how to add support for a new language, please refer to [README.md](https://github.com/monstermichl/confluent/tree/main/misc/language_support/README.md).
