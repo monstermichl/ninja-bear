@@ -8,7 +8,7 @@ var TestConfig = struct {
     myDouble            float64
     myRegex             string // Just another RegEx.
     mySubstitutedString string
-} {
+}{
     myBoolean:           true,
     myInteger:           142,
     myFloat:             322.0,

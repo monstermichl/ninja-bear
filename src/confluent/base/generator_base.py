@@ -4,12 +4,11 @@ import copy
 from typing import Callable, List
 
 from .info import VERSION
+from .configuration_base import _DEFAULT_INDENT
+from .generator_configuration import GeneratorConfiguration
 from .generator_naming_conventions import GeneratorNamingConventions
 from .name_converter import NamingConventionType, NameConverter
 from .property import Property
-
-
-_DEFAULT_INDENT = 4
 
 
 class PropertyAlreadyExistsException(Exception):
@@ -29,10 +28,8 @@ class GeneratorBase(ABC):
 
     def __init__(
         self,
-        type_name: str,
+        config: GeneratorConfiguration,
         properties: List[Property] = [],
-        indent: int = _DEFAULT_INDENT,
-        naming_conventions: GeneratorNamingConventions = None,
         additional_props = {}
     ):
         """
@@ -53,8 +50,12 @@ class GeneratorBase(ABC):
         :param additional_props:          All props that might need to be used by the derivating class, defaults to {}
         :type additional_props:           dict, optional
         """
+        type_name = config.type_name
+        indent = config.indent
+
         self._properties: List[Property] = []
-        self._naming_conventions = naming_conventions if naming_conventions else GeneratorNamingConventions()
+        self._naming_conventions = \
+            config.naming_conventions if config.naming_conventions else GeneratorNamingConventions()
         self._additional_props = additional_props
 
         self._set_type_name(type_name)

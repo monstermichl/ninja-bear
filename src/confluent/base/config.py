@@ -22,6 +22,7 @@ _KEY_FILE_NAMING = 'file_naming'
 _KEY_PROPERTY_NAMING = 'property_naming'
 _KEY_TYPE_NAMING = 'type_naming'
 _KEY_INDENT = 'indent'
+_KEY_TRANSFORM = 'transform'
 _KEY_TYPE = 'type'
 _KEY_NAME = 'name'
 
@@ -138,6 +139,7 @@ class Config:
             naming_conventions = LanguageConfigNamingConventions()
             language_type = language[_KEY_TYPE]
             indent = language[_KEY_INDENT] if _KEY_INDENT in language else None
+            transform = language[_KEY_TRANSFORM] if _KEY_TRANSFORM in language else None
 
             # Evaluate file naming-convention.
             naming_conventions.file_naming_convention = Config._evaluate_naming_convention_type(
@@ -159,6 +161,7 @@ class Config:
                 config_name,
                 properties,
                 indent,
+                transform,
                 naming_conventions,
 
                 # Pass all language props as additional_props to let the specific

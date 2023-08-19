@@ -1,19 +1,12 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 import re
-from typing import List, Type
+from typing import List
 
-from .language_config_naming_conventions import LanguageConfigNamingConventions
+from .language_config_configuration import LanguageConfigConfiguration
 from .config_file_info import ConfigFileInfo
 from .name_converter import NameConverter
-from .language_type import LanguageType
 from .property import Property
-from .generator_base import GeneratorBase
-
-
-class NoConfigNameProvidedException(Exception):
-    def __init__(self):
-        super().__init__('No config name has been provided')
 
 
 class InvalidFileNameException(Exception):
@@ -29,13 +22,8 @@ class LanguageConfigBase(ABC):
 
     def __init__(
         self,
-        config_name: str,
-        language_type: LanguageType,
-        file_extension: str,
-        generator: Type[GeneratorBase],
+        config: LanguageConfigConfiguration,
         properties: List[Property],
-        indent: int = None,
-        naming_conventions: LanguageConfigNamingConventions = None,
         additional_props = {},
     ):
         """
@@ -66,30 +54,25 @@ class LanguageConfigBase(ABC):
 
         :raises NoConfigNameProvidedException: Raised if no config name has been provided.
         """
-        if not config_name:
-            raise NoConfigNameProvidedException()
-        
-        # Make sure that the naming conventions are available.
-        if not naming_conventions:
-            naming_conventions = LanguageConfigNamingConventions()
-        
-        self.generator = generator(
-            config_name,
+
+        # Make sure, config is valid.
+        config.validate()
+
+        self.generator = config.generator_type(
+            config.get_generator_config(),
             properties,
-            indent,
-            naming_conventions,
             additional_props,
         )
         self.config_info = ConfigFileInfo(
             # Convert config file name according to naming convention if a convention was provided. Otherwise, just use
             # the config name directly.
-            NameConverter.convert(config_name, naming_conventions.file_naming_convention) if
-                naming_conventions.file_naming_convention else
-                config_name,
+            NameConverter.convert(config.config_name, config.naming_conventions.file_naming_convention) if
+                config.naming_conventions.file_naming_convention else
+                config.config_name,
 
-            file_extension,
+            config.file_extension,
         )
-        self.language_type = language_type
+        self.language_type = config.language_type
 
         # Check output file naming.
         self._check_file_name()
