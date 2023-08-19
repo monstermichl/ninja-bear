@@ -87,18 +87,22 @@ class MyLanguageConfig(LanguageConfigBase):
         self,
         config_name: str,
         properties: List[Property],
-        indent: int = None,
-        naming_conventions: LanguageConfigNamingConventions = None,
+        indent: int,
+        transform: str,
+        naming_conventions: LanguageConfigNamingConventions,
         additional_props = {},
     ):
         super().__init__(
-            config_name,
-            LanguageType.MY_LANGUAGE,  # Use the language type (LanguageType) set up two steps before.
-            'ml',
-            MyLanguageGenerator,  # Use the generator class created in the previous step.
+            LanguageConfigConfiguration(
+                config_name,
+                LanguageType.MY_LANGUAGE,  # Use the language type (LanguageType) set up two steps before.
+                'ml',
+                MyLanguageGenerator,  # Use the generator class created in the previous step.
+                indent,
+                transform,
+                naming_conventions,
+            ),
             properties,
-            indent,
-            naming_conventions,
             additional_props,
         )
 ```
