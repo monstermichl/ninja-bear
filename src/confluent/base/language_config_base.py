@@ -29,30 +29,13 @@ class LanguageConfigBase(ABC):
         """
         Constructor
 
-        :param config_name:               Name of the generated type and config. HINT: This acts more like a template
-                                          for the type name than the real name as some conventions must be met and
-                                          therefore the default convention specified by the deriving class of
-                                          GeneratorBase will be used if no naming convention for the type name
-                                          was provided (see GeneratorBase._default_type_naming_convention).
-        :type config_name:                str
-        :param language_type:             Which language type is this config for.
-        :type language_type:              LanguageType
-        :param file_extension:            Which file extension to use for the output file.
-        :type file_extension:             str
-        :param generator:                 Which generator to use to generate the config.
-        :type generator:                  Type[GeneratorBase]
-        :param properties:                Which properties to generate.
-        :type properties:                 List[Property]
-        :param indent:                    How much leading whitespace indent to use for each property, defaults to None
-        :type indent:                     int, optional
-        :param naming_conventions:        Specifies which case convention to use for the properties. If not provided,
-                                          the name as specified will be used. Defaults to None
-        :type GeneratorNamingConventions: LanguageConfigNamingConventions, optional
-        :param additional_props:          Additional props which might be required by the deriving generator class,
-                                          defaults to {}
-        :type additional_props:           dict, optional
-
-        :raises NoConfigNameProvidedException: Raised if no config name has been provided.
+        :param config:           Language config configuration.
+        :type config:            LanguageConfigConfiguration
+        :param properties:       Which properties to generate.
+        :type properties:        List[Property]
+        :param additional_props: Additional props which might be required by the deriving generator class,
+                                 defaults to {}
+        :type additional_props:  dict, optional
         """
 
         # Make sure, config is valid.

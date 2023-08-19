@@ -16,6 +16,31 @@ class LanguageConfigConfiguration(ConfigurationBase):
     """
     Encapsulates the configuration properties used by the LanguageConfigBase class.
     """
+    config_name: str
+    """
+    Name of the generated type and config. HINT: This acts more like a template
+    for the type name than the real name as some conventions must be met and
+    therefore the default convention specified by the deriving class of
+    GeneratorBase will be used if no naming convention for the type name
+    was provided (see GeneratorBase._default_type_naming_convention).
+    """
+    language_type: LanguageType
+    """
+    Which language type is this config for.
+    """
+    file_extension: str
+    """
+    Which file extension to use for the output file.
+    """
+    generator_type: Type[GeneratorBase]
+    """
+    Which generator to use to generate the config.
+    """
+    naming_conventions: LanguageConfigNamingConventions
+    """
+    Specifies which case convention to use for the properties. If not provided,
+    the name as specified will be used.
+    """
 
     def __init__(
         self,
@@ -38,6 +63,11 @@ class LanguageConfigConfiguration(ConfigurationBase):
         self.naming_conventions = naming_conventions
 
     def validate(self):
+        """
+        Validates the current configuration.
+
+        :raises NoConfigNameProvidedException: Raised if no config name has been provided.
+        """
         if not self.config_name:
             raise NoConfigNameProvidedException()
         
@@ -46,6 +76,12 @@ class LanguageConfigConfiguration(ConfigurationBase):
             self.naming_conventions = LanguageConfigNamingConventions()
 
     def get_generator_config(self) -> GeneratorConfiguration:
+        """
+        Creates the corresponding GeneratorConfig from the current LanguageConfigConfiguration.
+
+        :return: GeneratorConfiguration based on the current LanguageConfigConfiguration.
+        :rtype:  GeneratorConfiguration
+        """
         generator_config = GeneratorConfiguration()
 
         generator_config.type_name = self.config_name

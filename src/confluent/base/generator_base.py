@@ -35,20 +35,12 @@ class GeneratorBase(ABC):
         """
         Constructor
 
-        :param type_name:                 Name of the generated type. HINT: This acts more like a template than the
-                                          real name as some conventions must be met and therefore the default convention
-                                          specified by the deriving class will be used if no naming convention for the
-                                          type name was provided (see _default_type_naming_convention).
-        :type type_name:                  str
-        :param properties:                List of properties to generator by the GeneratorBase derivate, defaults to []
-        :type properties:                 List[Property], optional
-        :param indent:                    Whitespace indent before each property, defaults to _DEFAULT_INDENT
-        :type indent:                     int, optional
-        :param naming_conventions:        Specifies which case convention to use for the properties. If not provided,
-                                          the name as specified will be used. Defaults to None
-        :type GeneratorNamingConventions: GeneratorNamingConventions, optional
-        :param additional_props:          All props that might need to be used by the derivating class, defaults to {}
-        :type additional_props:           dict, optional
+        :param config:           Generator configuration.
+        :type config:            GeneratorConfiguration
+        :param properties:       List of properties to generator by the GeneratorBase derivate, defaults to []
+        :type properties:        List[Property], optional
+        :param additional_props: All props that might need to be used by the derivating class, defaults to {}
+        :type additional_props:  dict, optional
         """
         type_name = config.type_name
         indent = config.indent
