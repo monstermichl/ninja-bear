@@ -47,7 +47,7 @@ class Property:
             match property_type:
                 case PropertyType.BOOL:
                     # Correct boolean property value to 'true' or 'false'.
-                    value = True if value.lower() in ['1', 'true', 'yes', 'on'] else False
+                    value = False if value.lower() in ['0', 'false', 'no', 'off'] else True
                 case PropertyType.INT:
                     match = re.match(r'\d+', value)
                     value = int(match.group(0)) if match else 0  # Remove everything that comes after the integer.
