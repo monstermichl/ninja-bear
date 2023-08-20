@@ -1,9 +1,9 @@
 from enum import Enum
 from typing import List
 
+from ..base.generator_configuration import GeneratorConfiguration
 from ..base.name_converter import NamingConventionType
-from ..base.generator_naming_conventions import GeneratorNamingConventions
-from ..base.generator_base import _DEFAULT_INDENT, GeneratorBase
+from ..base.generator_base import GeneratorBase
 from ..base.property import Property
 from ..base.property_type import PropertyType
 
@@ -28,13 +28,11 @@ class JavascriptGenerator(GeneratorBase):
 
     def __init__(
         self,
-        type_name: str,
+        config: GeneratorConfiguration,
         properties: List[Property] = [],
-        indent: int = _DEFAULT_INDENT,
-        naming_conventions: GeneratorNamingConventions = None,
         additional_props = {}
     ):
-        super().__init__(type_name, properties, indent, naming_conventions, additional_props)
+        super().__init__(config, properties, additional_props)
 
         # Evaluate which export type to use.
         self.export_type = self._evaluate_export_type()

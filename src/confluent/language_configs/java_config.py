@@ -2,6 +2,7 @@ from typing import List
 
 from ..generators.java_generator import JavaGenerator
 
+from ..base.language_config_configuration import LanguageConfigConfiguration
 from ..base.language_config_naming_conventions import LanguageConfigNamingConventions
 from ..base.language_config_base import LanguageConfigBase
 from ..base.language_type import LanguageType
@@ -17,18 +18,22 @@ class JavaConfig(LanguageConfigBase):
         self,
         config_name: str,
         properties: List[Property],
-        indent: int = None,
-        naming_conventions: LanguageConfigNamingConventions = None,
+        indent: int,
+        transform: str,
+        naming_conventions: LanguageConfigNamingConventions,
         additional_props = {},
     ):
         super().__init__(
-            config_name,
-            LanguageType.JAVA,
-            'java',
-            JavaGenerator,
+            LanguageConfigConfiguration(
+                config_name,
+                LanguageType.JAVA,
+                'java',
+                JavaGenerator,
+                indent,
+                transform,
+                naming_conventions,
+            ),
             properties,
-            indent,
-            naming_conventions,
             additional_props,
         )
 

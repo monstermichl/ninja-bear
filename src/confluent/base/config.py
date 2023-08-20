@@ -1,5 +1,4 @@
 from __future__ import annotations
-import re
 from typing import List, Type
 
 import yaml
@@ -22,6 +21,7 @@ _KEY_FILE_NAMING = 'file_naming'
 _KEY_PROPERTY_NAMING = 'property_naming'
 _KEY_TYPE_NAMING = 'type_naming'
 _KEY_INDENT = 'indent'
+_KEY_TRANSFORM = 'transform'
 _KEY_TYPE = 'type'
 _KEY_NAME = 'name'
 
@@ -32,16 +32,6 @@ _KEY_COMMENT = 'comment'
 
 # Load the glue.
 _LANGUAGE_MAPPINGS = ConfigLanguageMapping.get_mappings()
-
-
-class UnknownSubstitutionException(Exception):
-    def __init__(self, substitution_property: str):
-        super().__init__(f'Unknown substitution property {substitution_property}')
-
-
-class RecursiveSubstitutionException(Exception):
-    def __init__(self, substitution_property: str):
-        super().__init__(f'It\'s not allowed for a property to reference itself ({substitution_property})')
 
 
 class UnknownPropertyTypeException(Exception):
@@ -86,9 +76,6 @@ class Config:
                             the specified file_naming rule from the config.
         :type config_name:  str
 
-        :raises UnknownSubstitutionException:   Raised if the requested substitution property does not exist.
-        :raises RecursiveSubstitutionException: Raised if a property referenced itself as substitution.
-
         :return: Language configurations which further can be dumped as config files.
         :rtype:  List[LanguageConfigBase]
         """
@@ -107,37 +94,12 @@ class Config:
                 comment=property[_KEY_COMMENT] if _KEY_COMMENT in property else None,
             ))
 
-        # Substitute property values.
-        for property in properties:
-            def replace(match):
-                substitution_property = match.group(1)
-                
-                # Substitute property only if it's not the same property as the one
-                # which is currently being processed.
-                if substitution_property != property.name:
-                    found_properties = [
-                        search_property.value for search_property in properties if
-                        search_property.name == substitution_property
-                    ]
-
-                    if not found_properties:
-                        raise UnknownSubstitutionException(substitution_property)
-                    replacement = found_properties[0]
-                else:
-                    raise RecursiveSubstitutionException('It\'s not allowed to reference the property itself')
-                return replacement
-            
-            if isinstance(property.value, str):
-                property.value = re.sub(r'\${(\w+)}', replace, property.value)
-
-        # Remove hidden properties.
-        properties = [property for property in properties if not property.hidden]
-
         # Evaluate each language setting one by one.
         for language in validated_object[_KEY_LANGUAGES]:
             naming_conventions = LanguageConfigNamingConventions()
             language_type = language[_KEY_TYPE]
             indent = language[_KEY_INDENT] if _KEY_INDENT in language else None
+            transform = language[_KEY_TRANSFORM] if _KEY_TRANSFORM in language else None
 
             # Evaluate file naming-convention.
             naming_conventions.file_naming_convention = Config._evaluate_naming_convention_type(
@@ -159,6 +121,7 @@ class Config:
                 config_name,
                 properties,
                 indent,
+                transform,
                 naming_conventions,
 
                 # Pass all language props as additional_props to let the specific
@@ -205,19 +168,9 @@ class Config:
         :return: The corresponding PropertyType enum value.
         :rtype:  PropertyType
         """
-        if type == 'bool':
-            type = PropertyType.BOOL
-        elif type == 'int':
-            type = PropertyType.INT
-        elif type == 'float':
-            type = PropertyType.FLOAT
-        elif type == 'double':
-            type = PropertyType.DOUBLE
-        elif type == 'string':
-            type = PropertyType.STRING
-        elif type == 'regex':
-            type = PropertyType.REGEX
-        else:
+        try:
+            type = PropertyType(type)
+        except ValueError:
             raise UnknownPropertyTypeException(type)
         return type
 

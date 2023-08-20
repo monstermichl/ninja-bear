@@ -11,7 +11,7 @@ def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-c', f'--{_CONFIG_PARAMETER}', help='Path to configuration file', required=True, type=str)
-    parser.add_argument('-o', f'--{_OUTPUT_PARAMETER}', help='Output location', required=False, type=str)
+    parser.add_argument('-o', f'--{_OUTPUT_PARAMETER}', help='Output location', required=False, type=str, default='.')
 
     args = parser.parse_args()
 

@@ -12,7 +12,13 @@ class NewLanguageGenerator(GeneratorBase):
     def _default_type_naming_convention(self) -> NamingConventionType:
         pass  # TODO: Implement according to the new language.
 
-    def _property_before_type(self, property: Property) -> str:
+    def _before_type(self) -> str:
+        pass  # TODO: Implement according to the new language.
+
+    def _property_before_type(self, _: Property) -> str:
+        pass  # TODO: Implement according to the new language.
+
+    def _start_type(self, type_name: str) -> str:
         pass  # TODO: Implement according to the new language.
 
     def _property_in_type(self, property: Property) -> str:
@@ -20,15 +26,12 @@ class NewLanguageGenerator(GeneratorBase):
 
     def _property_comment(self, comment: str) -> str:
         pass  # TODO: Implement according to the new language.
-    
-    def _before_type(self) -> str:
+
+    def _end_type(self) -> str:
+        pass  # TODO: Implement according to the new language.
+
+    def _property_after_type(self, _: Property) -> str:
         pass  # TODO: Implement according to the new language.
 
     def _after_type(self) -> str:
-        pass  # TODO: Implement according to the new language.
-
-    def _start_type(self, type_name: str) -> str:
-        pass  # TODO: Implement according to the new language.
-
-    def _end_type(self) -> str:
         pass  # TODO: Implement according to the new language.

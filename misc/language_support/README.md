@@ -87,18 +87,22 @@ class MyLanguageConfig(LanguageConfigBase):
         self,
         config_name: str,
         properties: List[Property],
-        indent: int = None,
-        naming_conventions: LanguageConfigNamingConventions = None,
+        indent: int,
+        transform: str,
+        naming_conventions: LanguageConfigNamingConventions,
         additional_props = {},
     ):
         super().__init__(
-            config_name,
-            LanguageType.MY_LANGUAGE,  # Use the language type (LanguageType) set up two steps before.
-            'ml',
-            MyLanguageGenerator,  # Use the generator class created in the previous step.
+            LanguageConfigConfiguration(
+                config_name,
+                LanguageType.MY_LANGUAGE,  # Use the language type (LanguageType) set up two steps before.
+                'ml',
+                MyLanguageGenerator,  # Use the generator class created in the previous step.
+                indent,
+                transform,
+                naming_conventions,
+            ),
             properties,
-            indent,
-            naming_conventions,
             additional_props,
         )
 ```
@@ -143,6 +147,13 @@ languages:
   # property_naming (optional): Specifies the property naming convention (snake | screaming_snake | camel | pascal | kebap).
   # type_naming     (optional): Specifies the naming convention for the generated type (snake | screaming_snake | camel | pascal | kebap). The default value is language specific.
   # indent          (optional): Specifies the amount of spaces before each constant. Defaults to 4.
+  # transform       (optional): Specifies a script to transform the currently processed property. To reflect changes to the outside of the script, the value variable
+  #                             must be modified. The script has access to the following variables:
+  #
+  #                             name: Property name.
+  #                             value: Property value.
+  #                             type: Property type string (bool | int | float | double | string | regex).
+  #                             properties: List of all properties (must not be modified).
   # -------------------------------------------------------------------------
 
   # --- Java specific properties --------------------------------------------

@@ -46,6 +46,13 @@ languages:
   # property_naming (optional): Specifies the property naming convention (snake | screaming_snake | camel | pascal | kebap).
   # type_naming     (optional): Specifies the naming convention for the generated type (snake | screaming_snake | camel | pascal | kebap). The default value is language specific.
   # indent          (optional): Specifies the amount of spaces before each constant. Defaults to 4.
+  # transform       (optional): Specifies a script to transform the currently processed property. To reflect changes to the outside of the script, the value variable
+  #                             must be modified. The script has access to the following variables:
+  #
+  #                             name: Property name.
+  #                             value: Property value.
+  #                             type: Property type string (bool | int | float | double | string | regex).
+  #                             properties: List of all properties (must not be modified).
   # -------------------------------------------------------------------------
 
   # --- Java specific properties --------------------------------------------
@@ -84,6 +91,9 @@ languages:
   - type: go
     file_naming: snake
     package: myconfig
+    transform: |  # If the property 'myString' is being processed, replace the value by 'Hello Mars'
+      if name == 'myString':
+        value = 'Hello Mars'
 
 properties:
   # -------------------------------------------------------------------------
@@ -131,7 +141,7 @@ properties:
 ```java
 package my.test.package;
 
-// Generated with confluent v0.0.1 (https://pypi.org/project/confluent/).
+// Generated with confluent v0.1.0 (https://pypi.org/project/confluent/).
 public class TestConfig {
     public final static boolean myBoolean = true;
     public final static int myInteger = 142;
@@ -144,7 +154,7 @@ public class TestConfig {
 
 #### JavaScript
 ```javascript
-// Generated with confluent v0.0.1 (https://pypi.org/project/confluent/).
+// Generated with confluent v0.1.0 (https://pypi.org/project/confluent/).
 class TestConfig {
     static get myBoolean() { return true; }
     static get myInteger() { return 142; }
@@ -158,7 +168,7 @@ module.exports = TestConfig
 
 #### TypeScript
 ```typescript
-// Generated with confluent v0.0.1 (https://pypi.org/project/confluent/).
+// Generated with confluent v0.1.0 (https://pypi.org/project/confluent/).
 export class TestConfig {
     public static readonly myBoolean = true;
     public static readonly myInteger = 142;
@@ -171,7 +181,7 @@ export class TestConfig {
 
 #### Python
 ```python
-# Generated with confluent v0.0.1 (https://pypi.org/project/confluent/).
+# Generated with confluent v0.1.0 (https://pypi.org/project/confluent/).
 class TestConfig:
     MY_BOOLEAN = True
     MY_INTEGER = 142
@@ -186,7 +196,7 @@ class TestConfig:
 #ifndef TEST_CONFIG_H
 #define TEST_CONFIG_H
 
-/* Generated with confluent v0.0.1 (https://pypi.org/project/confluent/). */
+/* Generated with confluent v0.1.0 (https://pypi.org/project/confluent/). */
 const struct {
     unsigned char myBoolean;
     int myInteger;
@@ -210,7 +220,7 @@ const struct {
 ```go
 package myconfig
 
-// Generated with confluent v0.0.1 (https://pypi.org/project/confluent/).
+// Generated with confluent v0.1.0 (https://pypi.org/project/confluent/).
 var TestConfig = struct {
     myBoolean           bool
     myInteger           int
@@ -218,13 +228,13 @@ var TestConfig = struct {
     myDouble            float64
     myRegex             string // Just another RegEx.
     mySubstitutedString string
-} {
+}{
     myBoolean:           true,
     myInteger:           142,
     myFloat:             322.0,
     myDouble:            233.9,
     myRegex:             "Test Reg(E|e)x",
-    mySubstitutedString: "Sometimes I just want to scream Hello World!",
+    mySubstitutedString: "Sometimes I just want to scream Hello Mars!",
 }
 ```
 
@@ -270,7 +280,7 @@ properties:
 ```java
 package com.app.endpoints;
 
-// Generated with confluent v0.0.2 (https://pypi.org/project/confluent/).
+// Generated with confluent v0.1.0 (https://pypi.org/project/confluent/).
 public class Endpoints {
     public final static String API_ENDPOINT = "/api";
     public final static String USERS_ENDPOINT = "/api/users";
@@ -281,7 +291,7 @@ public class Endpoints {
 
 #### TypeScript
 ```typescript
-// Generated with confluent v0.0.2 (https://pypi.org/project/confluent/).
+// Generated with confluent v0.1.0 (https://pypi.org/project/confluent/).
 export class Endpoints {
     public static readonly API_ENDPOINT = '/api';
     public static readonly USERS_ENDPOINT = '/api/users';

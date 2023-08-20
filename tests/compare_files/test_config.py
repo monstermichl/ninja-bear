@@ -1,4 +1,4 @@
-# Generated with confluent v0.0.2 (https://pypi.org/project/confluent/).
+# Generated with confluent v0.1.0 (https://pypi.org/project/confluent/).
 class TestConfig:
     MY_BOOLEAN = True
     MY_INTEGER = 142

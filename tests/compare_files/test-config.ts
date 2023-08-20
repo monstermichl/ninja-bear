@@ -1,4 +1,4 @@
-// Generated with confluent v0.0.2 (https://pypi.org/project/confluent/).
+// Generated with confluent v0.1.0 (https://pypi.org/project/confluent/).
 export class TestConfig {
     public static readonly myBoolean = true;
     public static readonly myInteger = 142;
