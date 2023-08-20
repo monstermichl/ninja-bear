@@ -147,7 +147,7 @@ languages:
   # property_naming (optional): Specifies the property naming convention (snake | screaming_snake | camel | pascal | kebap).
   # type_naming     (optional): Specifies the naming convention for the generated type (snake | screaming_snake | camel | pascal | kebap). The default value is language specific.
   # indent          (optional): Specifies the amount of spaces before each constant. Defaults to 4.
-  # transform       (optional): Specifies a script to transform the currently processed property. To reflect changes to the outside of the script, the value variable
+  # transform       (optional): Specifies a Python script to transform the currently processed property. To reflect changes to the outside of the script, the value variable
   #                             must be modified. The script has access to the following variables:
   #
   #                             name: Property name.
