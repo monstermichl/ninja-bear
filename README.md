@@ -141,7 +141,7 @@ properties:
 ```java
 package my.test.package;
 
-// Generated with confluent v0.0.1 (https://pypi.org/project/confluent/).
+// Generated with confluent v0.0.2 (https://pypi.org/project/confluent/).
 public class TestConfig {
     public final static boolean myBoolean = true;
     public final static int myInteger = 142;
@@ -154,7 +154,7 @@ public class TestConfig {
 
 #### JavaScript
 ```javascript
-// Generated with confluent v0.0.1 (https://pypi.org/project/confluent/).
+// Generated with confluent v0.0.2 (https://pypi.org/project/confluent/).
 class TestConfig {
     static get myBoolean() { return true; }
     static get myInteger() { return 142; }
@@ -168,7 +168,7 @@ module.exports = TestConfig
 
 #### TypeScript
 ```typescript
-// Generated with confluent v0.0.1 (https://pypi.org/project/confluent/).
+// Generated with confluent v0.0.2 (https://pypi.org/project/confluent/).
 export class TestConfig {
     public static readonly myBoolean = true;
     public static readonly myInteger = 142;
@@ -181,7 +181,7 @@ export class TestConfig {
 
 #### Python
 ```python
-# Generated with confluent v0.0.1 (https://pypi.org/project/confluent/).
+# Generated with confluent v0.0.2 (https://pypi.org/project/confluent/).
 class TestConfig:
     MY_BOOLEAN = True
     MY_INTEGER = 142
@@ -196,7 +196,7 @@ class TestConfig:
 #ifndef TEST_CONFIG_H
 #define TEST_CONFIG_H
 
-/* Generated with confluent v0.0.1 (https://pypi.org/project/confluent/). */
+/* Generated with confluent v0.0.2 (https://pypi.org/project/confluent/). */
 const struct {
     unsigned char myBoolean;
     int myInteger;
@@ -220,7 +220,7 @@ const struct {
 ```go
 package myconfig
 
-// Generated with confluent v0.0.1 (https://pypi.org/project/confluent/).
+// Generated with confluent v0.0.2 (https://pypi.org/project/confluent/).
 var TestConfig = struct {
     myBoolean           bool
     myInteger           int
@@ -228,13 +228,13 @@ var TestConfig = struct {
     myDouble            float64
     myRegex             string // Just another RegEx.
     mySubstitutedString string
-} {
+}{
     myBoolean:           true,
     myInteger:           142,
     myFloat:             322.0,
     myDouble:            233.9,
     myRegex:             "Test Reg(E|e)x",
-    mySubstitutedString: "Sometimes I just want to scream Hello World!",
+    mySubstitutedString: "Sometimes I just want to scream Hello Mars!",
 }
 ```
 
