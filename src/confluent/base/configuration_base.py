@@ -11,7 +11,7 @@ class ConfigurationBase:
     """
     transform: str
     """
-    Python function which can transform the provided value. The function has access to the following variables.
+    Python function which can transform the provided value. The script has access to the following variables.
     - name: Property name.
     - value: Property value.
     - type: Property type value (see values PropertyType).
