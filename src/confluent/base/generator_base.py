@@ -45,6 +45,7 @@ class GeneratorBase(ABC):
         type_name = config.type_name
         indent = config.indent
 
+        self.transform = config.transform
         self._properties: List[Property] = []
         self._naming_conventions = \
             config.naming_conventions if config.naming_conventions else GeneratorNamingConventions()
@@ -102,18 +103,24 @@ class GeneratorBase(ABC):
             if s[-1] != '\n':
                 s += '\n'
             return s
+        
+        # Create copies of the properties to avoid messing around with the originals.
+        properties_copy = [copy.deepcopy(property) for property in self._properties]
+
+        # Transform properties if transform function was provided.
+        self._apply_transformation(properties_copy)
 
         # Create the string for properties which shall be added before the class definition.
-        properties_before_type = self._create_properties_string(self._property_before_type)
+        properties_before_type = self._create_properties_string(self._property_before_type, properties_copy)
 
         # Create the string for properties which shall be added after the class definition.
-        properties_after_type = self._create_properties_string(self._property_after_type)
+        properties_after_type = self._create_properties_string(self._property_after_type, properties_copy)
 
         s = self._before_type()
         s += f'{properties_before_type}\n' if properties_before_type else ''
         s += f'{self._property_comment(f"Generated with confluent v{VERSION} (https://pypi.org/project/confluent/).").strip()}\n'
         s += f'{self._start_type(self._type_name)}\n'
-        s += self._create_properties_string(self._create_property_in_type)
+        s += self._create_properties_string(self._create_property_in_type, properties_copy)
 
         class_end = self._end_type()
         s += f'\n{class_end}'
@@ -136,6 +143,12 @@ class GeneratorBase(ABC):
     
     @abstractmethod
     def _default_type_naming_convention(self) -> NamingConventionType:
+        """
+        Abstract method which must be implemented by the deriving class to specify the default type naming convention.
+
+        :return: Default naming convention.
+        :rtype:  NamingConventionType
+        """
         pass
 
     @abstractmethod
@@ -266,15 +279,23 @@ class GeneratorBase(ABC):
         )
         return self
     
-    def _create_properties_string(self, callout: Callable[[Property], str]) -> str:
-        # Create copies of the properties to avoid messing around with the originals.
-        properties = [copy.deepcopy(property) for property in self._properties]
+    def _create_properties_string(self, callout: Callable[[Property], str], properties_copy: List[Property]) -> str:
+        """
+        Creates a string of all properties based on the provided callout.
 
+        :param callout:         Callout to create a string based on the provided properties.
+        :type callout:          Callable[[Property], str]
+        :param properties_copy: Copy of all properties (to prevent modification of original).
+        :type properties_copy:  List[Property]
+
+        :return: Newline-separated properties string.
+        :rtype:  str
+        """
         return '\n'.join(
             # Loop in a loop. I know, it's a little bit confusing...
             property_string for property_string in [
                 # This loop forms each property into a string.
-                f'{callout(property)}' for property in properties
+                f'{callout(property)}' for property in properties_copy
             ] if property_string  # This clause makes sure that only property strings with a value are used.
         )
 
@@ -309,3 +330,38 @@ class GeneratorBase(ABC):
         else:
             s = f'{INDENT}{property_in_type}{comment if comment else ""}'
         return s
+    
+    def _apply_transformation(self, properties_copy: List[Property]) -> None:
+        """
+        Applies the user defined value transformation to each property value.
+
+        :param properties_copy: Copy of all properties (to prevent modification of original).
+        :type properties_copy:  List[Property]
+        """
+        if self.transform:
+            NAME_KEY = 'name'
+            VALUE_KEY = 'value'
+            TYPE_KEY = 'type'
+            PROPERTIES_KEY = 'properties'
+
+            for i, property in enumerate(properties_copy):
+                # Create dictionary for local variables. This dictionary will also be used
+                # to get the modified value afterwards (https://stackoverflow.com/a/67824076).
+                local_variables = {
+                    NAME_KEY: property.name,
+                    VALUE_KEY: property.value,
+                    TYPE_KEY: property.type.value,
+                    PROPERTIES_KEY: properties_copy,
+                }
+
+                # Execute user defined Python script.
+                exec(self.transform, None, local_variables)
+                
+                # Create new property from modified value.
+                properties_copy[i] = Property(
+                    property.name,
+                    local_variables[VALUE_KEY],
+                    property.type,
+                    property.hidden,
+                    property.comment,
+                )
