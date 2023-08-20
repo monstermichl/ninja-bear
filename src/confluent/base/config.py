@@ -168,19 +168,9 @@ class Config:
         :return: The corresponding PropertyType enum value.
         :rtype:  PropertyType
         """
-        if type == 'bool':
-            type = PropertyType.BOOL
-        elif type == 'int':
-            type = PropertyType.INT
-        elif type == 'float':
-            type = PropertyType.FLOAT
-        elif type == 'double':
-            type = PropertyType.DOUBLE
-        elif type == 'string':
-            type = PropertyType.STRING
-        elif type == 'regex':
-            type = PropertyType.REGEX
-        else:
+        try:
+            type = PropertyType(type)
+        except ValueError:
             raise UnknownPropertyTypeException(type)
         return type
 
