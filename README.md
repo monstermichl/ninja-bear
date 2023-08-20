@@ -51,7 +51,7 @@ languages:
   #
   #                             name: Property name.
   #                             value: Property value.
-  #                             type: Property type.
+  #                             type: Property type string (bool | int | float | double | string | regex).
   #                             properties: List of all properties (must not be modified).
   # -------------------------------------------------------------------------
 
