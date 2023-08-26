@@ -117,6 +117,10 @@ properties:
     name: myFloat
     value: 322f  # Float with float specifier. However, an additional specifier (f) is not required and will be trimmed.
 
+  - type: float
+    name: myCombinedFloat
+    value: ${myInteger} * ${myFloat}  # Number and boolean combinations get evaluated during the dump process.
+
   - type: double
     name: myDouble
     value: 233.9
@@ -126,14 +130,14 @@ properties:
     value: Hello World
     hidden: true  # If a property should act as a helper but should not be written to the generated file, it must be marked as 'hidden'.
 
+  - type: string
+    name: mySubstitutedString
+    value: Sometimes I just want to scream ${myString}!
+
   - type: regex
     name: myRegex
     value: Test Reg(E|e)x
     comment: Just another RegEx.  # Variables can be described using the comment property.
-
-  - type: string
-    name: mySubstitutedString
-    value: Sometimes I just want to scream ${myString}!
 ```
 
 ### Output
@@ -141,54 +145,58 @@ properties:
 ```java
 package my.test.package;
 
-// Generated with confluent v0.1.0 (https://pypi.org/project/confluent/).
+// Generated with confluent v0.1.1 (https://pypi.org/project/confluent/).
 public class TestConfig {
     public final static boolean myBoolean = true;
     public final static int myInteger = 142;
     public final static float myFloat = 322.0f;
+    public final static float myCombinedFloat = 45724.0f;
     public final static double myDouble = 233.9d;
-    public final static String myRegex = "Test Reg(E|e)x"; // Just another RegEx.
     public final static String mySubstitutedString = "Sometimes I just want to scream Hello World!";
+    public final static String myRegex = "Test Reg(E|e)x"; // Just another RegEx.
 }
 ```
 
 #### JavaScript
 ```javascript
-// Generated with confluent v0.1.0 (https://pypi.org/project/confluent/).
+// Generated with confluent v0.1.1 (https://pypi.org/project/confluent/).
 class TestConfig {
     static get myBoolean() { return true; }
     static get myInteger() { return 142; }
     static get myFloat() { return 322.0; }
+    static get myCombinedFloat() { return 45724.0; }
     static get myDouble() { return 233.9; }
-    static get myRegex() { return /Test Reg(E|e)x/; } // Just another RegEx.
     static get mySubstitutedString() { return 'Sometimes I just want to scream Hello World!'; }
+    static get myRegex() { return /Test Reg(E|e)x/; } // Just another RegEx.
 }
 module.exports = TestConfig
 ```
 
 #### TypeScript
 ```typescript
-// Generated with confluent v0.1.0 (https://pypi.org/project/confluent/).
+// Generated with confluent v0.1.1 (https://pypi.org/project/confluent/).
 export class TestConfig {
     public static readonly myBoolean = true;
     public static readonly myInteger = 142;
     public static readonly myFloat = 322.0;
+    public static readonly myCombinedFloat = 45724.0;
     public static readonly myDouble = 233.9;
-    public static readonly myRegex = /Test Reg(E|e)x/; // Just another RegEx.
     public static readonly mySubstitutedString = 'Sometimes I just want to scream Hello World!';
+    public static readonly myRegex = /Test Reg(E|e)x/; // Just another RegEx.
 }
 ```
 
 #### Python
 ```python
-# Generated with confluent v0.1.0 (https://pypi.org/project/confluent/).
+# Generated with confluent v0.1.1 (https://pypi.org/project/confluent/).
 class TestConfig:
     MY_BOOLEAN = True
     MY_INTEGER = 142
     MY_FLOAT = 322.0
+    MY_COMBINED_FLOAT = 45724.0
     MY_DOUBLE = 233.9
-    MY_REGEX = r'Test Reg(E|e)x'  # Just another RegEx.
     MY_SUBSTITUTED_STRING = 'Sometimes I just want to scream Hello World!'
+    MY_REGEX = r'Test Reg(E|e)x'  # Just another RegEx.
 ```
 
 #### C
@@ -196,45 +204,49 @@ class TestConfig:
 #ifndef TEST_CONFIG_H
 #define TEST_CONFIG_H
 
-/* Generated with confluent v0.1.0 (https://pypi.org/project/confluent/). */
+/* Generated with confluent v0.1.1 (https://pypi.org/project/confluent/). */
 const struct {
-    unsigned char myBoolean;
-    int myInteger;
-    float myFloat;
-    double myDouble;
-    char* myRegex; /* Just another RegEx. */
-    char* mySubstitutedString;
+    unsigned char MyBoolean;
+    int MyInteger;
+    float MyFloat;
+    float MyCombinedFloat;
+    double MyDouble;
+    char* MySubstitutedString;
+    char* MyRegex; /* Just another RegEx. */
 } TestConfig = {
     1,
     142,
     322.0f,
+    45724.0f,
     233.9,
-    "Test Reg(E|e)x",
     "Sometimes I just want to scream Hello World!",
+    "Test Reg(E|e)x",
 };
 
-#endif  /* TEST_CONFIG_H */
+#endif /* TEST_CONFIG_H */
 ```
 
 #### Go
 ```go
 package myconfig
 
-// Generated with confluent v0.1.0 (https://pypi.org/project/confluent/).
+// Generated with confluent v0.1.1 (https://pypi.org/project/confluent/).
 var TestConfig = struct {
     myBoolean           bool
     myInteger           int
     myFloat             float64
+    myCombinedFloat     float64
     myDouble            float64
-    myRegex             string // Just another RegEx.
     mySubstitutedString string
+    myRegex             string // Just another RegEx.
 }{
     myBoolean:           true,
     myInteger:           142,
     myFloat:             322.0,
+    myCombinedFloat:     45724.0,
     myDouble:            233.9,
-    myRegex:             "Test Reg(E|e)x",
     mySubstitutedString: "Sometimes I just want to scream Hello Mars!",
+    myRegex:             "Test Reg(E|e)x",
 }
 ```
 
