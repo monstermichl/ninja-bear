@@ -1,7 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 import copy
-import re
 from typing import Callable, List
 
 from .info import VERSION
