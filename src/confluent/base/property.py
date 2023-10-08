@@ -1,4 +1,5 @@
 from __future__ import annotations
+import copy
 import random
 import re
 from typing import Callable, List
@@ -20,8 +21,16 @@ class InvalidVariableNameException(Exception):
         super().__init__(f'{variable_name} is not a valid variable name')
 
 
+class InvalidNamespaceException(Exception):
+    def __init__(self, namespace: str):
+        super().__init__(f'{namespace} is not a valid namespace')
+
+
 class Property:
-    _PROPERTY_SUBSTITUTION_PATTERN = r'\${(\w+)}'
+    _PROPERTY_SUBSTITUTION_PATTERN = r'\${(\w+(\.\w+)?)}'
+    _NAMING_PATTERN = r'^(_|[a-zA-Z])(\w|-)*$'  # Define a general naming pattern.
+    _PROPERTY_NAME_PATTERN = _NAMING_PATTERN
+    _NAMESPACE_NAME_PATTERN = _NAMING_PATTERN
 
     """
     Holds all the required information to create a property string.
@@ -35,7 +44,8 @@ class Property:
         value: str | bool | int | float,
         property_type: PropertyType,
         hidden: bool = False,
-        comment: str = None
+        comment: str = None,
+        namespace: str = None,
     ):
         """
         Constructor
@@ -50,12 +60,21 @@ class Property:
         :type hidden:         bool, optional
         :param comment:       Property description, defaults to None
         :type comment:        str, optional
+        :param namespace:     Namespace to give the property an additional information to where it belongs, defaults to
+                              None to avoid collision with other properties with the same name (e.g., imported from
+                              other files).
+        :type namespace:      str, optional
 
         :raises InvalidVariableNameException: Raised if an invalid variable name has been provided.
+        :raises InvalidNamespaceException: Raised if an invalid namespace has been provided.
         """
-        # Check if the key is a valid variable name by Java standards.
-        if not re.match(r'^(_|[a-zA-Z])\w*$', name):
+        # Check if the key is a valid variable name.
+        if not re.match(Property._PROPERTY_NAME_PATTERN, name):
             raise InvalidVariableNameException(name)
+        
+        # Check if the key is a valid variable name.
+        if namespace and not re.match(Property._NAMESPACE_NAME_PATTERN, namespace):
+            raise InvalidNamespaceException(namespace)
         
         # Make sure that the provided value is valid even if it's a string.
         value = Property._convert_value(value, property_type)
@@ -65,6 +84,7 @@ class Property:
         self.value = value
         self.hidden = hidden
         self.comment = comment
+        self.namespace = namespace
 
     @staticmethod
     def substitute(property: Property, properties: List[Property]) -> None:
@@ -79,23 +99,32 @@ class Property:
         :raises UnknownSubstitutionException:   Raised if the requested substitution property does not exist.
         :raises RecursiveSubstitutionException: Raised if a property referenced itself as substitution.
         """
-        def replace(match):
-            substitution_property = match.group(1)
+        # Copy properties to avoid messing around with the originals.
+        properties_copy = copy.deepcopy(properties)
+
+        def replace(match, matchProperty):
+            substitution_property_value = match.group(1)  # E.g. myReplaceString or ti.myReplaceString.
+
+            # Incorporate namespace into property name.
+            def prepared_property_name(propertyTemp):
+                return f'{propertyTemp.namespace}.{propertyTemp.name}' \
+                    if propertyTemp.namespace else propertyTemp.name
             
-            # Substitute property only if it's not the same property as the one
-            # which is currently being processed.
-            if substitution_property != property.name:
+            # Substitute property only if it's not the same property as the one which is currently being processed.
+            if substitution_property_value != property.name:
                 found_properties = [
-                    search_property.value for search_property in properties if
-                    search_property.name == substitution_property
+                    search_property.value for search_property in properties_copy if
+                    prepared_property_name(search_property) == substitution_property_value
                 ]
 
                 if not found_properties:
-                    raise UnknownSubstitutionException(substitution_property)
+                    raise UnknownSubstitutionException(substitution_property_value)
                 replacement = found_properties[0]
             else:
                 # TODO: Handle indirect self reference.
-                raise RecursiveSubstitutionException(f'Property {property.name} must not reference itself!')
+                raise RecursiveSubstitutionException(
+                    f'Property {prepared_property_name(property)} must not reference itself!'
+                )
             return f'{replacement}'
         
         original_value = property.value
@@ -128,7 +157,7 @@ class Property:
         return value
 
     @staticmethod
-    def _replace_property_value(property: Property, callout: Callable[[re.Match], str]) -> None:
+    def _replace_property_value(property: Property, callout: Callable[[re.Match, Property], str]) -> None:
         """
         Replaces the substitution strings of a property value by using the provided callout function.
 
@@ -137,9 +166,12 @@ class Property:
         :param callout:  Callout function to which the RegEx match is passed. It must return a replacement string.
         :type callout:   Callable[[re.Match], str]
         """
+        def callout_wrapper(match: re.Match) -> str:
+            return callout(match, property)
+
         if isinstance(property.value, str):
             # Replace all occurrences.
-            property.value = re.sub(Property._PROPERTY_SUBSTITUTION_PATTERN, callout, property.value)
+            property.value = re.sub(Property._PROPERTY_SUBSTITUTION_PATTERN, callout_wrapper, property.value)
 
     @staticmethod
     def _is_valid_number_substitution(value: any) -> bool:
@@ -159,7 +191,7 @@ class Property:
             pseudo_property = Property('p', value, PropertyType.STRING)
 
             # Substitute with pseudo data.
-            def replace(_):
+            def replace(*_):
                 random_number = random.randint(1, 10)
                 return f'{random_number}'
             Property._replace_property_value(pseudo_property, replace)

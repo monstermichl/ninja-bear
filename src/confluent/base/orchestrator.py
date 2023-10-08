@@ -46,17 +46,7 @@ class Orchestrator:
         :return: Orchestrator instance.
         :rtype:  Orchestrator
         """
-        with open(path, 'r') as f:
-            content = f.read()
-
-        # Prepare config name.
-        last_part = path.replace(r'\\', '/').split('/')[-1]
-
-        if '.' in last_part:
-            config_name = '.'.join(last_part.split('.')[0:-1])
-        else:
-            config_name = last_part
-        return Orchestrator.parse_config(content, config_name)
+        return Orchestrator(Config.read(path))
 
     @staticmethod
     def parse_config(config: str, config_name: str) -> Orchestrator:

@@ -366,9 +366,10 @@ class GeneratorBase(ABC):
                 
                 # Create new property from modified value.
                 properties_copy[i] = Property(
-                    property.name,
-                    local_variables[VALUE_KEY],
-                    property.type,
-                    property.hidden,
-                    property.comment,
+                    name=property.name,
+                    value=local_variables[VALUE_KEY],
+                    property_type=property.type,
+                    hidden=property.hidden,
+                    comment=property.comment,
+                    namespace=property.namespace,
                 )
