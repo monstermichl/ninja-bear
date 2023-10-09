@@ -1,4 +1,5 @@
 from __future__ import annotations
+import os
 from typing import List, Tuple, Type
 
 import yaml
@@ -122,10 +123,11 @@ class Config:
             config_name = '.'.join(last_part.split('.')[0:-1])
         else:
             config_name = last_part
-        return Config._parse(content, config_name, namespace)
+        return Config._parse(content, config_name, namespace, os.path.dirname(path))
 
     @staticmethod
-    def _parse(content: str, config_name: str, namespace: str) -> Tuple[List[LanguageConfigBase], List[Property]]:
+    def _parse(content: str, config_name: str, namespace: str='', directory: str='') -> \
+        Tuple[List[LanguageConfigBase], List[Property]]:
         """
         Parses the provided YAML configuration string and returns the corresponding language configurations.
 
@@ -161,9 +163,14 @@ class Config:
         if _KEY_INCLUDES in validated_object:
             for inclusion in validated_object[_KEY_INCLUDES]:
                 inclusion_namespace = inclusion[_KEY_AS]
+                inclusion_path = inclusion[_KEY_PATH]
+
+                # If the provided path is relative, incorporate the provided directory into the path.
+                if not os.path.isabs(inclusion_path):
+                    inclusion_path = os.path.join(directory, inclusion_path)
 
                 # Read included config and put properties into property list.
-                for inclusion_property in Config._read(inclusion[_KEY_PATH], inclusion_namespace)[1]:
+                for inclusion_property in Config._read(inclusion_path, inclusion_namespace)[1]:
                     properties.append(inclusion_property)
 
         # Evaluate each language setting one by one.
