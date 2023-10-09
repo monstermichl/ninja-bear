@@ -111,5 +111,5 @@ properties:
 
   - type: string
     name: myCombinedString
-    value: I'm telling you that ${ti.myIncludedString}.  # To use the value of another property from an included file, simply use the file's
+    value: I am telling you that ${ti.myIncludedString}.  # To use the value of another property from an included file, simply use the file's
                                                          # alias and the corresponding property name. E.g., ${ti.myIncludedString}.
