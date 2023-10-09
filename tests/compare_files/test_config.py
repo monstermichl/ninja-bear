@@ -5,5 +5,7 @@ class TestConfig:
     MY_FLOAT = 322.0
     MY_COMBINED_FLOAT = 45724.0
     MY_DOUBLE = 233.9
-    MY_SUBSTITUTED_STRING = 'Sometimes I just want to scream Hello World!'
     MY_REGEX = r'Test Reg(E|e)x'  # Just another RegEx.
+    MY_SUBSTITUTED_STRING = 'Sometimes I just want to scream Hello World!'
+    MY_COMBINED_STRING = 'I am telling you that this string got included from test-include.yaml.'
+    MY_INCLUDED_STRING = 'this string got included from test-include.yaml'

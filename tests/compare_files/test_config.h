@@ -8,16 +8,20 @@ const struct {
     float MyFloat;
     float MyCombinedFloat;
     double MyDouble;
-    char* MySubstitutedString;
     char* MyRegex; /* Just another RegEx. */
+    char* MySubstitutedString;
+    char* MyCombinedString;
+    char* MyIncludedString;
 } TestConfig = {
     1,
     142,
     322.0f,
     45724.0f,
     233.9,
-    "Sometimes I just want to scream Hello World!",
     "Test Reg(E|e)x",
+    "Sometimes I just want to scream Hello World!",
+    "I am telling you that this string got included from test-include.yaml.",
+    "this string got included from test-include.yaml",
 };
 
 #endif /* TEST_CONFIG_H */

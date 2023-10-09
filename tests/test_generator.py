@@ -38,8 +38,10 @@ class TestGenerator(unittest.TestCase):
         self._evaluate_configs(orchestrator.language_configs)
 
     def test_parse_config(self):
+        TEST_INCLUDE = 'test-include.yaml'
+
         with open(self._test_config_path, 'r') as f:
-            content = f.read()
+            content = f.read().replace(TEST_INCLUDE, os.path.join(os.getcwd(), 'example', TEST_INCLUDE))
         orchestrator = Orchestrator.parse_config(content, 'test-config')
         self._evaluate_configs(orchestrator.language_configs)
 
