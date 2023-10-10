@@ -65,6 +65,11 @@ class SeveralLanguageConfigsException(Exception):
         super().__init__(f'Several languages configs found for {language_type}')
 
 
+class AliasAlreadyInUseException(Exception):
+    def __init__(self, alias: str):
+        super().__init__(f'The include-alias \'{alias}\' is already in use')
+
+
 class Config:
     """
     Handles the config evaluation by parsing the provided YAML string via the parse-method.
@@ -101,7 +106,7 @@ class Config:
         return Config._parse(content, config_name, None)[0]
 
     @staticmethod
-    def _read(path: str, namespace: str) -> List[LanguageConfigBase]:
+    def _read(path: str, namespace: str, namespaces: List[str]=[]) -> List[LanguageConfigBase]:
         """
         Reads the provided YAML configuration file and generates a list of language configurations.
 
@@ -123,10 +128,10 @@ class Config:
             config_name = '.'.join(last_part.split('.')[0:-1])
         else:
             config_name = last_part
-        return Config._parse(content, config_name, namespace, os.path.dirname(path))
+        return Config._parse(content, config_name, namespace, os.path.dirname(path), namespaces)
 
     @staticmethod
-    def _parse(content: str, config_name: str, namespace: str='', directory: str='') -> \
+    def _parse(content: str, config_name: str, namespace: str='', directory: str='', namespaces: List[str]=[]) -> \
         Tuple[List[LanguageConfigBase], List[Property]]:
         """
         Parses the provided YAML configuration string and returns the corresponding language configurations.
@@ -139,6 +144,8 @@ class Config:
         :type config_name:  str
         :param namespace:   Specifies a namespace for the config. If None or empty, no namespace will be set.
         :type nammespace:   str
+
+        :raises AliasAlreadyInUseException: Raised if an included config file uses an already defined alias.
 
         :return: Language configurations which further can be dumped as config files.
         :rtype:  List[LanguageConfigBase]
@@ -163,6 +170,12 @@ class Config:
         if _KEY_INCLUDES in validated_object:
             for inclusion in validated_object[_KEY_INCLUDES]:
                 inclusion_namespace = inclusion[_KEY_AS]
+
+                # Make sure that a included config file does not re-define an alias.
+                if inclusion_namespace in namespaces:
+                    raise AliasAlreadyInUseException(inclusion_namespace)
+                else:
+                    namespaces.append(inclusion_namespace)
                 inclusion_path = inclusion[_KEY_PATH]
 
                 # If the provided path is relative, incorporate the provided directory into the path.
@@ -170,7 +183,7 @@ class Config:
                     inclusion_path = os.path.join(directory, inclusion_path)
 
                 # Read included config and put properties into property list.
-                for inclusion_property in Config._read(inclusion_path, inclusion_namespace)[1]:
+                for inclusion_property in Config._read(inclusion_path, inclusion_namespace, namespaces)[1]:
                     inclusion_property.hidden = True  # Included properties are not being exported by default.
                     properties.append(inclusion_property)
 
