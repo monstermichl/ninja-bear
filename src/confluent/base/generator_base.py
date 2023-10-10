@@ -69,7 +69,9 @@ class GeneratorBase(ABC):
         :return: The current generator instance.
         :rtype:  Self
         """
-        found_property = len([p for p in self._properties if p.name == property.name]) > 0
+        found_property = len([
+            p for p in self._properties if p.name == property.name and p.namespace == property.namespace
+        ]) > 0
 
         # Make sure that the name doesn't already exist.
         if found_property:
