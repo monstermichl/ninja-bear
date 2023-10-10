@@ -2,7 +2,7 @@
 So there's a language you use which is not yet supported and you want to add it yourself? Alright, lets dive right into it. Here are the steps you need to take to add support for a new language.
 
 ## Fork the project
-First of all, fork the project. This makes sure that there's no messing around on the main branch. Did that? Lets move on.
+First of all, fork the develop branch of the project. This makes sure that there's no messing around on the branch itself. Did that? Lets move on.
 
 ## Add a new language type
 Open up *src/confluent/base/language_type.py* and add the language you want to support.
@@ -212,4 +212,4 @@ Run *test.sh/bat* from the *helpers* directory and make sure all tests pass and 
 Make sure users know that the language is supported by adding it to the list of supported languages, updating the test-config and adding the example output to the README.md file (have a look how it's done for other languages).
 
 ## Create a Pull-Request
-Merge the main branch into your branch, resolve possibly arising merge conflicts and create a pull-request on Github.
+Merge the develop branch into your branch, resolve possibly arising merge conflicts and create a pull-request on Github.
