@@ -1,3 +1,15 @@
+# test-config.yaml file.
+
+# Optional
+includes:
+  # --- Common properties ---------------------------------------------------
+  # path (required): Specifies the path to the external configuration file.
+  # as   (required): Specifies how the file will be referenced in value substitutions (e.g., ${ti.myIncludedString}).
+  # -------------------------------------------------------------------------
+  - path: test-include.yaml
+    as: ti
+
+# Optional
 languages:
   # --- Common properties (valid for all languages) -------------------------
   # type            (required): Specifies the output language (java | javascript | typescript | python | c | go).
@@ -51,7 +63,7 @@ languages:
   - type: go
     file_naming: snake
     package: myconfig
-    transform: | 
+    transform: |  # If the property 'myString' is being processed, replace the value by 'Hello Mars'.
       if name == 'myString':
         value = 'Hello Mars'
 
@@ -77,6 +89,10 @@ properties:
     name: myFloat
     value: 322f  # Float with float specifier. However, an additional specifier (f) is not required and will be trimmed.
 
+  - type: float
+    name: myCombinedFloat
+    value: ${myInteger} * ${myFloat}  # Number and boolean combinations get evaluated during the dump process.
+
   - type: double
     name: myDouble
     value: 233.9
@@ -93,4 +109,9 @@ properties:
 
   - type: string
     name: mySubstitutedString
-    value: Sometimes I just want to scream ${myString}!
+    value: Sometimes I just want to scream ${myString}!  # To use the value of another property, simply use its name with ${}. E.g., ${myString}.
+
+  - type: string
+    name: myCombinedString
+    value: I am telling you that ${ti.myIncludedString}.  # To use the value of another property from an included file, simply use the file's
+                                                          # alias and the corresponding property name. E.g., ${ti.myIncludedString}.

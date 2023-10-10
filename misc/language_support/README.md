@@ -75,7 +75,7 @@ class MyLanguageGenerator(GeneratorBase):
 ```
 
 ## Add a new language config
-Create a new config class within *src/confluent/language_configs* (e.g., *my_language_configs.py*) which inherits from [*LanguageConfigBase*](https://github.com/monstermichl/confluent/blob/main/src/confluent/base/language_config_base.py) and implements the required **abstract** methods (a template can be found under [*misc/language_support/templates*](https://github.com/monstermichl/confluent/tree/main/misc/language_support/templates)). The language config encapsulates all the necessary information to create a config file (e.g., the language type,the config extension, which generator to use, ...).
+Create a new config class within *src/confluent/language_configs* (e.g., *my_language_configs.py*) which inherits from [*LanguageConfigBase*](https://github.com/monstermichl/confluent/blob/main/src/confluent/base/language_config_base.py) and implements the required **abstract** methods (a template can be found under [*misc/language_support/templates*](https://github.com/monstermichl/confluent/tree/main/misc/language_support/templates)). The language config encapsulates all the necessary information to create a config file (e.g., the language type, the config extension, which generator to use, ...).
 
 ```python
 class MyLanguageConfig(LanguageConfigBase):
@@ -83,28 +83,17 @@ class MyLanguageConfig(LanguageConfigBase):
     MyLanguage specific config. For more information about the config methods, refer to LanguageConfigBase.
     """
 
-    def __init__(
-        self,
-        config_name: str,
-        properties: List[Property],
-        indent: int,
-        transform: str,
-        naming_conventions: LanguageConfigNamingConventions,
-        additional_props = {},
-    ):
-        super().__init__(
-            LanguageConfigConfiguration(
-                config_name,
-                LanguageType.MY_LANGUAGE,  # Use the language type (LanguageType) set up two steps before.
-                'ml',
-                MyLanguageGenerator,  # Use the generator class created in the previous step.
-                indent,
-                transform,
-                naming_conventions,
-            ),
-            properties,
-            additional_props,
-        )
+    def _language_type(self) -> LanguageType:
+        return LanguageType.MY_LANGUAGE  # Use the language type (LanguageType) set up two steps before.
+
+    def _file_extension(self) -> str:
+        return 'ml'  # Define the language file extension.
+
+    def _generator_type(self) -> Type[GeneratorBase]:
+        return MyLanguageGenerator  # Use the generator class created in the previous step.
+
+    def _allowed_file_name_pattern(self) -> str:
+        return r'.+'  # Define which file names are valid.
 ```
 
 ## Glue everything together
@@ -133,7 +122,7 @@ def get_mappings() -> List[ConfigLanguageMapping]:
 ```
 
 ## Wrap up
-That's it! You successfully added support for a new language. Now here is where it gets tedious but yes, this stuff has also to be done.
+That's it! You successfully added support for a new language. Now here is where it gets tedious but yes, this stuff also has to be done.
 
 ### Add your language to test-config.yaml
 As test-config.yaml serves as the documentation for what's supported, make sure your language is added to it (as an example and under common language properties' type, where the supported languages are listed).
@@ -163,23 +152,6 @@ languages:
     file_naming: pascal
     type_naming: pascal
     package: my.test.package
-
-  # --- JavaScript/TypeScript specific properties ---------------------------
-  # export (optional): Specifies how to export the class (esm | common_js | none). Defaults to esm.
-  # -------------------------------------------------------------------------
-  - type: javascript
-    file_naming: screaming_snake
-    indent: 4
-    export: common_js
-
-  - type: typescript
-    indent: 4
-    export: esm
-
-  # -------------------------------------------------------------------------
-  - type: python
-    file_naming: snake
-    property_naming: screaming_snake
 
   .
   .

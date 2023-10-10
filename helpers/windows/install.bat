@@ -16,5 +16,5 @@ rem Exit script successfully.
 call :_exit 0
 
 :_exit
-    popd    
-    exit %1
+    popd
+    exit /B %1

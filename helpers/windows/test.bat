@@ -18,4 +18,4 @@ call :_exit 0
 
 :_exit
     popd    
-    exit %1
+    exit /B %1

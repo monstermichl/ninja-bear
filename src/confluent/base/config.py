@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import List, Type
+import os
+from typing import List, Tuple, Type
 
 import yaml
 from schema import Schema, Use, Optional, Or
@@ -13,8 +14,13 @@ from .language_config_base import LanguageConfigBase
 from .language_config_naming_conventions import LanguageConfigNamingConventions
 
 # Main categories.
+_KEY_INCLUDES = 'includes'
 _KEY_LANGUAGES = 'languages'
 _KEY_PROPERTIES = 'properties'
+
+# Include keys.
+_KEY_PATH = 'path'
+_KEY_AS = 'as'
 
 # Language keys.
 _KEY_FILE_NAMING = 'file_naming'
@@ -65,6 +71,19 @@ class Config:
     """
 
     @staticmethod
+    def read(path: str) -> List[LanguageConfigBase]:
+        """
+        Reads the provided YAML configuration file and generates a list of language configurations.
+
+        :param path: Path to load the YAML file from (see example/test-config.yaml for configuration details).
+        :type path:  str
+
+        :return: Language configurations which further can be dumped as config files.
+        :rtype:  List[LanguageConfigBase]
+        """
+        return Config._read(path, None)[0]
+
+    @staticmethod
     def parse(content: str, config_name: str) -> List[LanguageConfigBase]:
         """
         Parses the provided YAML configuration string and returns the corresponding language configurations.
@@ -79,57 +98,119 @@ class Config:
         :return: Language configurations which further can be dumped as config files.
         :rtype:  List[LanguageConfigBase]
         """
+        return Config._parse(content, config_name, None)[0]
+
+    @staticmethod
+    def _read(path: str, namespace: str) -> List[LanguageConfigBase]:
+        """
+        Reads the provided YAML configuration file and generates a list of language configurations.
+
+        :param path:      Path to load the YAML file from (see example/test-config.yaml for configuration details).
+        :type path:       str
+        :param namespace: Specifies a namespace for the config. If None or empty, no namespace will be set.
+        :type nammespace: str
+
+        :return: Language configurations which further can be dumped as config files.
+        :rtype:  List[LanguageConfigBase]
+        """
+        with open(path, 'r') as f:
+            content = f.read()
+
+        # Prepare config name.
+        last_part = path.replace(r'\\', '/').split('/')[-1]
+
+        if '.' in last_part:
+            config_name = '.'.join(last_part.split('.')[0:-1])
+        else:
+            config_name = last_part
+        return Config._parse(content, config_name, namespace, os.path.dirname(path))
+
+    @staticmethod
+    def _parse(content: str, config_name: str, namespace: str='', directory: str='') -> \
+        Tuple[List[LanguageConfigBase], List[Property]]:
+        """
+        Parses the provided YAML configuration string and returns the corresponding language configurations.
+
+        :param content:     YAML configuration strings. For config details, please check the test-config.yaml in
+                            the example folder.
+        :type content:      str
+        :param config_name: Output config file name. NOTE: The actual file name format might be overruled by
+                            the specified file_naming rule from the config.
+        :type config_name:  str
+        :param namespace:   Specifies a namespace for the config. If None or empty, no namespace will be set.
+        :type nammespace:   str
+
+        :return: Language configurations which further can be dumped as config files.
+        :rtype:  List[LanguageConfigBase]
+        """
         yaml_object = yaml.safe_load(content)
         validated_object = Config._schema().validate(yaml_object)
-        properties: List[Property] = []
         language_configs: List[LanguageConfigBase] = []
+        properties: List[Property] = []
 
         # Collect properties as they are the same for all languages.
         for property in validated_object[_KEY_PROPERTIES]:
             properties.append(Property(
-                property_type = property[_KEY_TYPE],
-                name = property[_KEY_NAME],
-                value = property[_KEY_VALUE],
+                name=property[_KEY_NAME],
+                value=property[_KEY_VALUE],
+                property_type=property[_KEY_TYPE],
                 hidden=property[_KEY_HIDDEN] if _KEY_HIDDEN in property else None,
                 comment=property[_KEY_COMMENT] if _KEY_COMMENT in property else None,
+                namespace=namespace,
             ))
+
+        # Evaluate included files and their properties.
+        if _KEY_INCLUDES in validated_object:
+            for inclusion in validated_object[_KEY_INCLUDES]:
+                inclusion_namespace = inclusion[_KEY_AS]
+                inclusion_path = inclusion[_KEY_PATH]
+
+                # If the provided path is relative, incorporate the provided directory into the path.
+                if not os.path.isabs(inclusion_path):
+                    inclusion_path = os.path.join(directory, inclusion_path)
+
+                # Read included config and put properties into property list.
+                for inclusion_property in Config._read(inclusion_path, inclusion_namespace)[1]:
+                    inclusion_property.hidden = True  # Included properties are not being exported by default.
+                    properties.append(inclusion_property)
 
         # Evaluate each language setting one by one.
-        for language in validated_object[_KEY_LANGUAGES]:
-            naming_conventions = LanguageConfigNamingConventions()
-            language_type = language[_KEY_TYPE]
-            indent = language[_KEY_INDENT] if _KEY_INDENT in language else None
-            transform = language[_KEY_TRANSFORM] if _KEY_TRANSFORM in language else None
+        if _KEY_LANGUAGES in validated_object:
+            for language in validated_object[_KEY_LANGUAGES]:
+                naming_conventions = LanguageConfigNamingConventions()
+                language_type = language[_KEY_TYPE]
+                indent = language[_KEY_INDENT] if _KEY_INDENT in language else None
+                transform = language[_KEY_TRANSFORM] if _KEY_TRANSFORM in language else None
 
-            # Evaluate file naming-convention.
-            naming_conventions.file_naming_convention = Config._evaluate_naming_convention_type(
-                language[_KEY_FILE_NAMING] if _KEY_FILE_NAMING in language else None
-            )
+                # Evaluate file naming-convention.
+                naming_conventions.file_naming_convention = Config._evaluate_naming_convention_type(
+                    language[_KEY_FILE_NAMING] if _KEY_FILE_NAMING in language else None
+                )
 
-            # Evaluate properties naming-convention.
-            naming_conventions.properties_naming_convention = Config._evaluate_naming_convention_type(
-                language[_KEY_PROPERTY_NAMING] if _KEY_PROPERTY_NAMING in language else None
-            )
+                # Evaluate properties naming-convention.
+                naming_conventions.properties_naming_convention = Config._evaluate_naming_convention_type(
+                    language[_KEY_PROPERTY_NAMING] if _KEY_PROPERTY_NAMING in language else None
+                )
 
-            # Evaluate type naming-convention.
-            naming_conventions.type_naming_convention = Config._evaluate_naming_convention_type(
-                language[_KEY_TYPE_NAMING] if _KEY_TYPE_NAMING in language else None
-            )
-            config_type = Config._evaluate_config_type(language_type)
+                # Evaluate type naming-convention.
+                naming_conventions.type_naming_convention = Config._evaluate_naming_convention_type(
+                    language[_KEY_TYPE_NAMING] if _KEY_TYPE_NAMING in language else None
+                )
+                config_type = Config._evaluate_config_type(language_type)
 
-            language_configs.append(config_type(
-                config_name,
-                properties,
-                indent,
-                transform,
-                naming_conventions,
+                language_configs.append(config_type(
+                    config_name=config_name,
+                    properties=properties,
+                    indent=indent,
+                    transform=transform,
+                    naming_conventions=naming_conventions,
 
-                # Pass all language props as additional_props to let the specific
-                # generator decides which props he requires additionally.
-                language,
-            ))
+                    # Pass all language props as additional_props to let the specific
+                    # generator decide which props it requires additionally.
+                    additional_props=language,
+                ))
 
-        return language_configs
+        return language_configs, properties
     
     @staticmethod
     def _schema() -> Schema:
@@ -140,7 +221,11 @@ class Config:
         :rtype:  Schema
         """
         return Schema({
-            _KEY_LANGUAGES: [{
+            Optional(_KEY_INCLUDES): [{
+                _KEY_PATH: str,
+                _KEY_AS: str,
+            }],
+            Optional(_KEY_LANGUAGES): [{
                 _KEY_TYPE: Use(Config._evaluate_language_type),
                 Optional(_KEY_FILE_NAMING): str,
                 Optional(_KEY_INDENT): int,

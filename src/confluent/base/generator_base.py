@@ -1,7 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 import copy
-import re
 from typing import Callable, List
 
 from .info import VERSION
@@ -10,16 +9,6 @@ from .generator_configuration import GeneratorConfiguration
 from .generator_naming_conventions import GeneratorNamingConventions
 from .name_converter import NamingConventionType, NameConverter
 from .property import Property
-
-
-class UnknownSubstitutionException(Exception):
-    def __init__(self, substitution_property: str):
-        super().__init__(f'Unknown substitution property {substitution_property}')
-
-
-class RecursiveSubstitutionException(Exception):
-    def __init__(self, substitution_property: str):
-        super().__init__(f'It\'s not allowed for a property to reference itself ({substitution_property})')
 
 
 class PropertyAlreadyExistsException(Exception):
@@ -106,9 +95,6 @@ class GeneratorBase(ABC):
         """
         Generates a config file string.
 
-        :raises UnknownSubstitutionException:   Raised if the requested substitution property does not exist.
-        :raises RecursiveSubstitutionException: Raised if a property referenced itself as substitution.
-
         :return: Config file string.
         :rtype:  str
         """
@@ -126,27 +112,7 @@ class GeneratorBase(ABC):
 
         # Substitute property values.
         for property in properties_copy:
-            def replace(match):
-                substitution_property = match.group(1)
-                
-                # Substitute property only if it's not the same property as the one
-                # which is currently being processed.
-                if substitution_property != property.name:
-                    found_properties = [
-                        search_property.value for search_property in properties_copy if
-                        search_property.name == substitution_property
-                    ]
-
-                    if not found_properties:
-                        raise UnknownSubstitutionException(substitution_property)
-                    replacement = found_properties[0]
-                else:
-                    # TODO: Handle indirect self reference.
-                    raise RecursiveSubstitutionException('It\'s not allowed to reference the property itself')
-                return replacement
-            
-            if isinstance(property.value, str):
-                property.value = re.sub(r'\${(\w+)}', replace, property.value)
+            Property.substitute(property, properties_copy)
 
         # Remove hidden properties.
         properties_copy = [property for property in properties_copy if not property.hidden]
@@ -400,9 +366,10 @@ class GeneratorBase(ABC):
                 
                 # Create new property from modified value.
                 properties_copy[i] = Property(
-                    property.name,
-                    local_variables[VALUE_KEY],
-                    property.type,
-                    property.hidden,
-                    property.comment,
+                    name=property.name,
+                    value=local_variables[VALUE_KEY],
+                    property_type=property.type,
+                    hidden=property.hidden,
+                    comment=property.comment,
+                    namespace=property.namespace,
                 )
