@@ -63,7 +63,7 @@ languages:
   - type: go
     file_naming: snake
     package: myconfig
-    transform: | 
+    transform: |  # If the property 'myString' is being processed, replace the value by 'Hello Mars'.
       if name == 'myString':
         value = 'Hello Mars'
 
