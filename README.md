@@ -292,6 +292,7 @@ languages:
   - type: java
     file_naming: pascal
     package: com.app.endpoints
+    transform: value = value.replace(':id', '{id}')  # For Java replace ':id' by '{id}'
 
   - type: typescript
     file_naming: kebap
@@ -330,7 +331,7 @@ package com.app.endpoints;
 public class Endpoints {
     public final static String API_ENDPOINT = "/api";
     public final static String USERS_ENDPOINT = "/api/users";
-    public final static String USER_PERMISSIONS_ENDPOINT = "/api/users/:id/permissions";
+    public final static String USER_PERMISSIONS_ENDPOINT = "/api/users/{id}/permissions";
     public final static String CUSTOMERS_ENDPOINT = "/api/customers";
 }
 ```
