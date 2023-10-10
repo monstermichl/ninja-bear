@@ -199,15 +199,15 @@ class Config:
                 config_type = Config._evaluate_config_type(language_type)
 
                 language_configs.append(config_type(
-                    config_name,
-                    properties,
-                    indent,
-                    transform,
-                    naming_conventions,
+                    config_name=config_name,
+                    properties=properties,
+                    indent=indent,
+                    transform=transform,
+                    naming_conventions=naming_conventions,
 
                     # Pass all language props as additional_props to let the specific
                     # generator decide which props it requires additionally.
-                    language,
+                    additional_props=language,
                 ))
 
         return language_configs, properties
