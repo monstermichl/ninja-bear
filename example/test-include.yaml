@@ -1,3 +1,5 @@
+# test-include.yaml file.
+
 properties:
   - type: string
     name: myIncludedString

@@ -133,7 +133,7 @@ def get_mappings() -> List[ConfigLanguageMapping]:
 ```
 
 ## Wrap up
-That's it! You successfully added support for a new language. Now here is where it gets tedious but yes, this stuff has also to be done.
+That's it! You successfully added support for a new language. Now here is where it gets tedious but yes, this stuff also has to be done.
 
 ### Add your language to test-config.yaml
 As test-config.yaml serves as the documentation for what's supported, make sure your language is added to it (as an example and under common language properties' type, where the supported languages are listed).
@@ -163,23 +163,6 @@ languages:
     file_naming: pascal
     type_naming: pascal
     package: my.test.package
-
-  # --- JavaScript/TypeScript specific properties ---------------------------
-  # export (optional): Specifies how to export the class (esm | common_js | none). Defaults to esm.
-  # -------------------------------------------------------------------------
-  - type: javascript
-    file_naming: screaming_snake
-    indent: 4
-    export: common_js
-
-  - type: typescript
-    indent: 4
-    export: esm
-
-  # -------------------------------------------------------------------------
-  - type: python
-    file_naming: snake
-    property_naming: screaming_snake
 
   .
   .

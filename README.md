@@ -15,7 +15,7 @@ python -m pip install confluent  # On Linux use python3.
 ```
 
 ## Configuration
-For details about the configuration file, please check *example/test-config.yaml*. All possible values are described there. Basically the configuration consists of a *languages*- and a *properties*-section. The first one describes language specific properties e.g. for which language to generate, which naming convention to use for the output file or how much indent to use. The *properties*-section defines the actual values whereis the following types are supported: *bool*, *int*, *float*, *double*, *string* and *regex*. Properties can also act as helpers for other properties which don't need to be written to the final config-file. These properties can be marked as *hidden*. Acting as a helper-property means that it defines a value which other properties can use as substitute values referencing them via *${property-name}*.
+For details about the configuration file, please check *example/test-config.yaml*. All possible values are described there. Basically the configuration consists of a *languages*- and a *properties*-section. The first one describes language specific properties e.g. for which language to generate, which naming convention to use for the output file or how much indent to use. The *properties*-section defines the actual values whereis the following types are supported: *bool*, *int*, *float*, *double*, *string* and *regex*. Properties can also act as helpers for other properties which don't need to be written to the final config-file. These properties must be marked as *hidden*. Acting as a helper-property means that it defines a value which other properties can use as substitute values referencing them via *${property-name}*. Additionally, other configuration files can be included via the *includes*-section. This way it is possible to use the properties from the external file in combination with the currently defined properties (see example config).
 
 ## Usage
 ### Commandline
@@ -38,6 +38,18 @@ orchestrator.write('generated')
 
 ### Configuration
 ```yaml
+# test-config.yaml file.
+
+# Optional
+includes:
+  # --- Common properties ---------------------------------------------------
+  # path (required): Specifies the path to the external configuration file.
+  # as   (required): Specifies how the file will be referenced in value substitutions (e.g., ${ti.myIncludedString}).
+  # -------------------------------------------------------------------------
+  - path: test-include.yaml
+    as: ti
+
+# Optional
 languages:
   # --- Common properties (valid for all languages) -------------------------
   # type            (required): Specifies the output language (java | javascript | typescript | python | c | go).
@@ -51,7 +63,7 @@ languages:
   #
   #                             name: Property name.
   #                             value: Property value.
-  #                             type: Property type string (bool | int | float | double | string | regex).
+  #                             type: Property type.
   #                             properties: List of all properties (must not be modified).
   # -------------------------------------------------------------------------
 
@@ -91,7 +103,7 @@ languages:
   - type: go
     file_naming: snake
     package: myconfig
-    transform: |  # If the property 'myString' is being processed, replace the value by 'Hello Mars'
+    transform: | 
       if name == 'myString':
         value = 'Hello Mars'
 
@@ -130,14 +142,28 @@ properties:
     value: Hello World
     hidden: true  # If a property should act as a helper but should not be written to the generated file, it must be marked as 'hidden'.
 
-  - type: string
-    name: mySubstitutedString
-    value: Sometimes I just want to scream ${myString}!
-
   - type: regex
     name: myRegex
     value: Test Reg(E|e)x
     comment: Just another RegEx.  # Variables can be described using the comment property.
+
+  - type: string
+    name: mySubstitutedString
+    value: Sometimes I just want to scream ${myString}!  # To use the value of another property, simply use its name with ${}. E.g., ${myString}.
+
+  - type: string
+    name: myCombinedString
+    value: I am telling you that ${ti.myIncludedString}.  # To use the value of another property from an included file, simply use the file's
+                                                          # alias and the corresponding property name. E.g., ${ti.myIncludedString}.
+```
+
+```yaml
+# test-include.yaml file.
+
+properties:
+  - type: string
+    name: myIncludedString
+    value: this string got included from test-include.yaml
 ```
 
 ### Output
