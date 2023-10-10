@@ -1,6 +1,6 @@
 package myconfig
 
-// Generated with confluent v0.1.1 (https://pypi.org/project/confluent/).
+// Generated with confluent v0.2.0 (https://pypi.org/project/confluent/).
 var TestConfig = struct {
     myBoolean           bool
     myInteger           int
@@ -10,7 +10,6 @@ var TestConfig = struct {
     myRegex             string // Just another RegEx.
     mySubstitutedString string
     myCombinedString    string
-    myIncludedString    string
 }{
     myBoolean:           true,
     myInteger:           142,
@@ -20,5 +19,4 @@ var TestConfig = struct {
     myRegex:             "Test Reg(E|e)x",
     mySubstitutedString: "Sometimes I just want to scream Hello Mars!",
     myCombinedString:    "I am telling you that this string got included from test-include.yaml.",
-    myIncludedString:    "this string got included from test-include.yaml",
 }

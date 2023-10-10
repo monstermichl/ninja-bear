@@ -1,4 +1,4 @@
-// Generated with confluent v0.1.1 (https://pypi.org/project/confluent/).
+// Generated with confluent v0.2.0 (https://pypi.org/project/confluent/).
 export class TestConfig {
     public static readonly myBoolean = true;
     public static readonly myInteger = 142;
@@ -8,5 +8,4 @@ export class TestConfig {
     public static readonly myRegex = /Test Reg(E|e)x/; // Just another RegEx.
     public static readonly mySubstitutedString = 'Sometimes I just want to scream Hello World!';
     public static readonly myCombinedString = 'I am telling you that this string got included from test-include.yaml.';
-    public static readonly myIncludedString = 'this string got included from test-include.yaml';
 }

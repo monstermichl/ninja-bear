@@ -1,7 +1,7 @@
 #ifndef TEST_CONFIG_H
 #define TEST_CONFIG_H
 
-/* Generated with confluent v0.1.1 (https://pypi.org/project/confluent/). */
+/* Generated with confluent v0.2.0 (https://pypi.org/project/confluent/). */
 const struct {
     unsigned char MyBoolean;
     int MyInteger;
@@ -11,7 +11,6 @@ const struct {
     char* MyRegex; /* Just another RegEx. */
     char* MySubstitutedString;
     char* MyCombinedString;
-    char* MyIncludedString;
 } TestConfig = {
     1,
     142,
@@ -21,7 +20,6 @@ const struct {
     "Test Reg(E|e)x",
     "Sometimes I just want to scream Hello World!",
     "I am telling you that this string got included from test-include.yaml.",
-    "this string got included from test-include.yaml",
 };
 
 #endif /* TEST_CONFIG_H */

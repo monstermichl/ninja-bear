@@ -1,4 +1,4 @@
-// Generated with confluent v0.1.1 (https://pypi.org/project/confluent/).
+// Generated with confluent v0.2.0 (https://pypi.org/project/confluent/).
 class TestConfig {
     static get myBoolean() { return true; }
     static get myInteger() { return 142; }
@@ -8,6 +8,5 @@ class TestConfig {
     static get myRegex() { return /Test Reg(E|e)x/; } // Just another RegEx.
     static get mySubstitutedString() { return 'Sometimes I just want to scream Hello World!'; }
     static get myCombinedString() { return 'I am telling you that this string got included from test-include.yaml.'; }
-    static get myIncludedString() { return 'this string got included from test-include.yaml'; }
 }
 module.exports = TestConfig
