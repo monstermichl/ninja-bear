@@ -86,7 +86,7 @@ class Config:
         :return: Language configurations which further can be dumped as config files.
         :rtype:  List[LanguageConfigBase]
         """
-        return Config._read(path, None)[0]
+        return Config._read(path)[0]
 
     @staticmethod
     def parse(content: str, config_name: str) -> List[LanguageConfigBase]:
@@ -103,10 +103,10 @@ class Config:
         :return: Language configurations which further can be dumped as config files.
         :rtype:  List[LanguageConfigBase]
         """
-        return Config._parse(content, config_name, None)[0]
+        return Config._parse(content, config_name)[0]
 
     @staticmethod
-    def _read(path: str, namespace: str, namespaces: List[str]=[]) -> List[LanguageConfigBase]:
+    def _read(path: str, namespace: str='', namespaces: List[str]=None) -> List[LanguageConfigBase]:
         """
         Reads the provided YAML configuration file and generates a list of language configurations.
 
@@ -131,7 +131,7 @@ class Config:
         return Config._parse(content, config_name, namespace, os.path.dirname(path), namespaces)
 
     @staticmethod
-    def _parse(content: str, config_name: str, namespace: str='', directory: str='', namespaces: List[str]=[]) -> \
+    def _parse(content: str, config_name: str, namespace: str='', directory: str='', namespaces: List[str]=None) -> \
         Tuple[List[LanguageConfigBase], List[Property]]:
         """
         Parses the provided YAML configuration string and returns the corresponding language configurations.
@@ -154,6 +154,12 @@ class Config:
         validated_object = Config._schema().validate(yaml_object)
         language_configs: List[LanguageConfigBase] = []
         properties: List[Property] = []
+
+        # Since a default list cannot be assigned to the namespaces variable in the method header, because it only
+        # gets initialized once and then the list gets re-used (see https://stackoverflow.com/a/1145781), make sure
+        # that namespaces gets set to a freshly created list if it hasn't already been until now.
+        if not namespaces:
+            namespaces = []
 
         # Collect properties as they are the same for all languages.
         for property in validated_object[_KEY_PROPERTIES]:
