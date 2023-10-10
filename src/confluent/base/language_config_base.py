@@ -1,9 +1,13 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 import re
-from typing import List
+from typing import List, Type
 
+from .configuration_base import _DEFAULT_INDENT
+from .generator_base import GeneratorBase
+from .language_type import LanguageType
 from .language_config_configuration import LanguageConfigConfiguration
+from .language_config_naming_conventions import LanguageConfigNamingConventions
 from .config_file_info import ConfigFileInfo
 from .name_converter import NameConverter
 from .property import Property
@@ -22,8 +26,11 @@ class LanguageConfigBase(ABC):
 
     def __init__(
         self,
-        config: LanguageConfigConfiguration,
+        config_name: str,
         properties: List[Property],
+        indent: int = _DEFAULT_INDENT,
+        transform: str = None,
+        naming_conventions: LanguageConfigNamingConventions = None,
         additional_props = {},
     ):
         """
@@ -37,6 +44,15 @@ class LanguageConfigBase(ABC):
                                  defaults to {}
         :type additional_props:  dict, optional
         """
+        config = LanguageConfigConfiguration(
+            config_name=config_name,
+            language_type=self._language_type(),
+            file_extension=self._file_extension(),
+            generator_type=self._generator_type(),
+            indent=indent,
+            transform=transform,
+            naming_conventions=naming_conventions,
+        )
 
         # Make sure, config is valid.
         config.validate()
@@ -70,12 +86,33 @@ class LanguageConfigBase(ABC):
         return self.generator.dump()
     
     def write(self, path: str = '') -> LanguageConfigBase:
+        """
+        Generates a config file string and writes the config file to the provided directory.
+
+        :param path: Directory to write the file to, defaults to ''
+        :type path:  str, optional
+
+        :return:     The current LanguageConfigBase instance.
+        :rtype:      LanguageConfigBase
+        """
         path = path.rstrip('/').rstrip('\\')  # Strip right-side slashes.
         path = f'{path}/{self.config_info.file_name_full}'
 
         with open(path, 'w') as f:
             f.write(self.dump())
         return self
+    
+    @abstractmethod
+    def _language_type(self) -> LanguageType:
+        pass
+
+    @abstractmethod
+    def _file_extension(self) -> str:
+        pass
+
+    @abstractmethod
+    def _generator_type(self) -> Type[GeneratorBase]:
+        pass
     
     @abstractmethod
     def _allowed_file_name_pattern(self) -> str:
@@ -89,6 +126,11 @@ class LanguageConfigBase(ABC):
         pass
 
     def _check_file_name(self) -> None:
+        """
+        Checks if the config file name matches the pattern defined by the deriving class.
+
+        :raises InvalidFileNameException: Thrown if the file name is not valid.
+        """
         pattern = self._allowed_file_name_pattern()
 
         if not re.match(pattern, self.config_info.file_name):
