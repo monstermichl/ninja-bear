@@ -60,7 +60,7 @@ class LanguageConfigConfiguration(ConfigurationBase):
 
         self.config_name = config_name
         self.language_type = language_type
-        self.file_extension = file_extension
+        self.file_extension = file_extension.lstrip('.')
         self.generator_type = generator_type
         self.indent = indent
         self.transform = transform
