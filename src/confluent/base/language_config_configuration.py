@@ -36,6 +36,10 @@ class LanguageConfigConfiguration(ConfigurationBase):
     """
     Which generator to use to generate the config.
     """
+    transform: str
+    """
+    Function string to transform property values.
+    """
     naming_conventions: LanguageConfigNamingConventions
     """
     Specifies which case convention to use for the properties. If not provided,
