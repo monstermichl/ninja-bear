@@ -171,6 +171,7 @@ class Config:
 
                 # Read included config and put properties into property list.
                 for inclusion_property in Config._read(inclusion_path, inclusion_namespace)[1]:
+                    inclusion_property.hidden = True  # Included properties are not being exported by default.
                     properties.append(inclusion_property)
 
         # Evaluate each language setting one by one.
