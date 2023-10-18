@@ -102,16 +102,24 @@ class Property:
         # Copy properties to avoid messing around with the originals.
         properties_copy = copy.deepcopy(properties)
 
-        def replace(match, matchProperty):
-            substitution_property_value = match.group(1)  # E.g. myReplaceString or ti.myReplaceString.
+        def replace(match, _: Property):
+
+            def add_namespace(property_name, namespace):
+                return f'{namespace}.{property_name}'
 
             # Incorporate namespace into property name.
             def prepared_property_name(propertyTemp):
-                return f'{propertyTemp.namespace}.{propertyTemp.name}' \
+                return add_namespace(propertyTemp.name, propertyTemp.namespace) \
                     if propertyTemp.namespace else propertyTemp.name
+
+            substitution_property_value = match.group(1)  # E.g. myReplaceString or ti.myReplaceString.
+            property_name = prepared_property_name(property)
+            
+            if property.namespace:
+                substitution_property_value = add_namespace(substitution_property_value, property.namespace)
             
             # Substitute property only if it's not the same property as the one which is currently being processed.
-            if substitution_property_value != property.name:
+            if substitution_property_value != property_name:
                 found_properties = [
                     search_property.value for search_property in properties_copy if
                     prepared_property_name(search_property) == substitution_property_value
@@ -123,7 +131,7 @@ class Property:
             else:
                 # TODO: Handle indirect self reference.
                 raise RecursiveSubstitutionException(
-                    f'Property {prepared_property_name(property)} must not reference itself!'
+                    f'Property {property_name} must not reference itself!'
                 )
             return f'{replacement}'
         
