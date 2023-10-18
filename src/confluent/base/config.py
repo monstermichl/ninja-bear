@@ -161,17 +161,6 @@ class Config:
         if not namespaces:
             namespaces = []
 
-        # Collect properties as they are the same for all languages.
-        for property in validated_object[_KEY_PROPERTIES]:
-            properties.append(Property(
-                name=property[_KEY_NAME],
-                value=property[_KEY_VALUE],
-                property_type=property[_KEY_TYPE],
-                hidden=property[_KEY_HIDDEN] if _KEY_HIDDEN in property else None,
-                comment=property[_KEY_COMMENT] if _KEY_COMMENT in property else None,
-                namespace=namespace,
-            ))
-
         # Evaluate included files and their properties.
         if _KEY_INCLUDES in validated_object:
             for inclusion in validated_object[_KEY_INCLUDES]:
@@ -192,6 +181,17 @@ class Config:
                 for inclusion_property in Config._read(inclusion_path, inclusion_namespace, namespaces)[1]:
                     inclusion_property.hidden = True  # Included properties are not being exported by default.
                     properties.append(inclusion_property)
+
+        # Collect properties as they are the same for all languages.
+        for property in validated_object[_KEY_PROPERTIES]:
+            properties.append(Property(
+                name=property[_KEY_NAME],
+                value=property[_KEY_VALUE],
+                property_type=property[_KEY_TYPE],
+                hidden=property[_KEY_HIDDEN] if _KEY_HIDDEN in property else None,
+                comment=property[_KEY_COMMENT] if _KEY_COMMENT in property else None,
+                namespace=namespace,
+            ))
 
         # Evaluate each language setting one by one.
         if _KEY_LANGUAGES in validated_object:
