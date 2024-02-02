@@ -12,6 +12,9 @@ from .property_type import PropertyType
 from .language_type import LanguageType
 from .language_config_base import LanguageConfigBase
 from .language_config_naming_conventions import LanguageConfigNamingConventions
+from .distributor_base import DistributorBase
+
+from ..distributors.git_distributor import GitDistributor
 
 # Main categories.
 _KEY_INCLUDES = 'includes'
@@ -19,22 +22,28 @@ _KEY_LANGUAGES = 'languages'
 _KEY_PROPERTIES = 'properties'
 
 # Include keys.
-_KEY_PATH = 'path'
-_KEY_AS = 'as'
+_INCLUDE_KEY_PATH = 'path'
+_INCLUDE_KEY_AS = 'as'
 
 # Language keys.
-_KEY_FILE_NAMING = 'file_naming'
-_KEY_PROPERTY_NAMING = 'property_naming'
-_KEY_TYPE_NAMING = 'type_naming'
-_KEY_INDENT = 'indent'
-_KEY_TRANSFORM = 'transform'
-_KEY_TYPE = 'type'
-_KEY_NAME = 'name'
+_LANGUAGE_KEY_FILE_NAMING = 'file_naming'
+_LANGUAGE_KEY_DISTRIBUTIONS = 'distributions'
+_LANGUAGE_KEY_URL = 'url'
+_LANGUAGE_KEY_PATH = 'path'
+_LANGUAGE_KEY_PROPERTY_NAMING = 'property_naming'
+_LANGUAGE_KEY_TYPE_NAMING = 'type_naming'
+_LANGUAGE_KEY_INDENT = 'indent'
+_LANGUAGE_KEY_TRANSFORM = 'transform'
+_LANGUAGE_KEY_TYPE = 'type'
+_LANGUAGE_KEY_NAME = 'name'
 
 # Property keys.
-_KEY_VALUE = 'value'
-_KEY_HIDDEN = 'hidden'
-_KEY_COMMENT = 'comment'
+_PROPERTY_KEY_VALUE = 'value'
+_PROPERTY_KEY_HIDDEN = 'hidden'
+_PROPERTY_KEY_COMMENT = 'comment'
+
+# Distribution types.
+_DISTRIBUTION_TYPE_GIT = 'git'
 
 # Load the glue.
 _LANGUAGE_MAPPINGS = ConfigLanguageMapping.get_mappings()
@@ -164,14 +173,14 @@ class Config:
         # Evaluate included files and their properties.
         if _KEY_INCLUDES in validated_object:
             for inclusion in validated_object[_KEY_INCLUDES]:
-                inclusion_namespace = inclusion[_KEY_AS]
+                inclusion_namespace = inclusion[_INCLUDE_KEY_AS]
 
                 # Make sure that a included config file does not re-define an alias.
                 if inclusion_namespace in namespaces:
                     raise AliasAlreadyInUseException(inclusion_namespace)
                 else:
                     namespaces.append(inclusion_namespace)
-                inclusion_path = inclusion[_KEY_PATH]
+                inclusion_path = inclusion[_INCLUDE_KEY_PATH]
 
                 # If the provided path is relative, incorporate the provided directory into the path.
                 if not os.path.isabs(inclusion_path):
@@ -185,11 +194,11 @@ class Config:
         # Collect properties as they are the same for all languages.
         for property in validated_object[_KEY_PROPERTIES]:
             properties.append(Property(
-                name=property[_KEY_NAME],
-                value=property[_KEY_VALUE],
-                property_type=property[_KEY_TYPE],
-                hidden=property[_KEY_HIDDEN] if _KEY_HIDDEN in property else None,
-                comment=property[_KEY_COMMENT] if _KEY_COMMENT in property else None,
+                name=property[_LANGUAGE_KEY_NAME],
+                value=property[_PROPERTY_KEY_VALUE],
+                property_type=property[_LANGUAGE_KEY_TYPE],
+                hidden=property[_PROPERTY_KEY_HIDDEN] if _PROPERTY_KEY_HIDDEN in property else None,
+                comment=property[_PROPERTY_KEY_COMMENT] if _PROPERTY_KEY_COMMENT in property else None,
                 namespace=namespace,
             ))
 
@@ -197,23 +206,23 @@ class Config:
         if _KEY_LANGUAGES in validated_object:
             for language in validated_object[_KEY_LANGUAGES]:
                 naming_conventions = LanguageConfigNamingConventions()
-                language_type = language[_KEY_TYPE]
-                indent = language[_KEY_INDENT] if _KEY_INDENT in language else None
-                transform = language[_KEY_TRANSFORM] if _KEY_TRANSFORM in language else None
+                language_type = language[_LANGUAGE_KEY_TYPE]
+                indent = language[_LANGUAGE_KEY_INDENT] if _LANGUAGE_KEY_INDENT in language else None
+                transform = language[_LANGUAGE_KEY_TRANSFORM] if _LANGUAGE_KEY_TRANSFORM in language else None
 
                 # Evaluate file naming-convention.
                 naming_conventions.file_naming_convention = Config._evaluate_naming_convention_type(
-                    language[_KEY_FILE_NAMING] if _KEY_FILE_NAMING in language else None
+                    language[_LANGUAGE_KEY_FILE_NAMING] if _LANGUAGE_KEY_FILE_NAMING in language else None
                 )
 
                 # Evaluate properties naming-convention.
                 naming_conventions.properties_naming_convention = Config._evaluate_naming_convention_type(
-                    language[_KEY_PROPERTY_NAMING] if _KEY_PROPERTY_NAMING in language else None
+                    language[_LANGUAGE_KEY_PROPERTY_NAMING] if _LANGUAGE_KEY_PROPERTY_NAMING in language else None
                 )
 
                 # Evaluate type naming-convention.
                 naming_conventions.type_naming_convention = Config._evaluate_naming_convention_type(
-                    language[_KEY_TYPE_NAMING] if _KEY_TYPE_NAMING in language else None
+                    language[_LANGUAGE_KEY_TYPE_NAMING] if _LANGUAGE_KEY_TYPE_NAMING in language else None
                 )
                 config_type = Config._evaluate_config_type(language_type)
 
@@ -223,6 +232,7 @@ class Config:
                     indent=indent,
                     transform=transform,
                     naming_conventions=naming_conventions,
+                    distributors=Config._evaluate_distributors(language),
 
                     # Pass all language props as additional_props to let the specific
                     # generator decide which props it requires additionally.
@@ -241,21 +251,25 @@ class Config:
         """
         return Schema({
             Optional(_KEY_INCLUDES): [{
-                _KEY_PATH: str,
-                _KEY_AS: str,
+                _INCLUDE_KEY_PATH: str,
+                _INCLUDE_KEY_AS: str,
             }],
             Optional(_KEY_LANGUAGES): [{
-                _KEY_TYPE: Use(Config._evaluate_language_type),
-                Optional(_KEY_FILE_NAMING): str,
-                Optional(_KEY_INDENT): int,
-                Optional(object): object  # Collect other properties(?).
+                _LANGUAGE_KEY_TYPE: Use(Config._evaluate_language_type),
+                Optional(_LANGUAGE_KEY_FILE_NAMING): str,
+                Optional(_LANGUAGE_KEY_INDENT): int,
+                Optional(_LANGUAGE_KEY_DISTRIBUTIONS): [{
+                    _LANGUAGE_KEY_TYPE: str,
+                    Optional(object): object  # Collect other properties.
+                }],
+                Optional(object): object  # Collect other properties.
             }],
             _KEY_PROPERTIES: [{
-                _KEY_TYPE: Use(Config._evaluate_data_type),
-                _KEY_NAME: str,
-                _KEY_VALUE: Or(str, bool, int, float),
-                Optional(_KEY_HIDDEN): bool,
-                Optional(_KEY_COMMENT): str,
+                _LANGUAGE_KEY_TYPE: Use(Config._evaluate_data_type),
+                _LANGUAGE_KEY_NAME: str,
+                _PROPERTY_KEY_VALUE: Or(str, bool, int, float),
+                Optional(_PROPERTY_KEY_HIDDEN): bool,
+                Optional(_PROPERTY_KEY_COMMENT): str,
             }]
         })
     
@@ -329,6 +343,37 @@ class Config:
         elif length > 1:
             raise SeveralLanguageConfigsException('Several language configs found')
         return found[0]
+    
+    @staticmethod
+    def _evaluate_distributors(language_config: {}) -> List[DistributorBase]:
+        distributors = []
+        distributor_configs = language_config[_LANGUAGE_KEY_DISTRIBUTIONS] \
+            if _LANGUAGE_KEY_DISTRIBUTIONS in language_config \
+            else None
+
+        if distributor_configs:
+            distributor = None
+
+            for config in distributor_configs:
+                type = config[_LANGUAGE_KEY_TYPE]
+
+                if type == _DISTRIBUTION_TYPE_GIT:
+                    path = config[_LANGUAGE_KEY_PATH] if _LANGUAGE_KEY_PATH in config else None
+
+                    if _LANGUAGE_KEY_URL not in config:
+                        pass  # TODO: Throw exception.
+                    else:
+                        distributor = GitDistributor(
+                            config[_LANGUAGE_KEY_URL],
+                            path,
+                        )
+                else:
+                    pass  # Not other types supported yet.
+
+                # If a distributor was created, add it to the distributors list.
+                if distributor:
+                    distributors.append(distributor)
+        return distributors
     
     @staticmethod
     def _evaluate_naming_convention_type(naming_convention: str) -> NamingConventionType:

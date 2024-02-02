@@ -1,9 +1,10 @@
-from typing import Type
+from typing import List, Type
 
 from .configuration_base import _DEFAULT_INDENT, ConfigurationBase
 from .language_type import LanguageType
 from .language_config_naming_conventions import LanguageConfigNamingConventions
 from .generator_base import GeneratorBase
+from .distributor_base import DistributorBase
 from .generator_configuration import GeneratorConfiguration
 
 
@@ -46,6 +47,11 @@ class LanguageConfigConfiguration(ConfigurationBase):
     the name as specified will be used.
     """
 
+    distributors: List[DistributorBase]
+    """
+    Specifies which distributors to use for spreading the generated file.
+    """
+
     def __init__(
         self,
         config_name: str,
@@ -55,6 +61,7 @@ class LanguageConfigConfiguration(ConfigurationBase):
         indent: int = _DEFAULT_INDENT,
         transform: str = None,
         naming_conventions: LanguageConfigNamingConventions = None,
+        distributors: List[DistributorBase] = None,
     ) -> None:
         super().__init__()
 
@@ -65,6 +72,7 @@ class LanguageConfigConfiguration(ConfigurationBase):
         self.indent = indent
         self.transform = transform
         self.naming_conventions = naming_conventions
+        self.distributors = distributors
 
     def validate(self):
         """

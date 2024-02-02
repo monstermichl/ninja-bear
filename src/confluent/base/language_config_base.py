@@ -5,6 +5,7 @@ from typing import List, Type
 
 from .configuration_base import _DEFAULT_INDENT
 from .generator_base import GeneratorBase
+from .distributor_base import DistributorBase
 from .language_type import LanguageType
 from .language_config_configuration import LanguageConfigConfiguration
 from .language_config_naming_conventions import LanguageConfigNamingConventions
@@ -31,18 +32,13 @@ class LanguageConfigBase(ABC):
         indent: int = _DEFAULT_INDENT,
         transform: str = None,
         naming_conventions: LanguageConfigNamingConventions = None,
+        distributors: List[DistributorBase] = None,
         additional_props = {},
     ):
         """
         Constructor
 
-        :param config:           Language config configuration.
-        :type config:            LanguageConfigConfiguration
-        :param properties:       Which properties to generate.
-        :type properties:        List[Property]
-        :param additional_props: Additional props which might be required by the deriving generator class,
-                                 defaults to {}
-        :type additional_props:  dict, optional
+        TODO: Update param descriptions.
         """
         config = LanguageConfigConfiguration(
             config_name=config_name,
@@ -52,6 +48,7 @@ class LanguageConfigBase(ABC):
             indent=indent,
             transform=transform,
             naming_conventions=naming_conventions,
+            distributors=distributors,
         )
 
         # Make sure, config is valid.
@@ -72,6 +69,7 @@ class LanguageConfigBase(ABC):
             config.file_extension,
         )
         self.language_type = config.language_type
+        self.distributors = distributors if distributors else []
 
         # Check output file naming.
         self._check_file_name()
@@ -102,6 +100,18 @@ class LanguageConfigBase(ABC):
             f.write(self.dump())
         return self
     
+    def distribute(self) -> LanguageConfigBase:
+        """
+        Distributes the generated config file via the specified distributors.
+
+        :return: The current LanguageConfigBase instance.
+        :rtype:  LanguageConfigBase
+        """
+        data = self.dump()
+
+        [distributor.distribute(self.config_info.file_name_full, data) for distributor in self.distributors]            
+        return self
+    
     @abstractmethod
     def _language_type(self) -> LanguageType:
         pass
@@ -113,7 +123,7 @@ class LanguageConfigBase(ABC):
     @abstractmethod
     def _generator_type(self) -> Type[GeneratorBase]:
         pass
-    
+
     @abstractmethod
     def _allowed_file_name_pattern(self) -> str:
         """

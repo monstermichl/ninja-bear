@@ -34,6 +34,16 @@ class Orchestrator:
         """
         [config.write(path) for config in self.language_configs]
         return self
+    
+    def distribute(self) -> Orchestrator:
+        """
+        Distributes all generated config files via their specified distributors.
+
+        :return: The current Orchestrator instance.
+        :rtype:  Orchestrator
+        """
+        [config.distribute() for config in self.language_configs]
+        return self
 
     @staticmethod
     def read_config(path: str) -> Orchestrator:

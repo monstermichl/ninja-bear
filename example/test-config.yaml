@@ -46,6 +46,10 @@ languages:
   - type: typescript
     indent: 4
     export: esm
+    distributions:
+      - type: git
+        url: https://github.com/monstermichl/confluent-test-repo.git
+        path: generated
 
   # -------------------------------------------------------------------------
   - type: python
