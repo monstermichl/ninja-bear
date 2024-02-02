@@ -12,7 +12,7 @@ from .property_type import PropertyType
 from .language_type import LanguageType
 from .language_config_base import LanguageConfigBase
 from .language_config_naming_conventions import LanguageConfigNamingConventions
-from .distributor_base import DistributorBase
+from .distributor_base import DistributorBase, DistributorCredential
 
 from ..distributors.git_distributor import GitDistributor
 
@@ -36,6 +36,9 @@ _LANGUAGE_KEY_INDENT = 'indent'
 _LANGUAGE_KEY_TRANSFORM = 'transform'
 _LANGUAGE_KEY_TYPE = 'type'
 _LANGUAGE_KEY_NAME = 'name'
+_LANGUAGE_KEY_USER = 'user'
+_LANGUAGE_KEY_PASSWORD = 'password'
+_LANGUAGE_KEY_AS = 'as'
 
 # Property keys.
 _PROPERTY_KEY_VALUE = 'value'
@@ -85,7 +88,7 @@ class Config:
     """
 
     @staticmethod
-    def read(path: str) -> List[LanguageConfigBase]:
+    def read(path: str, distributor_credentials: List[DistributorCredential]) -> List[LanguageConfigBase]:
         """
         Reads the provided YAML configuration file and generates a list of language configurations.
 
@@ -95,10 +98,11 @@ class Config:
         :return: Language configurations which further can be dumped as config files.
         :rtype:  List[LanguageConfigBase]
         """
-        return Config._read(path)[0]
+        return Config._read(path, distributor_credentials=distributor_credentials)[0]
 
     @staticmethod
-    def parse(content: str, config_name: str) -> List[LanguageConfigBase]:
+    def parse(content: str, config_name: str, distributor_credentials: List[DistributorCredential]) \
+        -> List[LanguageConfigBase]:
         """
         Parses the provided YAML configuration string and returns the corresponding language configurations.
 
@@ -112,10 +116,15 @@ class Config:
         :return: Language configurations which further can be dumped as config files.
         :rtype:  List[LanguageConfigBase]
         """
-        return Config._parse(content, config_name)[0]
+        return Config._parse(content, config_name, distributor_credentials=distributor_credentials)[0]
 
     @staticmethod
-    def _read(path: str, namespace: str='', namespaces: List[str]=None) -> List[LanguageConfigBase]:
+    def _read(
+        path: str,
+        namespace: str='',
+        namespaces: List[str]=None,
+        distributor_credentials: List[DistributorCredential]=[],
+    ) -> List[LanguageConfigBase]:
         """
         Reads the provided YAML configuration file and generates a list of language configurations.
 
@@ -137,11 +146,24 @@ class Config:
             config_name = '.'.join(last_part.split('.')[0:-1])
         else:
             config_name = last_part
-        return Config._parse(content, config_name, namespace, os.path.dirname(path), namespaces)
+        return Config._parse(
+            content,
+            config_name,
+            namespace,
+            os.path.dirname(path),
+            namespaces,
+            distributor_credentials
+        )
 
     @staticmethod
-    def _parse(content: str, config_name: str, namespace: str='', directory: str='', namespaces: List[str]=None) -> \
-        Tuple[List[LanguageConfigBase], List[Property]]:
+    def _parse(
+        content: str,
+        config_name: str,
+        namespace: str='',
+        directory: str='',
+        namespaces: List[str]=None,
+        distributor_credentials: List[DistributorCredential]=[],
+    ) -> Tuple[List[LanguageConfigBase], List[Property]]:
         """
         Parses the provided YAML configuration string and returns the corresponding language configurations.
 
@@ -232,7 +254,7 @@ class Config:
                     indent=indent,
                     transform=transform,
                     naming_conventions=naming_conventions,
-                    distributors=Config._evaluate_distributors(language),
+                    distributors=Config._evaluate_distributors(language, distributor_credentials),
 
                     # Pass all language props as additional_props to let the specific
                     # generator decide which props it requires additionally.
@@ -260,6 +282,7 @@ class Config:
                 Optional(_LANGUAGE_KEY_INDENT): int,
                 Optional(_LANGUAGE_KEY_DISTRIBUTIONS): [{
                     _LANGUAGE_KEY_TYPE: str,
+                    Optional(_LANGUAGE_KEY_AS): str,
                     Optional(object): object  # Collect other properties.
                 }],
                 Optional(object): object  # Collect other properties.
@@ -345,8 +368,15 @@ class Config:
         return found[0]
     
     @staticmethod
-    def _evaluate_distributors(language_config: {}) -> List[DistributorBase]:
+    def _evaluate_distributors(language_config: {}, distributor_credentials: List[DistributorCredential]=[]) \
+        -> List[DistributorBase]:
+
         distributors = []
+        credentials_map = {}
+
+        for distributor_credential in distributor_credentials:
+            credentials_map[distributor_credential.distribution_alias] = distributor_credential
+
         distributor_configs = language_config[_LANGUAGE_KEY_DISTRIBUTIONS] \
             if _LANGUAGE_KEY_DISTRIBUTIONS in language_config \
             else None
@@ -355,20 +385,36 @@ class Config:
             distributor = None
 
             for config in distributor_configs:
-                type = config[_LANGUAGE_KEY_TYPE]
+                def from_config(key: str):
+                    return config[key] if key in config else None
+                type = from_config(_LANGUAGE_KEY_TYPE)
 
                 if type == _DISTRIBUTION_TYPE_GIT:
-                    path = config[_LANGUAGE_KEY_PATH] if _LANGUAGE_KEY_PATH in config else None
+                    path = from_config(_LANGUAGE_KEY_PATH)
+                    user = from_config(_LANGUAGE_KEY_USER)
+                    password = from_config(_LANGUAGE_KEY_PASSWORD)
+                    alias = from_config(_LANGUAGE_KEY_AS)
+
+                    if alias in credentials_map:
+                        credential = credentials_map[alias]
+
+                        # Overwrite YAML defined user and password value if provided.
+                        if credential.user:
+                            user = credential.user
+                        if credential.password:
+                            password = credential.password
 
                     if _LANGUAGE_KEY_URL not in config:
                         pass  # TODO: Throw exception.
                     else:
                         distributor = GitDistributor(
-                            config[_LANGUAGE_KEY_URL],
+                            from_config(_LANGUAGE_KEY_URL),
                             path,
+                            user,
+                            password,
                         )
                 else:
-                    pass  # Not other types supported yet.
+                    pass  # No other types are supported yet.
 
                 # If a distributor was created, add it to the distributors list.
                 if distributor:

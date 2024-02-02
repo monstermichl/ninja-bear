@@ -48,8 +48,10 @@ languages:
     export: esm
     distributions:
       - type: git
-        url: https://github.com/monstermichl/confluent-test-repo.git
+        url: https://github.com/monstermichl/confluent-test.git
         path: generated
+        user: monstermichl
+        as: git-monstermichl  # An alias is required to provide the password via commandline in the form of -p/--password <alias>=[<username>:]<password>.
 
   # -------------------------------------------------------------------------
   - type: python

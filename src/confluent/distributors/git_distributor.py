@@ -42,7 +42,7 @@ class GitVersion:
 class GitDistributor(DistributorBase):
     _MIN_GIT_VERSION = GitVersion(2, 29, 0)  # Needs at least git version 2.29.0 as it introduced partial-clone (https://www.git-scm.com/docs/partial-clone).
 
-    def __init__(self, url: str, target_path: str) -> None:
+    def __init__(self, url: str, target_path: str, user: str, password: str):
         super().__init__()
 
         self._url = url
