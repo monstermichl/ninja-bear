@@ -60,7 +60,7 @@ class GitDistributor(DistributorBase):
             with tempfile.TemporaryDirectory() as temp_dir:
 
                 # Only clone desired target folder.
-                code, _, _ = execute_commands(*[
+                code, stdio, stderr = execute_commands(*[
                     f'git clone --filter=blob:none --no-checkout {self._url} {temp_dir}',
                     f'pushd {temp_dir}',
                     f'git sparse-checkout set {self._target_path}' if self._target_path else '',
@@ -87,4 +87,6 @@ class GitDistributor(DistributorBase):
                         f'git commit "{target_file_path}" -m "Update {target_file_path} via confluent v{VERSION}"',
                         'git push',
                     ])
+                else:
+                    pass  # TODO: Throw exception.
         return self
