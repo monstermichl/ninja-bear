@@ -7,7 +7,7 @@ from .base.distributor_base import DistributorCredential
 
 _CONFIG_PARAMETER = 'config'
 _OUTPUT_PARAMETER = 'output'
-_PASSWORD_PARAMETER = 'password'
+_SECRET_PARAMETER = 'secret'
 _DISTRIBUTE_PARAMETER = 'distribute'
 
 
@@ -36,7 +36,7 @@ def main():
 
     parser.add_argument('-c', f'--{_CONFIG_PARAMETER}', help='Path to configuration file', required=True, type=str)
     parser.add_argument('-o', f'--{_OUTPUT_PARAMETER}', help='Output location', required=False, type=str, default='.')
-    parser.add_argument('-p', f'--{_PASSWORD_PARAMETER}',
+    parser.add_argument('-s', f'--{_SECRET_PARAMETER}',
         help='Credential for distributions in the form of <alias>=[<username>:]<password>',
         required=False, action='append')
     parser.add_argument('-d', f'--{_DISTRIBUTE_PARAMETER}',
@@ -50,7 +50,7 @@ def main():
     if output_dir and not path.isdir(output_dir):
         raise Exception(f'Output directory {output_dir} does not exist')
     
-    credentials = _parse_credentials(getattr(args, _PASSWORD_PARAMETER) if hasattr(args, _PASSWORD_PARAMETER) else [])
+    credentials = _parse_credentials(getattr(args, _SECRET_PARAMETER) if hasattr(args, _SECRET_PARAMETER) else [])
     config = Orchestrator.read_config(getattr(args, _CONFIG_PARAMETER), credentials)
     config.write(output_dir)
 
