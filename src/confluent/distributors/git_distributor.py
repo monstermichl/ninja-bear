@@ -8,6 +8,21 @@ from ..base.info import VERSION
 from ..base.distributor_base import DistributorBase
 
 
+class NoRepositoryUrlProvidedException(Exception):
+    def __init__(self):
+        super().__init__('No repository URL has been provided')
+
+
+class GitProblemException(Exception):
+    def __init__(self, problem: str):
+        super().__init__(problem)
+
+
+class GitVersionException(Exception):
+    def __init__(self, check_version: GitVersion, git_version: GitVersion):
+        super().__init__(f'Invalid git version. Required: {check_version}, actual: {git_version}')
+
+
 class GitVersion:
     major: str
     minor: str
@@ -23,7 +38,9 @@ class GitVersion:
         code, text, _ = execute_commands('git --version')
         version_text = text if code == 0 else ''
 
-        return GitVersion.from_string(version_text)  # TODO: Throw exception if there is a problem with git.
+        if code != 0:
+            GitProblemException('Git version could not be evaluated')
+        return GitVersion.from_string(version_text)
 
     @staticmethod
     def from_string(version_string: str) -> GitVersion:
@@ -37,6 +54,9 @@ class GitVersion:
             version.minor = int(parts[1])
             version.patch = int(parts[2])
         return version
+    
+    def __str__(self) -> str:
+        return f'{self.major}.{self.minor}.{self.patch}'
 
 
 class GitDistributor(DistributorBase):
@@ -45,23 +65,35 @@ class GitDistributor(DistributorBase):
     def __init__(self, url: str, target_path: str, user: str, password: str):
         super().__init__()
 
+        # Make sure an URL has been provided.
+        if not url:
+            NoRepositoryUrlProvidedException()
+
         self._url = url
         self._target_path = target_path if target_path else ''  # Use root directory as default path.
+        self._user = user
+        self._password = password
 
     def distribute(self, file_name: str, data: str) -> DistributorBase:
-        version = GitVersion.from_git()
+        git_version = GitVersion.from_git()
         
-        if version.major < self._MIN_GIT_VERSION.major or \
-           version.minor < self._MIN_GIT_VERSION.minor or \
-           version.patch < self._MIN_GIT_VERSION.patch:
-            pass  # TODO: Throw exception.
+        if git_version.major < self._MIN_GIT_VERSION.major or \
+           git_version.minor < self._MIN_GIT_VERSION.minor or \
+           git_version.patch < self._MIN_GIT_VERSION.patch:
+            GitVersionException(self._MIN_GIT_VERSION, git_version)
         else:
             # Create temporary folder to clone the git repo into and work with it.
             with tempfile.TemporaryDirectory() as temp_dir:
+                SEPARATOR = '://'
+                url_parts = self._url.split(SEPARATOR)
+                protocol = url_parts[0] if len(url_parts) > 1 else ''
+                url = url_parts[1] if len(url_parts) > 1 else url_parts[0]
+                separator = SEPARATOR if protocol else ''
+                url_with_credentials = f'{protocol}{separator}{self._user}:{self._password}@{url}'
 
                 # Only clone desired target folder.
-                code, stdio, stderr = execute_commands(*[
-                    f'git clone --filter=blob:none --no-checkout {self._url} {temp_dir}',
+                code, _, _ = execute_commands(*[
+                    f'git clone --filter=blob:none --no-checkout {url_with_credentials} {temp_dir}',
                     f'pushd {temp_dir}',
                     f'git sparse-checkout set {self._target_path}' if self._target_path else '',
                     'git checkout',
@@ -85,8 +117,11 @@ class GitDistributor(DistributorBase):
                         f'pushd {temp_dir}',
                         f'git add "{target_file_path}"',
                         f'git commit "{target_file_path}" -m "Update {target_file_path} via confluent v{VERSION}"',
-                        'git push',
+                        f'git push -u {url_with_credentials}',
                     ])
+
+                    if code != 0:
+                        GitProblemException(f'{file_name} could not be pushed to {self._url}')
                 else:
-                    pass  # TODO: Throw exception.
+                    GitProblemException(f'Git repo {self._url} could not be cloned')
         return self

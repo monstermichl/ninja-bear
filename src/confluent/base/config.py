@@ -404,15 +404,12 @@ class Config:
                         if credential.password:
                             password = credential.password
 
-                    if _LANGUAGE_KEY_URL not in config:
-                        pass  # TODO: Throw exception.
-                    else:
-                        distributor = GitDistributor(
-                            from_config(_LANGUAGE_KEY_URL),
-                            path,
-                            user,
-                            password,
-                        )
+                    distributor = GitDistributor(
+                        from_config(_LANGUAGE_KEY_URL),
+                        path,
+                        user,
+                        password,
+                    )
                 else:
                     pass  # No other types are supported yet.
 
