@@ -18,6 +18,9 @@ on:
     types:
       - 'created'
 
+env:
+    SECRET: ${{ secrets.CONFLUENT_TEST_TOKEN }}
+
 jobs:
   test_and_lint:
     name: Test and lint
@@ -36,11 +39,9 @@ jobs:
         python3 -m pip install ruff coverage[toml]
     - name: Run tests
       run: |
-        export SECRET=${{ secrets.CONFLUENT_TEST_TOKEN }}
         python3 -m unittest discover tests || exit -1
     - name: Check coverage
       run: |
-        export SECRET=${{ secrets.CONFLUENT_TEST_TOKEN }}
         python3 -m coverage run -m unittest || exit -1
         python3 -m coverage report || exit -1
     - name: Lint
