@@ -38,7 +38,22 @@ class LanguageConfigBase(ABC):
         """
         Constructor
 
-        TODO: Update param descriptions.
+        :param config_name:        Language config name. The config name acts more like a template as it might
+                                   be changed by the naming convention rules or the specific language config
+                                   implementation (e.g. test-config might become e.g. TestConfig).
+        :type config_name:         str
+        :param properties:         List of properties.
+        :type properties:          List[Property]
+        :param indent:             Property indent for the generated config, defaults to _DEFAULT_INDENT
+        :type indent:              int, optional
+        :param transform:          Python function which can transform the provided value, defaults to None
+        :type transform:           str, optional
+        :param naming_conventions: Naming convention to use for the generated config file, defaults to None
+        :type naming_conventions:  LanguageConfigNamingConventions, optional
+        :param distributors:       List of distributors, defaults to None
+        :type distributors:        List[DistributorBase], optional
+        :param additional_props:   All props that might by needed by the derivating class, defaults to {}
+        :type additional_props:    dict, optional
         """
         config = LanguageConfigConfiguration(
             config_name=config_name,

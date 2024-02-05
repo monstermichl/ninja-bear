@@ -1,6 +1,6 @@
 from __future__ import annotations
 import os
-from typing import List, Tuple, Type
+from typing import Dict, List, Tuple, Type
 
 import yaml
 from schema import Schema, Use, Optional, Or
@@ -368,33 +368,53 @@ class Config:
         return found[0]
     
     @staticmethod
-    def _evaluate_distributors(language_config: {}, distributor_credentials: List[DistributorCredential]=[]) \
+    def _evaluate_distributors(language_config: Dict[str, any], distributor_credentials: List[DistributorCredential]=[]) \
         -> List[DistributorBase]:
+        """
+        Evaluates specified distributors of a language.
+
+        :param language_config:         Language config object.
+        :type language_config:          Dict[str, any]
+        :param distributor_credentials: Potentially required credentials, defaults to []
+        :type distributor_credentials:  List[DistributorCredential], optional
+
+        :return: List of evaluated distributors for the given language.
+        :rtype:  List[DistributorBase]
+        """
 
         distributors = []
         credentials_map = {}
 
+        # Map credential list to dictionary based on the credential alias for easer access.
         for distributor_credential in distributor_credentials:
             credentials_map[distributor_credential.distribution_alias] = distributor_credential
 
+        # Get distributions config if provided.
         distributor_configs = language_config[_LANGUAGE_KEY_DISTRIBUTIONS] \
             if _LANGUAGE_KEY_DISTRIBUTIONS in language_config \
             else None
-
+        
+        # Check if distributions are provided and 
         if distributor_configs:
             distributor = None
+
+            # Make sure distributor_configs is a list.
+            if not isinstance(distributor_configs, list):
+                distributor_configs = [distributor_configs]
 
             for config in distributor_configs:
                 def from_config(key: str):
                     return config[key] if key in config else None
                 type = from_config(_LANGUAGE_KEY_TYPE)
 
+                # Build Git distributor.
                 if type == _DISTRIBUTION_TYPE_GIT:
                     path = from_config(_LANGUAGE_KEY_PATH)
                     user = from_config(_LANGUAGE_KEY_USER)
                     password = from_config(_LANGUAGE_KEY_PASSWORD)
                     alias = from_config(_LANGUAGE_KEY_AS)
 
+                    # If the alias is available in the credentials-map, use provided values.
                     if alias in credentials_map:
                         credential = credentials_map[alias]
 
@@ -404,6 +424,7 @@ class Config:
                         if credential.password:
                             password = credential.password
 
+                    # Build distributor.
                     distributor = GitDistributor(
                         from_config(_LANGUAGE_KEY_URL),
                         path,

@@ -28,13 +28,29 @@ class GitVersion:
     minor: str
     patch: str
 
-    def __init__(self, major, minor, patch) -> None:
+    def __init__(self, major: int, minor: int, patch: int):
+        """
+        Constructor
+
+        :param major: Major version.
+        :type major:  int
+        :param minor: Minor version.
+        :type minor:  int
+        :param patch: Patch version.
+        :type patch:  int
+        """
         self.major = major
         self.minor = minor
         self.patch = patch
 
     @staticmethod
     def from_git() -> GitVersion:
+        """
+        Retrieves the git version by calling git --version.
+
+        :return: GitVersion instance with the actual Git version.
+        :rtype:  GitVersion
+        """
         code, text, _ = execute_commands('git --version')
         version_text = text if code == 0 else ''
 
@@ -44,6 +60,15 @@ class GitVersion:
 
     @staticmethod
     def from_string(version_string: str) -> GitVersion:
+        """
+        Turns a version string.
+
+        :param version_string: Version string which contains the version in the form of <major>.<minor>.<patch>.
+        :type version_string:  str
+
+        :return: GitVersion instance with the data from the version string.
+        :rtype:  GitVersion
+        """
         version = GitVersion(0, 0, 0)
         match = re.search('\d+\.\d+\.\d+', version_string)
 
@@ -63,6 +88,18 @@ class GitDistributor(DistributorBase):
     _MIN_GIT_VERSION = GitVersion(2, 29, 0)  # Needs at least git version 2.29.0 as it introduced partial-clone (https://www.git-scm.com/docs/partial-clone).
 
     def __init__(self, url: str, target_path: str, user: str, password: str):
+        """
+        Constructor
+
+        :param url:         Git repository URL.
+        :type url:          str
+        :param target_path: Relative target path within the repo.
+        :type target_path:  str
+        :param user:        Git user.
+        :type user:         str
+        :param password:    Git user password or token.
+        :type password:     str
+        """
         super().__init__()
 
         # Make sure an URL has been provided.
