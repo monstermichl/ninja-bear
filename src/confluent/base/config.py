@@ -368,8 +368,10 @@ class Config:
         return found[0]
     
     @staticmethod
-    def _evaluate_distributors(language_config: Dict[str, any], distributor_credentials: List[DistributorCredential]=[]) \
-        -> List[DistributorBase]:
+    def _evaluate_distributors(
+        language_config: Dict[str, any],
+        distributor_credentials: List[DistributorCredential]=[]
+    ) -> List[DistributorBase]:
         """
         Evaluates specified distributors of a language.
 
