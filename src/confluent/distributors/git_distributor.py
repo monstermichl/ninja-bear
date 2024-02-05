@@ -14,8 +14,8 @@ class NoRepositoryUrlProvidedException(Exception):
 
 
 class GitProblemException(Exception):
-    def __init__(self, problem: str):
-        super().__init__(problem)
+    def __init__(self, problem: str, additional_info: str=''):
+        super().__init__(problem, additional_info)
 
 
 class GitVersionException(Exception):
@@ -128,13 +128,18 @@ class GitDistributor(DistributorBase):
                 separator = SEPARATOR if protocol else ''
                 url_with_credentials = f'{protocol}{separator}{self._user}:{self._password}@{url}'
 
-                # Only clone desired target folder.
-                code, _, _ = execute_commands(*[
+                code, _, stderr = execute_commands(*[
                     f'git clone --filter=blob:none --no-checkout {url_with_credentials} {temp_dir}',
-                    f'pushd {temp_dir}',
-                    f'git sparse-checkout set {self._target_path}' if self._target_path else '',
-                    'git checkout',
                 ])
+
+                # If clone was successful, go on.
+                if code == 0:
+                    # Only clone desired target folder.
+                    code, _, stderr = execute_commands(*[
+                        f'pushd {temp_dir}',
+                        f'git sparse-checkout set {self._target_path}' if self._target_path else '',
+                        'git checkout',
+                    ])
 
                 # If checkout was successful, go on.
                 if code == 0:
@@ -160,5 +165,5 @@ class GitDistributor(DistributorBase):
                     if code != 0:
                         raise GitProblemException(f'{file_name} could not be pushed to {self._url}')
                 else:
-                    raise GitProblemException(f'Git repo {self._url} could not be cloned')
+                    raise GitProblemException(f'Git repo {self._url} could not be cloned', stderr)
         return self
