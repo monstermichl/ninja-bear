@@ -29,7 +29,7 @@ class DistributorCredential:
         """
         # Make sure there's an alias for the credentials.
         if not distribution_alias:
-            NoAliasProvidedException()
+            raise NoAliasProvidedException()
 
         self.distribution_alias = distribution_alias
         self.user = user

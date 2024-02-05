@@ -55,7 +55,7 @@ class GitVersion:
         version_text = text if code == 0 else ''
 
         if code != 0:
-            GitProblemException('Git version could not be evaluated')
+            raise GitProblemException('Git version could not be evaluated')
         return GitVersion.from_string(version_text)
 
     @staticmethod
@@ -104,7 +104,7 @@ class GitDistributor(DistributorBase):
 
         # Make sure an URL has been provided.
         if not url:
-            NoRepositoryUrlProvidedException()
+            raise NoRepositoryUrlProvidedException()
 
         self._url = url
         self._target_path = target_path if target_path else ''  # Use root directory as default path.
@@ -117,7 +117,7 @@ class GitDistributor(DistributorBase):
         if git_version.major < self._MIN_GIT_VERSION.major or \
            git_version.minor < self._MIN_GIT_VERSION.minor or \
            git_version.patch < self._MIN_GIT_VERSION.patch:
-            GitVersionException(self._MIN_GIT_VERSION, git_version)
+            raise GitVersionException(self._MIN_GIT_VERSION, git_version)
         else:
             # Create temporary folder to clone the git repo into and work with it.
             with tempfile.TemporaryDirectory() as temp_dir:
@@ -158,7 +158,7 @@ class GitDistributor(DistributorBase):
                     ])
 
                     if code != 0:
-                        GitProblemException(f'{file_name} could not be pushed to {self._url}')
+                        raise GitProblemException(f'{file_name} could not be pushed to {self._url}')
                 else:
-                    GitProblemException(f'Git repo {self._url} could not be cloned')
+                    raise GitProblemException(f'Git repo {self._url} could not be cloned')
         return self
