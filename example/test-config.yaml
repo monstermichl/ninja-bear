@@ -46,12 +46,24 @@ languages:
   - type: typescript
     indent: 4
     export: esm
+
+    # --- File distribution ---------------------------------------------------
+    # Each language section can have a distributions section which specified, to which locations
+    # to distribute the generated file to.
+    #
+    # type (required): Specifies the distribution type (git).
+    # as   (optional): Specifies an alias for the distribution. This alias might be necessary
+    #                  for specific distribution types (e.g. for git)
+    #
+    # The rest of the properties are distribution specific and described beside the property.
+    # -------------------------------------------------------------------------
     distributions:
       - type: git
-        url: https://github.com/monstermichl/confluent-test.git
-        path: generated
-        user: monstermichl
-        as: git-monstermichl  # An alias is required to provide the password via commandline in the form of -p/--password <alias>=[<username>:]<password>.
+        as: git-monstermichl                                     # An alias is required to provide the password via commandline in the form of -p/--password <alias>=[<username>:]<password>.
+        url: https://github.com/monstermichl/confluent-test.git  # URL of the Git repository.
+        path: generated                                          # Target path within the Git repository.
+        user: monstermichl                                       # Git user (optional).
+        password: password123                                    # Git password (optional).
 
   # -------------------------------------------------------------------------
   - type: python
