@@ -155,7 +155,7 @@ class GitDistributor(DistributorBase):
                         f.write(data)
 
                     # Commit and push changes to repo.
-                    code, _, _ = execute_commands(*[
+                    code, _, stderr = execute_commands(*[
                         f'cd {temp_dir}',
                         f'git add "{target_file_path}"',
                         f'git commit "{target_file_path}" -m "Update {target_file_path} via confluent v{VERSION}"',
@@ -163,7 +163,7 @@ class GitDistributor(DistributorBase):
                     ])
 
                     if code != 0:
-                        raise GitProblemException(f'{file_name} could not be pushed to {self._url}')
+                        raise GitProblemException(f'{file_name} could not be pushed to {self._url}', stderr)
                 else:
                     raise GitProblemException(f'Git repo {self._url} could not be cloned', stderr)
         return self
