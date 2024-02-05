@@ -126,7 +126,9 @@ class GitDistributor(DistributorBase):
                 protocol = url_parts[0] if len(url_parts) > 1 else ''
                 url = url_parts[1] if len(url_parts) > 1 else url_parts[0]
                 separator = SEPARATOR if protocol else ''
-                url_with_credentials = f'{protocol}{separator}{self._user}:{self._password}@{url}'
+                colon = ':' if self._password else ''
+                at = '@' if self._user or self._password else ''
+                url_with_credentials = f'{protocol}{separator}{self._user}{colon}{self._password}{at}{url}'
 
                 code, _, stderr = execute_commands(*[
                     f'git clone --filter=blob:none --no-checkout {url_with_credentials} {temp_dir}',
@@ -154,13 +156,36 @@ class GitDistributor(DistributorBase):
                     with open(target_file_path_full, 'w') as f:
                         f.write(data)
 
-                    # Commit and push changes to repo.
+                    # Add changes.
                     code, _, stderr = execute_commands(*[
                         f'cd {temp_dir}',
                         f'git add "{target_file_path}"',
-                        f'git commit "{target_file_path}" -m "Update {target_file_path} via confluent v{VERSION}"',
-                        f'git push -u {url_with_credentials}',
                     ])
+
+                    if code == 0:
+                        # Commit changes.
+                        code, _, stderr = execute_commands(*[
+                            f'cd {temp_dir}',
+                            f'git commit "{target_file_path}" -m "Update {target_file_path} via confluent v{VERSION}"',
+                        ])
+
+                    if code != 0:
+                        user = self._user if self._user else 'confluent'
+
+                        # If commit didn't work, it's probably because user.name and user.email are not set. Therefore,
+                        # if a user was provided, use it, otherwise commit as confluent.
+                        code, _, stderr = execute_commands(*[
+                            f'cd {temp_dir}',
+                            f'git config --local user.name {user}',
+                            f'git config --local user.email {user}',
+                        ])
+
+                    if code == 0:
+                        # Commit and push changes to repo.
+                        code, _, stderr = execute_commands(*[
+                            f'cd {temp_dir}',
+                            f'git push -u {url_with_credentials}',
+                        ])
 
                     if code != 0:
                         raise GitProblemException(f'{file_name} could not be pushed to {self._url}', stderr)
