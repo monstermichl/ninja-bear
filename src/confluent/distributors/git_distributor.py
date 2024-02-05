@@ -136,7 +136,7 @@ class GitDistributor(DistributorBase):
                 if code == 0:
                     # Only clone desired target folder.
                     code, _, stderr = execute_commands(*[
-                        f'pushd {temp_dir}',
+                        f'cd {temp_dir}',
                         f'git sparse-checkout set {self._target_path}' if self._target_path else '',
                         'git checkout',
                     ])
@@ -156,7 +156,7 @@ class GitDistributor(DistributorBase):
 
                     # Commit and push changes to repo.
                     code, _, _ = execute_commands(*[
-                        f'pushd {temp_dir}',
+                        f'cd {temp_dir}',
                         f'git add "{target_file_path}"',
                         f'git commit "{target_file_path}" -m "Update {target_file_path} via confluent v{VERSION}"',
                         f'git push -u {url_with_credentials}',
