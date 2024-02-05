@@ -148,20 +148,19 @@ class Property:
     @staticmethod
     def _convert_value(value: any, property_type: PropertyType) -> any:
         if isinstance(value, str):
-            match property_type:
-                case PropertyType.BOOL:
-                    # Correct boolean property value to 'true' or 'false'.
-                    value = False if value.lower() in ['0', 'false', 'no', 'off'] else True
-                case PropertyType.INT:
-                    # If numbers can be substituted validly and produce another number, keep it as string.
-                    if not Property._is_valid_number_substitution(value):
-                        match = re.match(r'\d+', value)
-                        value = int(match.group(0)) if match else 0  # Remove everything that comes after the integer.
-                case PropertyType.FLOAT | PropertyType.DOUBLE:
-                    # If numbers can be substituted validly and produce another number, keep it as string.
-                    if not Property._is_valid_number_substitution(value):
-                        match = re.match(r'\d+(\.\d+)?', value)
-                        value = float(match.group(0)) if match else 0  # Remove everything that comes after the float.
+            if property_type == PropertyType.BOOL:
+                # Correct boolean property value to 'true' or 'false'.
+                value = False if value.lower() in ['0', 'false', 'no', 'off'] else True
+            elif property_type == PropertyType.INT:
+                # If numbers can be substituted validly and produce another number, keep it as string.
+                if not Property._is_valid_number_substitution(value):
+                    match = re.match(r'\d+', value)
+                    value = int(match.group(0)) if match else 0  # Remove everything that comes after the integer.
+            elif property_type == PropertyType.FLOAT or property_type == PropertyType.DOUBLE:
+                # If numbers can be substituted validly and produce another number, keep it as string.
+                if not Property._is_valid_number_substitution(value):
+                    match = re.match(r'\d+(\.\d+)?', value)
+                    value = float(match.group(0)) if match else 0  # Remove everything that comes after the float.
         return value
 
     @staticmethod

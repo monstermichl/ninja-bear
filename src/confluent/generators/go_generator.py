@@ -42,17 +42,18 @@ class GoGenerator(GeneratorBase):
         return f'var {self._type_name} = struct {{'
 
     def _property_in_type(self, property: Property) -> str:
-        match property.type:
-            case PropertyType.BOOL:
-                type = 'bool'
-            case PropertyType.INT:
-                type = 'int'
-            case PropertyType.FLOAT | PropertyType.DOUBLE:
-                type = 'float64'
-            case PropertyType.STRING | PropertyType.REGEX:
-                type = 'string'
-            case _:
-                raise Exception('Unknown type')
+        type = property.type
+
+        if type == PropertyType.BOOL:
+            type = 'bool'
+        elif type == PropertyType.INT:
+            type = 'int'
+        elif type == PropertyType.FLOAT or type == PropertyType.DOUBLE:
+            type = 'float64'
+        elif type == PropertyType.STRING or type == PropertyType.REGEX:
+            type = 'string'
+        else:
+            raise Exception('Unknown type')
             
         REMAINING_SPACE_LENGTH = self._evaluate_longest_property() - len(property.name)
         return f'{property.name}{" " * REMAINING_SPACE_LENGTH} {type}'
@@ -64,18 +65,19 @@ class GoGenerator(GeneratorBase):
         return '}{'
     
     def _property_after_type(self, property: Property) -> str:
-        match property.type:
-            case PropertyType.BOOL:
-                value = 'true' if property.value else 'false'
-            case PropertyType.INT:
-                value = property.value
-            case PropertyType.FLOAT | PropertyType.DOUBLE:
-                value = property.value
-            case PropertyType.STRING | PropertyType.REGEX:
-                value = property.value.replace('\\', '\\\\')  # TODO: Might need to be refined.
-                value = f'"{value}"'  # Wrap in quotes.
-            case _:
-                raise Exception('Unknown type')
+        type = property.type
+
+        if type == PropertyType.BOOL:
+            value = 'true' if property.value else 'false'
+        elif type == PropertyType.INT:
+            value = property.value
+        elif type == PropertyType.FLOAT or type == PropertyType.DOUBLE:
+            value = property.value
+        elif type == PropertyType.STRING or type == PropertyType.REGEX:
+            value = property.value.replace('\\', '\\\\')  # TODO: Might need to be refined.
+            value = f'"{value}"'  # Wrap in quotes.
+        else:
+            raise Exception('Unknown type')
             
         REMAINING_SPACE_LENGTH = self._evaluate_longest_property() - len(property.name)
         return f'{" " * self._indent}{property.name}:{" " * REMAINING_SPACE_LENGTH} {value},'

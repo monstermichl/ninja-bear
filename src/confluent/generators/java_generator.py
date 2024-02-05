@@ -42,25 +42,26 @@ class JavaGenerator(GeneratorBase):
         return f'public class {type_name} {{'
 
     def _property_in_type(self, property: Property) -> str:
-        match property.type:
-            case PropertyType.BOOL:
-                type = 'boolean'
-                value = 'true' if property.value else 'false'
-            case PropertyType.INT:
-                type = 'int'
-                value = property.value
-            case PropertyType.FLOAT:
-                type = 'float'
-                value = f'{property.value}f'
-            case PropertyType.DOUBLE:
-                type = 'double'
-                value = f'{property.value}d'
-            case PropertyType.STRING | PropertyType.REGEX:
-                type = 'String'
-                value = property.value.replace('\\', '\\\\')  # TODO: Might need to be refined.
-                value = f'"{value}"'  # Wrap in quotes.
-            case _:
-                raise Exception('Unknown type')
+        type = property.type
+
+        if type == PropertyType.BOOL:
+            type = 'boolean'
+            value = 'true' if property.value else 'false'
+        elif type == PropertyType.INT:
+            type = 'int'
+            value = property.value
+        elif type == PropertyType.FLOAT:
+            type = 'float'
+            value = f'{property.value}f'
+        elif type == PropertyType.DOUBLE:
+            type = 'double'
+            value = f'{property.value}d'
+        elif type == PropertyType.STRING or type == PropertyType.REGEX:
+            type = 'String'
+            value = property.value.replace('\\', '\\\\')  # TODO: Might need to be refined.
+            value = f'"{value}"'  # Wrap in quotes.
+        else:
+            raise Exception('Unknown type')
 
         return f'public final static {type} {property.name} = {value};'
     
