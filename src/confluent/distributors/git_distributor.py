@@ -162,16 +162,18 @@ class GitDistributor(DistributorBase):
                         f'git add "{target_file_path}"',
                     ])
 
-                    if code == 0:
-                        # Commit changes.
-                        code, _, stderr = execute_commands(*[
+                    def commit():
+                        return execute_commands(*[
                             f'cd {temp_dir}',
                             f'git commit "{target_file_path}" -m "Update {target_file_path} via confluent v{VERSION}"',
                         ])
 
+                    if code == 0:
+                        # Commit changes.
+                        code, _, stderr = commit()
+
                     if code != 0:
                         user = self._user if self._user else 'confluent'
-                        print (f'setting {user} as user')
 
                         # If commit didn't work, it's probably because user.name and user.email are not set. Therefore,
                         # if a user was provided, use it, otherwise commit as confluent.
@@ -180,6 +182,8 @@ class GitDistributor(DistributorBase):
                             f'git config --local user.name {user}',
                             f'git config --local user.email {user}',
                         ])
+                        # Try to commit changes again.
+                        code, _, stderr = commit()
                         print('git exited with', code)
                         print('stdio ->', stdio)
                         print('stderr ->', stderr)
