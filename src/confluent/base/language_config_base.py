@@ -15,8 +15,14 @@ from .property import Property
 
 
 class InvalidFileNameException(Exception):
-    def __init__(self, file_name: str, pattern: str):
-        super().__init__(f'The file name "{file_name}" does not conform to the validation pattern "{pattern}"')
+    def __init__(self, file_name: str, pattern: str, class_type: type):
+        type_name = class_type.__name__
+
+        super().__init__(
+            f'The file name "{file_name}" does not conform to the validation pattern "{pattern}" of {type_name} '
+            'as it might be problematic to import the module later on. The output-filename convention can be '
+            'specified using the "file_naming" property.'
+        )
 
 
 class LanguageConfigBase(ABC):
@@ -159,4 +165,4 @@ class LanguageConfigBase(ABC):
         pattern = self._allowed_file_name_pattern()
 
         if not re.match(pattern, self.config_info.file_name):
-            raise InvalidFileNameException(self.config_info.file_name, pattern)
+            raise InvalidFileNameException(self.config_info.file_name, pattern, type(self))
