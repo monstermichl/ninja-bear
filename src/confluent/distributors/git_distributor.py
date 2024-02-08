@@ -171,14 +171,18 @@ class GitDistributor(DistributorBase):
 
                     if code != 0:
                         user = self._user if self._user else 'confluent'
+                        print (f'setting {user} as user')
 
                         # If commit didn't work, it's probably because user.name and user.email are not set. Therefore,
                         # if a user was provided, use it, otherwise commit as confluent.
-                        code, _, stderr = execute_commands(*[
+                        code, stdio, stderr = execute_commands(*[
                             f'cd {temp_dir}',
                             f'git config --local user.name {user}',
                             f'git config --local user.email {user}',
                         ])
+                        print('git exited with', code)
+                        print('stdio ->', stdio)
+                        print('stderr ->', stderr)
 
                     if code == 0:
                         # Commit and push changes to repo.
