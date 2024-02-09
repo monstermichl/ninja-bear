@@ -27,9 +27,9 @@ properties:
 
 ### Output (readme-config.ts)
 ```typescript
-export class ReadmeConfig {
-    public static readonly OPENER = 'Hello World';
-}
+export const ReadmeConfig = {
+    OPENER: 'Hello World',
+} as const;
 ```
 
 ### Output (readme_config.py)
