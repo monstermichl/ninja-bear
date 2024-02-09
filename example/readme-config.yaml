@@ -1,0 +1,17 @@
+languages:
+  - type: typescript
+    property_naming: screaming_snake
+    export: esm
+
+  - type: python
+    file_naming: snake
+    property_naming: screaming_snake
+
+  - type: c
+    file_naming: snake
+    property_naming: pascal
+
+properties:
+  - type: string
+    name: opener
+    value: Hello World
