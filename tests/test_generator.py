@@ -9,6 +9,7 @@ import unittest
 from src.confluent import Orchestrator
 from src.confluent.base.language_config_base import LanguageConfigBase
 from src.confluent.base.language_type import LanguageType
+from src.confluent.base.distributor_base import DistributorCredential
 from src.confluent.generators.java_generator import JavaGenerator
 from src.confluent.generators.javascript_generator import JavascriptGenerator
 from src.confluent.generators.typescript_generator import TypescriptGenerator
@@ -85,6 +86,14 @@ class TestGenerator(unittest.TestCase):
         # Compare files.
         for config in orchestrator.language_configs:
             self.assertIn(config.config_info.file_name_full, files)
+
+    def test_git_distribution(self):
+        # Get secret from environment variables.
+        credential = DistributorCredential('git-monstermichl', None, os.environ['SECRET'])
+        orchestrator = Orchestrator.read_config(self._test_config_path, [credential])
+
+        self._evaluate_configs(orchestrator.language_configs)
+        orchestrator.distribute()
 
     def _evaluate_configs(self, configs: List[LanguageConfigBase]):
         checks = [

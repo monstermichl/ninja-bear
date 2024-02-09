@@ -5,6 +5,7 @@ from typing import List, Type
 
 from .configuration_base import _DEFAULT_INDENT
 from .generator_base import GeneratorBase
+from .distributor_base import DistributorBase
 from .language_type import LanguageType
 from .language_config_configuration import LanguageConfigConfiguration
 from .language_config_naming_conventions import LanguageConfigNamingConventions
@@ -14,8 +15,14 @@ from .property import Property
 
 
 class InvalidFileNameException(Exception):
-    def __init__(self, file_name: str, pattern: str):
-        super().__init__(f'The file name "{file_name}" does not conform to the validation pattern "{pattern}"')
+    def __init__(self, file_name: str, pattern: str, class_type: type):
+        type_name = class_type.__name__
+
+        super().__init__(
+            f'The file name "{file_name}" does not conform to the validation pattern "{pattern}" of {type_name} '
+            'as it might be problematic to import the module later on. The output-filename convention can be '
+            'specified using the "file_naming" property.'
+        )
 
 
 class LanguageConfigBase(ABC):
@@ -31,18 +38,28 @@ class LanguageConfigBase(ABC):
         indent: int = _DEFAULT_INDENT,
         transform: str = None,
         naming_conventions: LanguageConfigNamingConventions = None,
+        distributors: List[DistributorBase] = None,
         additional_props = {},
     ):
         """
         Constructor
 
-        :param config:           Language config configuration.
-        :type config:            LanguageConfigConfiguration
-        :param properties:       Which properties to generate.
-        :type properties:        List[Property]
-        :param additional_props: Additional props which might be required by the deriving generator class,
-                                 defaults to {}
-        :type additional_props:  dict, optional
+        :param config_name:        Language config name. The config name acts more like a template as it might
+                                   be changed by the naming convention rules or the specific language config
+                                   implementation (e.g. test-config might become e.g. TestConfig).
+        :type config_name:         str
+        :param properties:         List of properties.
+        :type properties:          List[Property]
+        :param indent:             Property indent for the generated config, defaults to _DEFAULT_INDENT
+        :type indent:              int, optional
+        :param transform:          Python function which can transform the provided value, defaults to None
+        :type transform:           str, optional
+        :param naming_conventions: Naming convention to use for the generated config file, defaults to None
+        :type naming_conventions:  LanguageConfigNamingConventions, optional
+        :param distributors:       List of distributors, defaults to None
+        :type distributors:        List[DistributorBase], optional
+        :param additional_props:   All props that might by needed by the derivating class, defaults to {}
+        :type additional_props:    dict, optional
         """
         config = LanguageConfigConfiguration(
             config_name=config_name,
@@ -52,6 +69,7 @@ class LanguageConfigBase(ABC):
             indent=indent,
             transform=transform,
             naming_conventions=naming_conventions,
+            distributors=distributors,
         )
 
         # Make sure, config is valid.
@@ -72,6 +90,7 @@ class LanguageConfigBase(ABC):
             config.file_extension,
         )
         self.language_type = config.language_type
+        self.distributors = distributors if distributors else []
 
         # Check output file naming.
         self._check_file_name()
@@ -102,6 +121,18 @@ class LanguageConfigBase(ABC):
             f.write(self.dump())
         return self
     
+    def distribute(self) -> LanguageConfigBase:
+        """
+        Distributes the generated config file via the specified distributors.
+
+        :return: The current LanguageConfigBase instance.
+        :rtype:  LanguageConfigBase
+        """
+        data = self.dump()
+
+        [distributor.distribute(self.config_info.file_name_full, data) for distributor in self.distributors]            
+        return self
+    
     @abstractmethod
     def _language_type(self) -> LanguageType:
         pass
@@ -113,7 +144,7 @@ class LanguageConfigBase(ABC):
     @abstractmethod
     def _generator_type(self) -> Type[GeneratorBase]:
         pass
-    
+
     @abstractmethod
     def _allowed_file_name_pattern(self) -> str:
         """
@@ -134,4 +165,4 @@ class LanguageConfigBase(ABC):
         pattern = self._allowed_file_name_pattern()
 
         if not re.match(pattern, self.config_info.file_name):
-            raise InvalidFileNameException(self.config_info.file_name, pattern)
+            raise InvalidFileNameException(self.config_info.file_name, pattern, type(self))

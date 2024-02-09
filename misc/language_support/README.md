@@ -44,20 +44,19 @@ class MyLanguageGenerator(GeneratorBase):
         return f'class_start {type_name}'
 
     def _property_in_type(self, property: Property) -> str:
-        match property.type:
-            case PropertyType.BOOL:
-                type = 'boolean'
-                value = 1 if property.value else 0
-            case PropertyType.INT:
-            case PropertyType.FLOAT:
-            case PropertyType.DOUBLE:
-                value = property.value
-            case PropertyType.STRING | PropertyType.REGEX:
-                type = 'String'
-                value = property.value.replace('\\', '\\\\')
-                value = f'"{value}"'  # Wrap in quotes.
-            case _:
-                raise Exception('Unknown type')
+        type = property.type
+
+        if type == PropertyType.BOOL:
+            type = 'boolean'
+            value = 1 if property.value else 0
+        elif type == PropertyType.INT or type == PropertyType.FLOAT or type == PropertyType.DOUBLE:
+            value = property.value
+        elif type == PropertyType.STRING or type == PropertyType.REGEX:
+            type = 'String'
+            value = property.value.replace('\\', '\\\\')
+            value = f'"{value}"'  # Wrap in quotes.
+        else:
+            raise Exception('Unknown type')
 
         return f'const {property.name}: {type} = {value};'
 

@@ -47,26 +47,25 @@ class NameConverter:
         # Replace all special characters by underline for easier further processing.
         name = re.sub(r'\W+', UNDERLINE, name)
 
-        match type:
-            case NamingConventionType.SNAKE_CASE:
-                name = name.lower()
-            case NamingConventionType.SCREAMING_SNAKE_CASE:
-                name = name.upper()
-            case NamingConventionType.CAMEL_CASE | NamingConventionType.PASCAL_CASE:
-                # Replace all special characters followed by a letter by the uppercase version of the letter.
-                compare_name = ''
-                while compare_name != name:
-                    compare_name = name
-                    name = re.sub(rf'{UNDERLINE}+([a-zA-Z0-9])',
-                        lambda match: match.group(1).upper(), name # Thanks for the hint: https://stackoverflow.com/a/8934655.
-                    )
+        if type == NamingConventionType.SNAKE_CASE:
+            name = name.lower()
+        elif type == NamingConventionType.SCREAMING_SNAKE_CASE:
+            name = name.upper()
+        elif type == NamingConventionType.CAMEL_CASE or type == NamingConventionType.PASCAL_CASE:
+            # Replace all special characters followed by a letter by the uppercase version of the letter.
+            compare_name = ''
+            while compare_name != name:
+                compare_name = name
+                name = re.sub(rf'{UNDERLINE}+([a-zA-Z0-9])',
+                    lambda match: match.group(1).upper(), name # Thanks for the hint: https://stackoverflow.com/a/8934655.
+                )
 
-                # If Pascal-case, uppercase the first letter.
-                if type == NamingConventionType.PASCAL_CASE:
-                    name = f'{name[0].upper()}{name[1:]}'
-            case NamingConventionType.KEBAP_CASE:
-                name = re.sub(rf'{UNDERLINE}+', '-', name)
-            case _:
-                raise UnknownNamingConventionException(type)
+            # If Pascal-case, uppercase the first letter.
+            if type == NamingConventionType.PASCAL_CASE:
+                name = f'{name[0].upper()}{name[1:]}'
+        elif type == NamingConventionType.KEBAP_CASE:
+            name = re.sub(rf'{UNDERLINE}+', '-', name)
+        else:
+            raise UnknownNamingConventionException(type)
             
         return name

@@ -22,18 +22,19 @@ class PythonGenerator(GeneratorBase):
         return f'class {type_name}:'
 
     def _property_in_type(self, property: Property) -> str:
-        match property.type:
-            case PropertyType.BOOL:
-                value = 'True' if property.value else 'False'
-            case PropertyType.INT | PropertyType.FLOAT | PropertyType.DOUBLE:
-                value = property.value
-            case PropertyType.STRING:
-                value = property.value.replace('\\', '\\\\')  # TODO: Might need to be refined.
-                value = f'\'{value}\''  # Wrap in single quotes.
-            case PropertyType.REGEX:
-                value = f'r\'{property.value}\''  # Wrap in single quotes.
-            case _:
-                raise Exception('Unknown type')
+        type = property.type
+
+        if type == PropertyType.BOOL:
+            value = 'True' if property.value else 'False'
+        elif type == PropertyType.INT or type == PropertyType.FLOAT or type == PropertyType.DOUBLE:
+            value = property.value
+        elif type == PropertyType.STRING:
+            value = property.value.replace('\\', '\\\\')  # TODO: Might need to be refined.
+            value = f'\'{value}\''  # Wrap in single quotes.
+        elif type == PropertyType.REGEX:
+            value = f'r\'{property.value}\''  # Wrap in single quotes.
+        else:
+            raise Exception('Unknown type')
 
         return f'{property.name} = {value}'
     

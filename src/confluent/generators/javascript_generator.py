@@ -53,18 +53,19 @@ class JavascriptGenerator(GeneratorBase):
         return f'{export}class {type_name} {{'
 
     def _property_in_type(self, property: Property) -> str:
-        match property.type:
-            case PropertyType.BOOL:
-                value = 'true' if property.value else 'false'
-            case PropertyType.INT | PropertyType.FLOAT | PropertyType.DOUBLE:
-                value = property.value
-            case PropertyType.STRING:
-                value = property.value.replace('\\', '\\\\')  # TODO: Might need to be refined.
-                value = f'\'{value}\''  # Wrap in single quotes.
-            case PropertyType.REGEX:
-                value = f'/{property.value}/'  # Wrap in single quotes.
-            case _:
-                raise Exception('Unknown type')
+        type = property.type
+
+        if type == PropertyType.BOOL:
+            value = 'true' if property.value else 'false'
+        elif type == PropertyType.INT or type == PropertyType.FLOAT or type ==  PropertyType.DOUBLE:
+            value = property.value
+        elif type == PropertyType.STRING:
+            value = property.value.replace('\\', '\\\\')  # TODO: Might need to be refined.
+            value = f'\'{value}\''  # Wrap in single quotes.
+        elif type == PropertyType.REGEX:
+            value = f'/{property.value}/'  # Wrap in single quotes.
+        else:
+            raise Exception('Unknown type')
             
         return self._create_property(property.name, value)
     
@@ -87,15 +88,14 @@ class JavascriptGenerator(GeneratorBase):
         if self._ATTRIBUTE_EXPORT in self._additional_props:
             exception_type_string = self._additional_props[self._ATTRIBUTE_EXPORT]
 
-            match exception_type_string:
-                case ExportType.ESM:
-                    export_type = ExportType.ESM
-                case ExportType.COMMON_JS:
-                    export_type = ExportType.COMMON_JS
-                case ExportType.NONE:
-                    export_type = ExportType.NONE
-                case _:
-                    raise UnknownExportTypeException(exception_type_string)
+            if exception_type_string == ExportType.ESM:
+                export_type = ExportType.ESM
+            elif exception_type_string == ExportType.COMMON_JS:
+                export_type = ExportType.COMMON_JS
+            elif exception_type_string == ExportType.NONE:
+                export_type = ExportType.NONE
+            else:
+                raise UnknownExportTypeException(exception_type_string)
         return export_type
 
     def _create_property(self, name: str, value: str):

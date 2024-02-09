@@ -27,7 +27,7 @@ class InvalidNamespaceException(Exception):
 
 
 class Property:
-    _PROPERTY_SUBSTITUTION_PATTERN = r'\${(\w+(\.\w+)?)}'
+    _PROPERTY_SUBSTITUTION_PATTERN = r'\${((_|[a-zA-Z])(\w|-)*((\.(_|[a-zA-Z])(\w|-)*))?)}'
     _NAMING_PATTERN = r'^(_|[a-zA-Z])(\w|-)*$'  # Define a general naming pattern.
     _PROPERTY_NAME_PATTERN = _NAMING_PATTERN
     _NAMESPACE_NAME_PATTERN = _NAMING_PATTERN
@@ -66,7 +66,7 @@ class Property:
         :type namespace:      str, optional
 
         :raises InvalidVariableNameException: Raised if an invalid variable name has been provided.
-        :raises InvalidNamespaceException: Raised if an invalid namespace has been provided.
+        :raises InvalidNamespaceException:    Raised if an invalid namespace has been provided.
         """
         # Check if the key is a valid variable name.
         if not re.match(Property._PROPERTY_NAME_PATTERN, name):
@@ -148,20 +148,19 @@ class Property:
     @staticmethod
     def _convert_value(value: any, property_type: PropertyType) -> any:
         if isinstance(value, str):
-            match property_type:
-                case PropertyType.BOOL:
-                    # Correct boolean property value to 'true' or 'false'.
-                    value = False if value.lower() in ['0', 'false', 'no', 'off'] else True
-                case PropertyType.INT:
-                    # If numbers can be substituted validly and produce another number, keep it as string.
-                    if not Property._is_valid_number_substitution(value):
-                        match = re.match(r'\d+', value)
-                        value = int(match.group(0)) if match else 0  # Remove everything that comes after the integer.
-                case PropertyType.FLOAT | PropertyType.DOUBLE:
-                    # If numbers can be substituted validly and produce another number, keep it as string.
-                    if not Property._is_valid_number_substitution(value):
-                        match = re.match(r'\d+(\.\d+)?', value)
-                        value = float(match.group(0)) if match else 0  # Remove everything that comes after the float.
+            if property_type == PropertyType.BOOL:
+                # Correct boolean property value to 'true' or 'false'.
+                value = False if value.lower() in ['0', 'false', 'no', 'off'] else True
+            elif property_type == PropertyType.INT:
+                # If numbers can be substituted validly and produce another number, keep it as string.
+                if not Property._is_valid_number_substitution(value):
+                    match = re.match(r'\d+', value)
+                    value = int(match.group(0)) if match else 0  # Remove everything that comes after the integer.
+            elif property_type == PropertyType.FLOAT or property_type == PropertyType.DOUBLE:
+                # If numbers can be substituted validly and produce another number, keep it as string.
+                if not Property._is_valid_number_substitution(value):
+                    match = re.match(r'\d+(\.\d+)?', value)
+                    value = float(match.group(0)) if match else 0  # Remove everything that comes after the float.
         return value
 
     @staticmethod

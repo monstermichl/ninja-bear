@@ -3,6 +3,7 @@ from typing import List
 
 from .language_config_base import LanguageConfigBase
 from .config import Config
+from .distributor_base import DistributorCredential
 
 class Orchestrator:
 
@@ -34,9 +35,19 @@ class Orchestrator:
         """
         [config.write(path) for config in self.language_configs]
         return self
+    
+    def distribute(self) -> Orchestrator:
+        """
+        Distributes all generated config files via their specified distributors.
+
+        :return: The current Orchestrator instance.
+        :rtype:  Orchestrator
+        """
+        [config.distribute() for config in self.language_configs]
+        return self
 
     @staticmethod
-    def read_config(path: str) -> Orchestrator:
+    def read_config(path: str, distributor_credentials: List[DistributorCredential]=[]) -> Orchestrator:
         """
         Reads the provided YAML configuration file and generates a list of language configurations.
 
@@ -46,10 +57,11 @@ class Orchestrator:
         :return: Orchestrator instance.
         :rtype:  Orchestrator
         """
-        return Orchestrator(Config.read(path))
+        return Orchestrator(Config.read(path, distributor_credentials))
 
     @staticmethod
-    def parse_config(config: str, config_name: str) -> Orchestrator:
+    def parse_config(config: str, config_name: str, distributor_credentials: List[DistributorCredential]=[]) \
+        -> Orchestrator:
         """
         Parses the provided YAML configuration string and generates a list of language configurations. 
 
@@ -65,4 +77,4 @@ class Orchestrator:
         :return: Orchestrator instance.
         :rtype:  Orchestrator
         """
-        return Orchestrator(Config.parse(config, config_name))
+        return Orchestrator(Config.parse(config, config_name, distributor_credentials))

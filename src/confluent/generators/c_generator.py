@@ -22,19 +22,20 @@ class CGenerator(GeneratorBase):
         return 'const struct {'
 
     def _property_in_type(self, property: Property) -> str:
-        match property.type:
-            case PropertyType.BOOL:
-                type = 'unsigned char'
-            case PropertyType.INT:
-                type = 'int'
-            case PropertyType.FLOAT:
-                type = 'float'
-            case PropertyType.DOUBLE:
-                type = 'double'
-            case PropertyType.STRING | PropertyType.REGEX:
-                type = 'char*'
-            case _:
-                raise Exception('Unknown type')
+        type = property.type
+
+        if type == PropertyType.BOOL:
+            type = 'unsigned char'
+        elif type == PropertyType.INT:
+            type = 'int'
+        elif type == PropertyType.FLOAT:
+            type = 'float'
+        elif type == PropertyType.DOUBLE:
+            type = 'double'
+        elif type == PropertyType.STRING or type == PropertyType.REGEX:
+            type = 'char*'
+        else:
+            raise Exception('Unknown type')
 
         return f'{type} {property.name};'
     
@@ -45,20 +46,21 @@ class CGenerator(GeneratorBase):
         return f'}} {self._type_name} = {{'
     
     def _property_after_type(self, property: Property) -> str:
-        match property.type:
-            case PropertyType.BOOL:
-                value = '1' if property.value else '0'
-            case PropertyType.INT:
-                value = property.value
-            case PropertyType.FLOAT:
-                value = f'{property.value}f'
-            case PropertyType.DOUBLE:
-                value = property.value
-            case PropertyType.STRING | PropertyType.REGEX:
-                value = property.value.replace('\\', '\\\\')  # TODO: Might need to be refined.
-                value = f'"{value}"'  # Wrap in quotes.
-            case _:
-                raise Exception('Unknown type')
+        type = property.type
+
+        if type == PropertyType.BOOL:
+            value = '1' if property.value else '0'
+        elif type == PropertyType.INT:
+            value = property.value
+        elif type == PropertyType.FLOAT:
+            value = f'{property.value}f'
+        elif type == PropertyType.DOUBLE:
+            value = property.value
+        elif type == PropertyType.STRING or type == PropertyType.REGEX:
+            value = property.value.replace('\\', '\\\\')  # TODO: Might need to be refined.
+            value = f'"{value}"'  # Wrap in quotes.
+        else:
+            raise Exception('Unknown type')
 
         return f'{" " * self._indent}{value},'
     

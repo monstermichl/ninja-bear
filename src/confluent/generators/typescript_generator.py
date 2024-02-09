@@ -1,4 +1,4 @@
-from .javascript_generator import JavascriptGenerator
+from .javascript_generator import ExportType, JavascriptGenerator
 
 
 class TypescriptGenerator(JavascriptGenerator):
@@ -7,5 +7,16 @@ class TypescriptGenerator(JavascriptGenerator):
     """
 
     # Override JavaScriptGenerator method.
+    def _start_type(self, type_name: str) -> str:
+        # Export class only directly if ESM is used.
+        export = 'export ' if self.export_type == ExportType.ESM else ''
+
+        return f'{export}const {type_name} = {{'
+    
+    # Override JavaScriptGenerator method.
+    def _end_type(self) -> str:
+        return '} as const;'
+
+    # Override JavaScriptGenerator method.
     def _create_property(self, name: str, value: str):
-        return f'public static readonly {name} = {value};'
+        return f'{name}: {value},'

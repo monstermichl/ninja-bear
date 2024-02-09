@@ -20,13 +20,29 @@ class InvalidPackageNameException(Exception):
         super().__init__(message)
 
 
-def evaluate_package(package_regex: str, hint: str, **props):
-    ATTRITBUTE_PACKAGE = 'package'
+def evaluate_package(package_regex: str, hint: str, **props) -> str:
+    """
+    Checks if props contains a value for 'package' and if the package name conforms
+    to the specified RegEx.
 
-    if ATTRITBUTE_PACKAGE not in props:
+    :param package_regex: Package name RegEx to check.
+    :type package_regex:  str
+    :param hint:          Hint to throw if the package name doesn't conform.
+    :type hint:           str
+
+    :raises NoPackageNameException:      Raised if no package name was found.
+    :raises EmptyPackageNameException:   Raised if the package name is empty.
+    :raises InvalidPackageNameException: Raised if the package name does not conform to the RegEx.
+
+    :return: Package name string.
+    :rtype:  str
+    """
+    ATTRIBUTE_PACKAGE = 'package'
+
+    if ATTRIBUTE_PACKAGE not in props:
         raise NoPackageNameException()
     else:
-        package = props[ATTRITBUTE_PACKAGE]
+        package = props[ATTRIBUTE_PACKAGE]
     
     if not package:
         raise EmptyPackageNameException()
