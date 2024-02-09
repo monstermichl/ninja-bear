@@ -48,7 +48,7 @@ languages:
     export: esm
 
     # --- File distribution ---------------------------------------------------
-    # Each language section can have a distributions section which specified, to which locations
+    # Each language section can have a distributions section which specifies, to which locations
     # to distribute the generated file to.
     #
     # type (required): Specifies the distribution type (git).
@@ -59,7 +59,7 @@ languages:
     # -------------------------------------------------------------------------
     distributions:
       - type: git
-        as: git-monstermichl                                     # An alias is required to provide the password via commandline in the form of -p/--password <alias>=[<username>:]<password>.
+        as: git-monstermichl                                     # An alias is required if the password shall be provided via commandline in the form of -s/--secret <alias>=[<username>:]<password>.
         url: https://github.com/monstermichl/confluent-test.git  # URL of the Git repository.
         path: generated                                          # Target path within the Git repository.
         user: monstermichl                                       # Git user (optional).
