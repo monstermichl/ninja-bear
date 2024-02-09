@@ -67,7 +67,7 @@ python3 -m pip install confluent
 ```
 
 ## Configuration
-For detailed configuration information, please check [example/test-config](https://github.com/monstermichl/confluent/blob/main/example/test-config.yaml).yaml. All possible values are described there.
+For detailed configuration information, please check [example/test-config.yaml](https://github.com/monstermichl/confluent/blob/main/example/test-config.yaml). All possible values are described there.
 
 ## Usage
 ### Commandline
