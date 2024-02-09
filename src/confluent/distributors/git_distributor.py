@@ -183,7 +183,7 @@ class GitDistributor(DistributorBase):
                             f'git config --local user.email {user}',
                         ])
                         # Try to commit changes again.
-                        code, _, stderr = commit()
+                        code, stdio, stderr = commit()
                         print('git exited with', code)
                         print('stdio ->', stdio)
                         print('stderr ->', stderr)
