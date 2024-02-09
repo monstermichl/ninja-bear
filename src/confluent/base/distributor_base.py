@@ -26,6 +26,8 @@ class DistributorCredential:
         :type user:                str, optional
         :param password:           Credential password, defaults to ''
         :type password:            str, optional
+
+        :raises NoAliasProvidedException: Raised if no distribution alias has been provided.
         """
         # Make sure there's an alias for the credentials.
         if not distribution_alias:
@@ -44,7 +46,7 @@ class DistributorBase(ABC):
     """
 
     @abstractmethod
-    def distribute(file_name: str, data: str):
+    def distribute(file_name: str, data: str) -> DistributorBase:
         """
         Method to distribute a generated config which must be implemented by a derivative class.
 

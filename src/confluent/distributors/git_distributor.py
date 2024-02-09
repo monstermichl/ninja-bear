@@ -48,6 +48,8 @@ class GitVersion:
         """
         Retrieves the git version by calling git --version.
 
+        :raises GitProblemException: Raised if the Git version could not be evaluated.
+
         :return: GitVersion instance with the actual Git version.
         :rtype:  GitVersion
         """
@@ -99,6 +101,8 @@ class GitDistributor(DistributorBase):
         :type user:         str
         :param password:    Git user password or token.
         :type password:     str
+
+        :raises NoRepositoryUrlProvidedException: Raised if no Git server URL has been provided.
         """
         super().__init__()
 
@@ -111,7 +115,21 @@ class GitDistributor(DistributorBase):
         self._user = user
         self._password = password
 
-    def distribute(self, file_name: str, data: str) -> DistributorBase:
+    def distribute(self, file_name: str, data: str) -> GitDistributor:
+        """
+        Method to distribute a generated config to a Git server.
+
+        :param file_name: Config file name.
+        :type file_name:  str
+        :param data:      Config file data.
+        :type data:       str
+
+        :raises GitVersionException: Raised if Git does not fulfill the minimum required version.
+        :raises GitProblemException: Raised on different Git problems.
+
+        :return: The current GitDistributor instance.
+        :rtype:  GitDistributor
+        """
         git_version = GitVersion.from_git()
         
         if git_version.major < self._MIN_GIT_VERSION.major or \

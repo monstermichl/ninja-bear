@@ -66,7 +66,7 @@ class Property:
         :type namespace:      str, optional
 
         :raises InvalidVariableNameException: Raised if an invalid variable name has been provided.
-        :raises InvalidNamespaceException: Raised if an invalid namespace has been provided.
+        :raises InvalidNamespaceException:    Raised if an invalid namespace has been provided.
         """
         # Check if the key is a valid variable name.
         if not re.match(Property._PROPERTY_NAME_PATTERN, name):
