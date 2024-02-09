@@ -27,7 +27,7 @@ class InvalidNamespaceException(Exception):
 
 
 class Property:
-    _PROPERTY_SUBSTITUTION_PATTERN = r'\${(\w+(\.\w+)?)}'
+    _PROPERTY_SUBSTITUTION_PATTERN = r'\${((_|[a-zA-Z])(\w|-)*((\.(_|[a-zA-Z])(\w|-)*))?)}'
     _NAMING_PATTERN = r'^(_|[a-zA-Z])(\w|-)*$'  # Define a general naming pattern.
     _PROPERTY_NAME_PATTERN = _NAMING_PATTERN
     _NAMESPACE_NAME_PATTERN = _NAMING_PATTERN
