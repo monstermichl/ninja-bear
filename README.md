@@ -63,7 +63,7 @@ const struct {
 
 ## Installation
 ```bash
-python -m pip install confluent  # On Linux use python3.
+python3 -m pip install confluent
 ```
 
 ## Configuration
@@ -72,7 +72,7 @@ For detailed configuration information, please check [example/test-config](https
 ## Usage
 ### Commandline
 ```bash
-python3 -m confluent -c test-config.yaml -o generated [-d]
+python3 -m confluent -c test-config.yaml -o generated
 # For more information run "python3 -m confluent -h".
 ```
 
