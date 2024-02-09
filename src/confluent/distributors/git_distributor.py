@@ -184,9 +184,10 @@ class GitDistributor(DistributorBase):
                         ])
                         # Try to commit changes again.
                         code, stdio, stderr = commit()
-                        print('git exited with', code)
-                        print('stdio ->', stdio)
-                        print('stderr ->', stderr)
+                        
+                        # if nothing to commit was the problem, correct the error code.
+                        if code != 0 and re.search('nothing to commit', stdio):
+                            code = 0
 
                     if code == 0:
                         # Commit and push changes to repo.
