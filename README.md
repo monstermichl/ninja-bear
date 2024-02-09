@@ -72,7 +72,7 @@ For detailed configuration information, please check [example/test-config](https
 ## Usage
 ### Commandline
 ```bash
-python3 -m confluent -c test-config.yaml -o generated [-d]
+python3 -m confluent -c test-config.yaml -o generated
 # For more information run "python3 -m confluent -h".
 ```
 
