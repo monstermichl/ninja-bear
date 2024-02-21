@@ -144,9 +144,12 @@ class GitDistributor(DistributorBase):
                 protocol = url_parts[0] if len(url_parts) > 1 else ''
                 url = url_parts[1] if len(url_parts) > 1 else url_parts[0]
                 separator = SEPARATOR if protocol else ''
-                colon = ':' if self._password else ''
-                at = '@' if self._user or self._password else ''
-                url_with_credentials = f'{protocol}{separator}{self._user}{colon}{self._password}{at}{url}'
+                user = self._user if self._user else ''
+                password = self._password if self._password else ''
+                colon = ':' if user and password else ''
+                at = '@' if user or password else ''
+                url_with_credentials = f'{protocol}{separator}{user}{colon}{password}{at}{url}'
+                password = None
 
                 code, _, stderr = execute_commands(*[
                     f'git clone --filter=blob:none --no-checkout {url_with_credentials} {temp_dir}',
