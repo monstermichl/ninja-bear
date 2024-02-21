@@ -66,6 +66,11 @@ languages:
     # Each language section can have a distributions section which specifies,
     # to which locations to distribute the generated file to.
     #
+    # IMPORTANT: The configs won't get distributed by default. To distribute
+    #            them via commandline, use the -d/--distribute flag. To
+    #            distribute them from within a Python script, use the
+    #            Orchestrator's distribute() method.
+    #
     # type (required): Specifies the distribution type (git).
     # as   (optional): Specifies an alias for the distribution. This alias might
     #                  be necessary for specific distribution types (e.g. for git).
