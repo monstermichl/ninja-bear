@@ -1,5 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
+from typing import Dict
 
 
 class NoAliasProvidedException(Exception):
@@ -7,7 +8,7 @@ class NoAliasProvidedException(Exception):
         super().__init__('No alias has been provided')
 
 
-class DistributorCredential:
+class DistributorCredentials:
     """
     Class to encapsulate credentials for specific distributor types.
     """
@@ -45,8 +46,22 @@ class DistributorBase(ABC):
     distributor implementation).
     """
 
+    def __init__(self, config: Dict, credentials: DistributorCredentials=None) -> DistributorBase:
+        super().__init__()
+
+        self._config = config
+        self._credentials = credentials
+
+    def from_config(self, key: str):
+        return self._config[key] if key in self._config else None
+    
     @abstractmethod
-    def distribute(file_name: str, data: str) -> DistributorBase:
+    def get_responsiblity_type(self) -> str:
+        pass
+
+    @abstractmethod
+    def distribute(self, file_name: str, data: str) -> DistributorBase:
+
         """
         Method to distribute a generated config which must be implemented by a derivative class.
 

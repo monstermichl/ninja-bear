@@ -6,9 +6,10 @@
 # -------------------------------------------------------------------------
 includes:
   # --- Common properties ---------------------------------------------------
-  # path (required): Specifies the path to the external configuration file.
-  # as   (required): Specifies how the file will be referenced in value
-  #                  substitutions (e.g., ${ti.myIncludedString}).
+  # path   (required): Specifies the path to the external configuration file.
+  # as     (required): Specifies how the file will be referenced in value
+  #                    substitutions (e.g., ${ti.myIncludedString}).
+  # ignore (optional): If true, the section gets ignored.
   # -------------------------------------------------------------------------
   - path: test-include.yaml
     as: ti
@@ -39,6 +40,8 @@ languages:
   #                             value: Property value.
   #                             type: Property type.
   #                             properties: List of all properties (must not be modified).
+  #
+  # ignore          (optional): If true, the section gets ignored.
   # -------------------------------------------------------------------------
 
   # --- Java specific properties --------------------------------------------
@@ -71,23 +74,19 @@ languages:
     #            -d/--distribute flag. To distribute them from within a
     #            Python script, use the Orchestrator's distribute() method.
     #
-    # type (required): Specifies the distribution type (git).
-    # as   (optional): Specifies an alias for the distribution. This alias might
-    #                  be necessary for specific distribution types (e.g. for git).
+    # distributor (required): Specifies which plugin to use to distribute.
+    # as          (optional): Specifies an alias for the distribution. With
+    #                         the alias it's possible to provide possible
+    #                         credentials via the command line.
+    # ignore      (optional): If true, the section gets ignored.
     #
-    # The rest of the properties are distribution specific and described beside
-    # the property.
+    # The rest of the properties are distributor specific and (hopefully)
+    # described by the corresponding plugin.
     # -------------------------------------------------------------------------
     distributions:
-      - type: git                                                # Distribute file to a Git server. Minimum
-                                                                 # Git requirement is v2.29.0.
-        as: git-monstermichl                                     # An alias is required if the password shall
-                                                                 # be provided via commandline in the form of
-                                                                 # -s/--secret <alias>=[<username>:]<password>.
-        url: https://github.com/monstermichl/confluent-test.git  # URL of the Git repository.
-        path: generated                                          # Target path within the Git repository.
-        user: monstermichl                                       # Git user (optional).
-        password: password123                                    # Git password (optional).
+      - distributor: confluent-example-distributor  # Specifies which distributor plugin to use.
+        as: example-alias
+        ignore: true
 
   # -------------------------------------------------------------------------
   - type: python
@@ -121,6 +120,7 @@ properties:
   # comment (optional): Adds an extra comment to the constant.
   # hidden  (optional): Constants serves as helper and will not be written to
   #                     the final result.
+  # ignore  (optional): If true, the section gets ignored.
   # -------------------------------------------------------------------------
 
   - type: bool

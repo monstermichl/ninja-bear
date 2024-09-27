@@ -3,7 +3,7 @@ from os import path
 from typing import List
 
 from .base.orchestrator import Orchestrator
-from .base.distributor_base import DistributorCredential
+from .base.distributor_base import DistributorCredentials
 
 _CONFIG_PARAMETER = 'config'
 _OUTPUT_PARAMETER = 'output'
@@ -11,7 +11,7 @@ _SECRET_PARAMETER = 'secret'
 _DISTRIBUTE_PARAMETER = 'distribute'
 
 
-def _parse_credentials(credential_strings: List[str]) -> List[DistributorCredential]:
+def _parse_credentials(credential_strings: List[str]) -> List[DistributorCredentials]:
     credentials = []
 
     for credential_string in credential_strings if credential_strings else []:
@@ -27,7 +27,7 @@ def _parse_credentials(credential_strings: List[str]) -> List[DistributorCredent
         )
 
         if alias and password:
-            credentials.append(DistributorCredential(alias, user, password))
+            credentials.append(DistributorCredentials(alias, user, password))
     return credentials
 
 

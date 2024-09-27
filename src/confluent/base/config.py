@@ -5,6 +5,7 @@ from typing import Dict, List, Tuple, Type
 import yaml
 from schema import Schema, Use, Optional, Or
 
+from .plugin_loader import Plugin, PluginLoader, PluginType
 from .config_language_mapping import ConfigLanguageMapping
 from .name_converter import NamingConventionType
 from .property import Property
@@ -12,14 +13,13 @@ from .property_type import PropertyType
 from .language_type import LanguageType
 from .language_config_base import LanguageConfigBase
 from .language_config_naming_conventions import LanguageConfigNamingConventions
-from .distributor_base import DistributorBase, DistributorCredential
+from .distributor_base import DistributorBase, DistributorCredentials
 
-from ..distributors.git_distributor import GitDistributor
-
-# Main categories.
+# Main keys.
 _KEY_INCLUDES = 'includes'
 _KEY_LANGUAGES = 'languages'
 _KEY_PROPERTIES = 'properties'
+_KEY_IGNORE = 'ignore'
 
 # Include keys.
 _INCLUDE_KEY_PATH = 'path'
@@ -28,17 +28,14 @@ _INCLUDE_KEY_AS = 'as'
 # Language keys.
 _LANGUAGE_KEY_FILE_NAMING = 'file_naming'
 _LANGUAGE_KEY_DISTRIBUTIONS = 'distributions'
-_LANGUAGE_KEY_URL = 'url'
-_LANGUAGE_KEY_PATH = 'path'
 _LANGUAGE_KEY_PROPERTY_NAMING = 'property_naming'
 _LANGUAGE_KEY_TYPE_NAMING = 'type_naming'
 _LANGUAGE_KEY_INDENT = 'indent'
 _LANGUAGE_KEY_TRANSFORM = 'transform'
 _LANGUAGE_KEY_TYPE = 'type'
 _LANGUAGE_KEY_NAME = 'name'
-_LANGUAGE_KEY_USER = 'user'
-_LANGUAGE_KEY_PASSWORD = 'password'
 _LANGUAGE_KEY_AS = 'as'
+_LANGUAGE_KEY_DISTRIBUTOR = 'distributor'
 
 # Property keys.
 _PROPERTY_KEY_VALUE = 'value'
@@ -82,13 +79,18 @@ class AliasAlreadyInUseException(Exception):
         super().__init__(f'The include-alias \'{alias}\' is already in use')
 
 
+class DistributorNotFoundException(Exception):
+    def __init__(self, distributor: str):
+        super().__init__(f'The distributor \'{distributor}\' could not be found')
+
+
 class Config:
     """
     Handles the config evaluation by parsing the provided YAML string via the parse-method.
     """
 
     @staticmethod
-    def read(path: str, distributor_credentials: List[DistributorCredential]) -> List[LanguageConfigBase]:
+    def read(path: str, distributor_credentials: List[DistributorCredentials]) -> List[LanguageConfigBase]:
         """
         Reads the provided YAML configuration file and generates a list of language configurations.
 
@@ -101,7 +103,7 @@ class Config:
         return Config._read(path, distributor_credentials=distributor_credentials)[0]
 
     @staticmethod
-    def parse(content: str, config_name: str, distributor_credentials: List[DistributorCredential]) \
+    def parse(content: str, config_name: str, distributor_credentials: List[DistributorCredentials]) \
         -> List[LanguageConfigBase]:
         """
         Parses the provided YAML configuration string and returns the corresponding language configurations.
@@ -123,7 +125,7 @@ class Config:
         path: str,
         namespace: str='',
         namespaces: List[str]=None,
-        distributor_credentials: List[DistributorCredential]=[],
+        distributor_credentials: List[DistributorCredentials]=[],
     ) -> List[LanguageConfigBase]:
         """
         Reads the provided YAML configuration file and generates a list of language configurations.
@@ -162,7 +164,7 @@ class Config:
         namespace: str='',
         directory: str='',
         namespaces: List[str]=None,
-        distributor_credentials: List[DistributorCredential]=[],
+        distributor_credentials: List[DistributorCredentials]=[],
     ) -> Tuple[List[LanguageConfigBase], List[Property]]:
         """
         Parses the provided YAML configuration string and returns the corresponding language configurations.
@@ -185,6 +187,7 @@ class Config:
         validated_object = Config._schema().validate(yaml_object)
         language_configs: List[LanguageConfigBase] = []
         properties: List[Property] = []
+        distributor_plugins = PluginLoader().load_distributors()
 
         # Since a default list cannot be assigned to the namespaces variable in the method header, because it only
         # gets initialized once and then the list gets re-used (see https://stackoverflow.com/a/1145781), make sure
@@ -195,71 +198,85 @@ class Config:
         # Evaluate included files and their properties.
         if _KEY_INCLUDES in validated_object:
             for inclusion in validated_object[_KEY_INCLUDES]:
-                inclusion_namespace = inclusion[_INCLUDE_KEY_AS]
+                ignore = inclusion[_KEY_IGNORE] if _KEY_IGNORE in inclusion else False
 
-                # Make sure that a included config file does not re-define an alias.
-                if inclusion_namespace in namespaces:
-                    raise AliasAlreadyInUseException(inclusion_namespace)
-                else:
-                    namespaces.append(inclusion_namespace)
-                inclusion_path = inclusion[_INCLUDE_KEY_PATH]
+                # If inclusion shall not be ignored, include it.
+                if not ignore:
+                    inclusion_namespace = inclusion[_INCLUDE_KEY_AS]
 
-                # If the provided path is relative, incorporate the provided directory into the path.
-                if not os.path.isabs(inclusion_path):
-                    inclusion_path = os.path.join(directory, inclusion_path)
+                    # Make sure that a included config file does not re-define an alias.
+                    if inclusion_namespace in namespaces:
+                        raise AliasAlreadyInUseException(inclusion_namespace)
+                    else:
+                        namespaces.append(inclusion_namespace)
+                    inclusion_path = inclusion[_INCLUDE_KEY_PATH]
 
-                # Read included config and put properties into property list.
-                for inclusion_property in Config._read(inclusion_path, inclusion_namespace, namespaces)[1]:
-                    inclusion_property.hidden = True  # Included properties are not being exported by default.
-                    properties.append(inclusion_property)
+                    # If the provided path is relative, incorporate the provided directory into the path.
+                    if not os.path.isabs(inclusion_path):
+                        inclusion_path = os.path.join(directory, inclusion_path)
+
+                    # Read included config and put properties into property list.
+                    for inclusion_property in Config._read(inclusion_path, inclusion_namespace, namespaces)[1]:
+                        inclusion_property.hidden = True  # Included properties are not being exported by default.
+                        properties.append(inclusion_property)
 
         # Collect properties as they are the same for all languages.
         for property in validated_object[_KEY_PROPERTIES]:
-            properties.append(Property(
-                name=property[_LANGUAGE_KEY_NAME],
-                value=property[_PROPERTY_KEY_VALUE],
-                property_type=property[_LANGUAGE_KEY_TYPE],
-                hidden=property[_PROPERTY_KEY_HIDDEN] if _PROPERTY_KEY_HIDDEN in property else None,
-                comment=property[_PROPERTY_KEY_COMMENT] if _PROPERTY_KEY_COMMENT in property else None,
-                namespace=namespace,
-            ))
+            ignore = property[_KEY_IGNORE] if _KEY_IGNORE in property else False
+
+            # If property shall not be ignored, include it.
+            if not ignore:
+                properties.append(Property(
+                    name=property[_LANGUAGE_KEY_NAME],
+                    value=property[_PROPERTY_KEY_VALUE],
+                    property_type=property[_LANGUAGE_KEY_TYPE],
+                    hidden=property[_PROPERTY_KEY_HIDDEN] if _PROPERTY_KEY_HIDDEN in property else None,
+                    comment=property[_PROPERTY_KEY_COMMENT] if _PROPERTY_KEY_COMMENT in property else None,
+                    namespace=namespace,
+                ))
 
         # Evaluate each language setting one by one.
         if _KEY_LANGUAGES in validated_object:
             for language in validated_object[_KEY_LANGUAGES]:
-                naming_conventions = LanguageConfigNamingConventions()
-                language_type = language[_LANGUAGE_KEY_TYPE]
-                indent = language[_LANGUAGE_KEY_INDENT] if _LANGUAGE_KEY_INDENT in language else None
-                transform = language[_LANGUAGE_KEY_TRANSFORM] if _LANGUAGE_KEY_TRANSFORM in language else None
+                ignore = language[_KEY_IGNORE] if _KEY_IGNORE in language else False
 
-                # Evaluate file naming-convention.
-                naming_conventions.file_naming_convention = Config._evaluate_naming_convention_type(
-                    language[_LANGUAGE_KEY_FILE_NAMING] if _LANGUAGE_KEY_FILE_NAMING in language else None
-                )
+                # If language shall not be ignored, include it.
+                if not ignore:
+                    naming_conventions = LanguageConfigNamingConventions()
+                    language_type = language[_LANGUAGE_KEY_TYPE]
+                    indent = language[_LANGUAGE_KEY_INDENT] if _LANGUAGE_KEY_INDENT in language else None
+                    transform = language[_LANGUAGE_KEY_TRANSFORM] if _LANGUAGE_KEY_TRANSFORM in language else None
 
-                # Evaluate properties naming-convention.
-                naming_conventions.properties_naming_convention = Config._evaluate_naming_convention_type(
-                    language[_LANGUAGE_KEY_PROPERTY_NAMING] if _LANGUAGE_KEY_PROPERTY_NAMING in language else None
-                )
+                    # Evaluate file naming-convention.
+                    naming_conventions.file_naming_convention = Config._evaluate_naming_convention_type(
+                        language[_LANGUAGE_KEY_FILE_NAMING] if _LANGUAGE_KEY_FILE_NAMING in language else None
+                    )
 
-                # Evaluate type naming-convention.
-                naming_conventions.type_naming_convention = Config._evaluate_naming_convention_type(
-                    language[_LANGUAGE_KEY_TYPE_NAMING] if _LANGUAGE_KEY_TYPE_NAMING in language else None
-                )
-                config_type = Config._evaluate_config_type(language_type)
+                    # Evaluate properties naming-convention.
+                    naming_conventions.properties_naming_convention = Config._evaluate_naming_convention_type(
+                        language[_LANGUAGE_KEY_PROPERTY_NAMING] if _LANGUAGE_KEY_PROPERTY_NAMING in language else None
+                    )
 
-                language_configs.append(config_type(
-                    config_name=config_name,
-                    properties=properties,
-                    indent=indent,
-                    transform=transform,
-                    naming_conventions=naming_conventions,
-                    distributors=Config._evaluate_distributors(language, distributor_credentials),
+                    # Evaluate type naming-convention.
+                    naming_conventions.type_naming_convention = Config._evaluate_naming_convention_type(
+                        language[_LANGUAGE_KEY_TYPE_NAMING] if _LANGUAGE_KEY_TYPE_NAMING in language else None
+                    )
+                    config_type = Config._evaluate_config_type(language_type)
 
-                    # Pass all language props as additional_props to let the specific
-                    # generator decide which props it requires additionally.
-                    additional_props=language,
-                ))
+                    language_configs.append(config_type(
+                        config_name=config_name,
+                        properties=properties,
+                        indent=indent,
+                        transform=transform,
+                        naming_conventions=naming_conventions,
+                        distributors=Config._evaluate_distributors(
+                            language, distributor_plugins, distributor_credentials
+                        ),
+
+                        # Pass all language props as additional_props to let the specific
+                        # generator decide which props it requires additionally.
+                        additional_props=language,
+                    ))
 
         return language_configs, properties
     
@@ -275,16 +292,19 @@ class Config:
             Optional(_KEY_INCLUDES): [{
                 _INCLUDE_KEY_PATH: str,
                 _INCLUDE_KEY_AS: str,
+                Optional(_KEY_IGNORE): bool,
             }],
             Optional(_KEY_LANGUAGES): [{
                 _LANGUAGE_KEY_TYPE: Use(Config._evaluate_language_type),
                 Optional(_LANGUAGE_KEY_FILE_NAMING): str,
                 Optional(_LANGUAGE_KEY_INDENT): int,
                 Optional(_LANGUAGE_KEY_DISTRIBUTIONS): [{
-                    _LANGUAGE_KEY_TYPE: str,
+                    _LANGUAGE_KEY_DISTRIBUTOR: str,
                     Optional(_LANGUAGE_KEY_AS): str,
-                    Optional(object): object  # Collect other properties.
+                    Optional(object): object,  # Collect other properties.
+                    Optional(_KEY_IGNORE): bool,
                 }],
+                Optional(_KEY_IGNORE): bool,
                 Optional(object): object  # Collect other properties.
             }],
             _KEY_PROPERTIES: [{
@@ -293,6 +313,7 @@ class Config:
                 _PROPERTY_KEY_VALUE: Or(str, bool, int, float),
                 Optional(_PROPERTY_KEY_HIDDEN): bool,
                 Optional(_PROPERTY_KEY_COMMENT): str,
+                Optional(_KEY_IGNORE): bool,
             }]
         })
     
@@ -370,7 +391,8 @@ class Config:
     @staticmethod
     def _evaluate_distributors(
         language_config: Dict[str, any],
-        distributor_credentials: List[DistributorCredential]=[]
+        distributor_plugins: List[Plugin]=[],
+        distributor_credentials: List[DistributorCredentials]=[]
     ) -> List[DistributorBase]:
         """
         Evaluates specified distributors of a language.
@@ -396,49 +418,36 @@ class Config:
             if _LANGUAGE_KEY_DISTRIBUTIONS in language_config \
             else None
         
-        # Check if distributions are provided and 
+        # Check if distributions are provided.
         if distributor_configs:
-            distributor = None
 
             # Make sure distributor_configs is a list.
             if not isinstance(distributor_configs, list):
                 distributor_configs = [distributor_configs]
 
-            for config in distributor_configs:
-                def from_config(key: str):
-                    return config[key] if key in config else None
-                type = from_config(_LANGUAGE_KEY_TYPE)
+            for distributor_config in distributor_configs:
+                ignore = distributor_config[_KEY_IGNORE] if _KEY_IGNORE in distributor_config else False
 
-                # Build Git distributor.
-                if type == _DISTRIBUTION_TYPE_GIT:
-                    path = from_config(_LANGUAGE_KEY_PATH)
-                    user = from_config(_LANGUAGE_KEY_USER)
-                    password = from_config(_LANGUAGE_KEY_PASSWORD)
+                # If distributor shall not be ignored, include it.
+                if not ignore:
+                    def from_config(key: str):
+                        return distributor_config[key] if key in distributor_config else None
+
+                    used_distributor = from_config(_LANGUAGE_KEY_DISTRIBUTOR)
+                    found_distributors_classes = [plugin.get_class_type() for plugin in distributor_plugins if
+                        plugin.get_type() == PluginType.DISTRIBUTOR and plugin.get_name() == used_distributor
+                    ]
                     alias = from_config(_LANGUAGE_KEY_AS)
 
-                    # If the alias is available in the credentials-map, use provided values.
-                    if alias in credentials_map:
-                        credential = credentials_map[alias]
+                    if len(found_distributors_classes):
+                        found_distributor_class = found_distributors_classes[0]
+                        distributors.append(found_distributor_class(
+                            distributor_config,
+                            credentials_map[alias] if alias in credentials_map else None
+                        ))
+                    else:
+                        raise DistributorNotFoundException(used_distributor)
 
-                        # Overwrite YAML defined user and password value if provided.
-                        if credential.user:
-                            user = credential.user
-                        if credential.password:
-                            password = credential.password
-
-                    # Build distributor.
-                    distributor = GitDistributor(
-                        from_config(_LANGUAGE_KEY_URL),
-                        path,
-                        user,
-                        password,
-                    )
-                else:
-                    pass  # No other types are supported yet.
-
-                # If a distributor was created, add it to the distributors list.
-                if distributor:
-                    distributors.append(distributor)
         return distributors
     
     @staticmethod

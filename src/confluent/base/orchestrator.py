@@ -3,7 +3,7 @@ from typing import List
 
 from .language_config_base import LanguageConfigBase
 from .config import Config
-from .distributor_base import DistributorCredential
+from .distributor_base import DistributorCredentials
 
 class Orchestrator:
 
@@ -47,7 +47,7 @@ class Orchestrator:
         return self
 
     @staticmethod
-    def read_config(path: str, distributor_credentials: List[DistributorCredential]=[]) -> Orchestrator:
+    def read_config(path: str, distributor_credentials: List[DistributorCredentials]=[]) -> Orchestrator:
         """
         Reads the provided YAML configuration file and generates a list of language configurations.
 
@@ -60,7 +60,7 @@ class Orchestrator:
         return Orchestrator(Config.read(path, distributor_credentials))
 
     @staticmethod
-    def parse_config(config: str, config_name: str, distributor_credentials: List[DistributorCredential]=[]) \
+    def parse_config(config: str, config_name: str, distributor_credentials: List[DistributorCredentials]=[]) \
         -> Orchestrator:
         """
         Parses the provided YAML configuration string and generates a list of language configurations. 
