@@ -87,6 +87,14 @@ class TestGenerator(unittest.TestCase):
         for config in orchestrator.language_configs:
             self.assertIn(config.config_info.file_name_full, files)
 
+    def test_distribution(self):
+        # Get secret from environment variables.
+        credential = DistributorCredentials('example-alias', None, os.environ['SECRET'])
+        orchestrator = Orchestrator.read_config(self._test_config_path, [credential])
+
+        self._evaluate_configs(orchestrator.language_configs)
+        orchestrator.distribute()
+
     def _evaluate_configs(self, configs: List[LanguageConfigBase]):
         checks = [
             # Check Java config.
