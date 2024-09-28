@@ -8,7 +8,7 @@ LONG_DESCRIPTION = Path(__file__).parent.absolute().joinpath('README.md').read_t
 
 # Get version.
 try:
-    with open('src/ninja-bear/base/info.py') as fp:
+    with open('src/ninja_bear/base/info.py') as fp:
         info = {}
         exec(fp.read(), info)
         VERSION = info['VERSION']
@@ -25,8 +25,9 @@ setup(
         long_description_content_type='text/markdown',
         package_dir={'': 'src'},
         packages=find_packages(where='src'),
+        py_modules=['ninja_bear'],
         entry_points = {
-            'console_scripts': ['ninja_bear=src.config_generator:__main__'],
+            'console_scripts': ['ninja-bear=ninja_bear.cli:main'],
         },
         install_requires=[
             'pyyaml >= 6.0.1',
