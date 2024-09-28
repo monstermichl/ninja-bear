@@ -1,6 +1,6 @@
 package my.test.package;
 
-// Generated with ninja-bear v0.2.0 (https://pypi.org/project/ninja-bear/).
+// Generated with ninja-bear v1.0.0 (https://pypi.org/project/ninja-bear/).
 public class TestConfig {
     public final static boolean myBoolean = true;
     public final static int myInteger = 142;

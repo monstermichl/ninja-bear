@@ -1,6 +1,6 @@
 package myconfig
 
-// Generated with ninja-bear v0.2.0 (https://pypi.org/project/ninja-bear/).
+// Generated with ninja-bear v1.0.0 (https://pypi.org/project/ninja-bear/).
 var TestConfig = struct {
     myBoolean           bool
     myInteger           int

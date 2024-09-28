@@ -1,4 +1,4 @@
-# Generated with ninja-bear v0.2.0 (https://pypi.org/project/ninja-bear/).
+# Generated with ninja-bear v1.0.0 (https://pypi.org/project/ninja-bear/).
 class TestConfig:
     MY_BOOLEAN = True
     MY_INTEGER = 142

@@ -1,4 +1,4 @@
-// Generated with ninja-bear v0.3.0 (https://pypi.org/project/ninja-bear/).
+// Generated with ninja-bear v1.0.0 (https://pypi.org/project/ninja-bear/).
 export const TestConfig = {
     myBoolean: true,
     myInteger: 142,

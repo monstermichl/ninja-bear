@@ -55,7 +55,7 @@ class ReadmeConfig:
 #ifndef README_CONFIG_H
 #define README_CONFIG_H
 
-/* Generated with ninja-bear v0.3.0 (https://pypi.org/project/ninja-bear/). */
+/* Generated with ninja-bear v1.0.0 (https://pypi.org/project/ninja-bear/). */
 const struct {
     char* Opener;
 } ReadmeConfig = {
