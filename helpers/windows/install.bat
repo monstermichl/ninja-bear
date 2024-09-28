@@ -9,8 +9,8 @@ python -m pip install build wheel || call :_exit -1
 rem Build locally (https://packaging.python.org/en/latest/discussions/setup-py-deprecated/#what-commands-should-be-used-instead).
 python -m build || call :_exit -2
 
-rem Install this module.
-python -m pip install . || call :_exit -3
+rem Install this module (https://github.com/pypa/pip/issues/9110#issuecomment-723675528).
+python -m pip install --force-reinstall . || call :_exit -3
 
 rem Exit script successfully.
 call :_exit 0
