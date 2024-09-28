@@ -6,8 +6,8 @@ pushd %~dp0\..\..
 rem Install required build packages.
 python -m pip install build wheel || call :_exit -1
 
-rem Build locally.
-python setup.py sdist bdist_wheel || call :_exit -2
+rem Build locally (https://packaging.python.org/en/latest/discussions/setup-py-deprecated/#what-commands-should-be-used-instead).
+python -m build || call :_exit -2
 
 rem Install this module.
 python -m pip install . || call :_exit -3

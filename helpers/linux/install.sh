@@ -7,10 +7,10 @@ function _exit() {
 }
 
 # Install required build packages.
-python -m pip install build wheel || _exit -1
+python3 -m pip install build wheel || _exit -1
 
-# Build locally.
-python3 setup.py sdist bdist_wheel || _exit -2
+# Build locally (https://packaging.python.org/en/latest/discussions/setup-py-deprecated/#what-commands-should-be-used-instead).
+python3 -m build || _exit -2
 
 # Install via pip.
 python3 -m pip install . || _exit -3
