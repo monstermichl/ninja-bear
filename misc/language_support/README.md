@@ -5,7 +5,7 @@ So there's a language you use which is not yet supported and you want to add it 
 First of all, fork the develop branch of the project. This makes sure that there's no messing around on the branch itself. Did that? Lets move on.
 
 ## Add a new language type
-Open up *src/confluent/base/language_type.py* and add the language you want to support.
+Open up *src/ninja_bear/base/language_type.py* and add the language you want to support.
 
 ```python
 class LanguageType(IntEnum):
@@ -23,7 +23,7 @@ class LanguageType(IntEnum):
 ```
 
 ## Add a new language generator
-Create a new generator class within *src/confluent/generators* (e.g., *my_language_generator.py*) which inherits from [*GeneratorBase*](https://github.com/monstermichl/confluent/blob/main/src/confluent/base/generator_base.py) and implements the required **abstract** methods (a template can be found under [*misc/language_support/templates*](https://github.com/monstermichl/confluent/tree/main/misc/language_support/templates). (Hopefully I don't have to mention that you should not name it "my_language..." ;) ). This class is the actual generator which holds the information how the class/struct and the properties will look like. **HINT:** If special handling for specific properties is required (e.g., see 'package' in JavaGenerator), implement it in the constructor, not in the methods responsible for the dump (abstract methods).
+Create a new generator class within *src/ninja_bear/generators* (e.g., *my_language_generator.py*) which inherits from [*GeneratorBase*](https://github.com/monstermichl/ninja-bear/blob/main/src/ninja-bear/base/generator_base.py) and implements the required **abstract** methods (a template can be found under [*misc/language_support/templates*](https://github.com/monstermichl/ninja-bear/tree/main/misc/language_support/templates). (Hopefully I don't have to mention that you should not name it "my_language..." ;) ). This class is the actual generator which holds the information how the class/struct and the properties will look like. **HINT:** If special handling for specific properties is required (e.g., see 'package' in JavaGenerator), implement it in the constructor, not in the methods responsible for the dump (abstract methods).
 
 ```python
 class MyLanguageGenerator(GeneratorBase):
@@ -74,7 +74,7 @@ class MyLanguageGenerator(GeneratorBase):
 ```
 
 ## Add a new language config
-Create a new config class within *src/confluent/language_configs* (e.g., *my_language_configs.py*) which inherits from [*LanguageConfigBase*](https://github.com/monstermichl/confluent/blob/main/src/confluent/base/language_config_base.py) and implements the required **abstract** methods (a template can be found under [*misc/language_support/templates*](https://github.com/monstermichl/confluent/tree/main/misc/language_support/templates)). The language config encapsulates all the necessary information to create a config file (e.g., the language type, the config extension, which generator to use, ...).
+Create a new config class within *src/ninja-bear/language_configs* (e.g., *my_language_configs.py*) which inherits from [*LanguageConfigBase*](https://github.com/monstermichl/ninja-bear/blob/main/src/ninja-bear/base/language_config_base.py) and implements the required **abstract** methods (a template can be found under [*misc/language_support/templates*](https://github.com/monstermichl/ninja-bear/tree/main/misc/language_support/templates)). The language config encapsulates all the necessary information to create a config file (e.g., the language type, the config extension, which generator to use, ...).
 
 ```python
 class MyLanguageConfig(LanguageConfigBase):
@@ -96,7 +96,7 @@ class MyLanguageConfig(LanguageConfigBase):
 ```
 
 ## Glue everything together
-At this point all required classes are setup and implemented. We now need to tell the [Config class](https://github.com/monstermichl/confluent/blob/main/src/confluent/base/config.py) that there's a new language in town. Open up *src/confluent/base/config_language_mapping.py* and add your newly created language components to the list returned by *get_mappings*.
+At this point all required classes are setup and implemented. We now need to tell the [Config class](https://github.com/monstermichl/ninja-bear/blob/main/src/ninja-bear/base/config.py) that there's a new language in town. Open up *src/ninja-bear/base/config_language_mapping.py* and add your newly created language components to the list returned by *get_mappings*.
 
 ```python
 @staticmethod
@@ -165,11 +165,11 @@ languages:
     fun_factor: 5
 ```
 
-Afterwards, install *confluent* from the local project to test if your implementation works as expected (you might need to uninstall your current installation of *confluent* first). This can either be done by building and running the project manually or by running the *install.sh/bat* script from the *helpers* directory. If you want to setup everything manually, please have a look into the *install.sh/bat* script how it's done there.
+Afterwards, install *ninja-bear* from the local project to test if your implementation works as expected (you might need to uninstall your current installation of *ninja-bear* first). This can either be done by building and running the project manually or by running the *install.sh/bat* script from the *helpers* directory. If you want to setup everything manually, please have a look into the *install.sh/bat* script how it's done there.
 
 If the installation passed successfully, run your prefered version of the example script from the *example* folder to generate the example config files from *test-config.yaml* with your freshly added language.
 
-If your desired config file was created, CONGRATULATIONS! your implementation was successful :) If it wasn't, usually an error gets thrown which provides a clear description where the generation process went wrong. Just recapitulate the steps how to create support for a new language. If you're still having troubles getting it to work, feel free to open an issue at https://github.com/monstermichl/confluent/issues.
+If your desired config file was created, CONGRATULATIONS! your implementation was successful :) If it wasn't, usually an error gets thrown which provides a clear description where the generation process went wrong. Just recapitulate the steps how to create support for a new language. If you're still having troubles getting it to work, feel free to open an issue at https://github.com/monstermichl/ninja-bear/issues.
 
 ### Add your language to the unit tests
 If everything went well so far, copy the generated example config for your language from *example* to *tests/compare_files*. This serves as the blueprint for testing your language. Therefore, **please make absolutely sure, that this is how you want your language output to look like.** Then open up *tests/test_generator.py* and add your language validation to the *_evaluate_configs* function.

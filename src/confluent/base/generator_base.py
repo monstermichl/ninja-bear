@@ -127,7 +127,7 @@ class GeneratorBase(ABC):
 
         s = self._before_type()
         s += f'{properties_before_type}\n' if properties_before_type else ''
-        s += f'{self._property_comment(f"Generated with confluent v{VERSION} (https://pypi.org/project/confluent/).").strip()}\n'
+        s += f'{self._property_comment(f"Generated with ninja-bear v{VERSION} (https://pypi.org/project/ninja-bear/).").strip()}\n'
         s += f'{self._start_type(self._type_name)}\n'
         s += self._create_properties_string(self._create_property_in_type, properties_copy)
 

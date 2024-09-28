@@ -347,7 +347,7 @@ class Config:
         :raises UnknownLanguageException:  Raised if an unsupported language was used in the config.
         :raises SeveralLanguagesException: Raised if several mappings were found for the requested language. If this
                                            error arises, it's a package error. Please open an issue at
-                                           https://github.com/monstermichl/confluent/issues.
+                                           https://github.com/monstermichl/ninja-bear/issues.
 
         :return: The corresponding LanguageType enum value.
         :rtype:  LanguageType
@@ -371,10 +371,10 @@ class Config:
 
         :raises NoLanguageConfigException:       Raised if no language config mapping was provided for the specified
                                                  language type. If this error arises, it's a package error. Please open
-                                                 an issue at https://github.com/monstermichl/confluent/issues.
+                                                 an issue at https://github.com/monstermichl/ninja-bear/issues.
         :raises SeveralLanguageConfigsException: Raised if several language config mappings were found for the specified
                                                  language type. If this error arises, it's a package error. Please open
-                                                 an issue at https://github.com/monstermichl/confluent/issues.
+                                                 an issue at https://github.com/monstermichl/ninja-bear/issues.
 
         :return: The corresponding LanguageConfigBase derivate type (e.g., Type[JavaConfig]).
         :rtype:  Type[LanguageConfigBase]

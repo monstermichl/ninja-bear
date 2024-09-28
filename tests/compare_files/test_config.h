@@ -1,7 +1,7 @@
 #ifndef TEST_CONFIG_H
 #define TEST_CONFIG_H
 
-/* Generated with confluent v0.2.0 (https://pypi.org/project/confluent/). */
+/* Generated with ninja-bear v0.2.0 (https://pypi.org/project/ninja-bear/). */
 const struct {
     unsigned char MyBoolean;
     int MyInteger;

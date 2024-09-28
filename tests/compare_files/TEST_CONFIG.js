@@ -1,4 +1,4 @@
-// Generated with confluent v0.2.0 (https://pypi.org/project/confluent/).
+// Generated with ninja-bear v0.2.0 (https://pypi.org/project/ninja-bear/).
 class TestConfig {
     static get myBoolean() { return true; }
     static get myInteger() { return 142; }

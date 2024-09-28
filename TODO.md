@@ -1,0 +1,13 @@
+- [x] Class Format überschreibbar oder von Subklasse implementierbar machen.
+- [x] Keine Default File-Formattierung.
+- [x] Zusätzliche Argumente an Klasse, nicht an dump übergeben.
+- [x] Verschiedene Exporte für JavaScript und TypeScript.
+- [ ] Dokumentation.
+- [x] Add reference to confluent in output
+- [x] Substitution und Löschen von hidden properties in Generator dump verschieben.
+- [x] Templates aktualisieren.
+- [x] PropertyType als compare value in Config verwenden (weil nicht mehr IntEnum).
+- [x] Support von Import von anderen Configuration files.
+- [ ] Support von Arrays.
+- [ ] Export von importierten Properties.
+- [ ] Check ob Include Alias schon verwendet wird.

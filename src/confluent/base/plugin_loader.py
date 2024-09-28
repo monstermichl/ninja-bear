@@ -28,7 +28,7 @@ class Plugin:
 
 class PluginLoader:
     def __init__(self) -> None:
-        self._modules = [m for m in pkgutil.iter_modules() if re.match('confluent-.+', m.name)]
+        self._modules = [m for m in pkgutil.iter_modules() if re.match('ninja-bear-.+', m.name)]
 
     def load_distributors(self) -> List[Type[DistributorBase]]:
         return self._load_plugins(PluginType.DISTRIBUTOR, 'Distributor')

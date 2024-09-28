@@ -3,12 +3,12 @@ from setuptools import setup, find_packages
 
 # Setup process taken from here: https://www.freecodecamp.org/news/build-your-first-python-package/.
 
-DESCRIPTION = 'confluent keeps your language specific configs in sync'
+DESCRIPTION = 'ninja-bear keeps your language specific configs in sync'
 LONG_DESCRIPTION = Path(__file__).parent.absolute().joinpath('README.md').read_text()
 
 # Get version.
 try:
-    with open('src/confluent/base/info.py') as fp:
+    with open('src/ninja-bear/base/info.py') as fp:
         info = {}
         exec(fp.read(), info)
         VERSION = info['VERSION']
@@ -17,7 +17,7 @@ except Exception as e:
     exit(-1)
 
 setup(
-        name='confluent', 
+        name='ninja-bear', 
         version=VERSION,
         author='monstermichl',
         description=DESCRIPTION,
@@ -26,7 +26,7 @@ setup(
         package_dir={'': 'src'},
         packages=find_packages(where='src'),
         entry_points = {
-            'console_scripts': ['confluent=src.config_generator:__main__'],
+            'console_scripts': ['ninja_bear=src.config_generator:__main__'],
         },
         install_requires=[
             'pyyaml >= 6.0.1',
@@ -46,7 +46,7 @@ setup(
             'License :: OSI Approved :: MIT License',
             'Operating System :: OS Independent',
         ],
-        url = 'https://github.com/monstermichl/confluent.git',
+        url = 'https://github.com/monstermichl/ninja-bear.git',
         keywords = [
             'multi',
             'distributed',

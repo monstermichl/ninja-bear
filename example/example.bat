@@ -11,7 +11,7 @@ if not exist %OUTPUT_DIR% (
 )
 
 rem Generate Java and Typescript files from test config.
-python -m confluent -c test-config.yaml -o generated %*
+python -m ninja-bear -c test-config.yaml -o generated %*
 
 rem Go back to original directory.
 popd

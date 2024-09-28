@@ -9,7 +9,7 @@ if [ ! -d ${OUTPUT_DIR} ]; then
 fi
 
 # Generate Java and Typescript files from test config.
-python3 -m confluent -c test-config.yaml -o generated $*
+python3 -m ninja-bear -c test-config.yaml -o generated $*
 
 # Go back to original directory.
 popd

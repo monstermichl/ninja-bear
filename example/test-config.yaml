@@ -84,7 +84,7 @@ languages:
     # described by the corresponding plugin.
     # -------------------------------------------------------------------------
     distributions:
-      - distributor: confluent-example-distributor  # Specifies which distributor plugin to use.
+      - distributor: ninja-bear-example-distributor  # Specifies which distributor plugin to use.
         as: example-alias
         ignore: true
 
