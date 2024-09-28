@@ -4,7 +4,7 @@ In times of distributed systems and en vogue micro-architecture it can get quite
 ## Example
 Alright, after all this confusing nerd-talk, lets just have a look at a simple example to see what *ninja-bear* can do for you.
 
-The example YAML file contains a property named **opener** with the value **Hello World**. Output files shall be generated for *TypeScript*, *Python* and *C*. In addition, the *C*-file shall be distributed to a Git server's *config*-folder (for more information please have a look at [test-config.yaml](https://github.com/monstermichl/ninja-bear/blob/2bce469b112c4da295026b00d0421ac50995ed3c/example/test-config.yaml#L81)).
+The example YAML file contains a property named **opener** with the value **Hello World**. Output files shall be generated for *TypeScript*, *Python* and *C*. In addition, the *C*-file shall be distributed to a Git server's *config*-folder using the ninja-bear-git-distributor plugin. For more information please have a look at [test-config.yaml](https://github.com/monstermichl/ninja-bear/blob/2bce469b112c4da295026b00d0421ac50995ed3c/example/test-config.yaml#L81).
 
 ### Input (readme-config.yaml)
 ```yaml
@@ -21,7 +21,7 @@ languages:
     file_naming: snake
     property_naming: pascal
     distributions:
-      - type: git
+      - distributor: ninja-bear-git-distributor
         path: config
         url: https://github.com/idontknow/example.git
 
@@ -34,7 +34,7 @@ properties:
 ### Execute ninja-bear
 ```bash
 # -d is used to distribute the C-file to Git.
-python3 -m ninja-bear -c readme-config.yaml -d
+ninja-bear -c readme-config.yaml -d
 ```
 
 ### Output (readme-config.ts)
@@ -75,7 +75,7 @@ const struct {
 
 ## Installation
 ```bash
-python3 -m pip install ninja-bear
+pip install ninja-bear
 ```
 
 ## Configuration
@@ -85,12 +85,12 @@ For detailed configuration information, please check [example/test-config.yaml](
 ### Commandline
 ```bash
 # For more information run "python3 -m ninja-bear -h".
-python3 -m ninja-bear -c test-config.yaml -o generated
+ninja-bear -c test-config.yaml -o generated
 ```
 
 ### Script
 ```python
-from ninja-bear import Orchestrator
+from ninja_bear import Orchestrator
 
 # Create Orchestrator instance from file.
 orchestrator = Orchestrator.read_config('test-config.yaml')
