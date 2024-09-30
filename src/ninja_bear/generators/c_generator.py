@@ -23,6 +23,7 @@ class CGenerator(GeneratorBase):
 
     def _property_in_type(self, property: Property) -> str:
         type = property.type
+        additional_stuff = ''
 
         if type == PropertyType.BOOL:
             type = 'unsigned char'
@@ -33,17 +34,18 @@ class CGenerator(GeneratorBase):
         elif type == PropertyType.DOUBLE:
             type = 'double'
         elif type == PropertyType.STRING or type == PropertyType.REGEX:
-            type = 'char*'
+            type = 'char'
+            additional_stuff = f'[{len(property.value) + 1}]'
         else:
             raise Exception('Unknown type')
 
-        return f'{type} {property.name};'
+        return f'{type} {property.name}{additional_stuff};'
     
     def _property_comment(self, comment: str) -> str:
         return f' /* {comment} */'
     
     def _end_type(self) -> str:
-        return f'}} {self._type_name} = {{'
+        return f'}} const {self._type_name} = {{'
     
     def _property_after_type(self, property: Property) -> str:
         type = property.type
