@@ -1,7 +1,6 @@
 from typing import List, Type
 
 from .configuration_base import _DEFAULT_INDENT, ConfigurationBase
-from .language_type import LanguageType
 from .language_config_naming_conventions import LanguageConfigNamingConventions
 from .generator_base import GeneratorBase
 from .distributor_base import DistributorBase
@@ -24,10 +23,6 @@ class LanguageConfigConfiguration(ConfigurationBase):
     therefore the default convention specified by the deriving class of
     GeneratorBase will be used if no naming convention for the type name
     was provided (see GeneratorBase._default_type_naming_convention).
-    """
-    language_type: LanguageType
-    """
-    Which language type is this config for.
     """
     file_extension: str
     """
@@ -55,7 +50,6 @@ class LanguageConfigConfiguration(ConfigurationBase):
     def __init__(
         self,
         config_name: str,
-        language_type: LanguageType,
         file_extension: str,
         generator_type: Type[GeneratorBase],
         indent: int = _DEFAULT_INDENT,
@@ -66,7 +60,6 @@ class LanguageConfigConfiguration(ConfigurationBase):
         super().__init__()
 
         self.config_name = config_name
-        self.language_type = language_type
         self.file_extension = file_extension.lstrip('.')
         self.generator_type = generator_type
         self.indent = indent

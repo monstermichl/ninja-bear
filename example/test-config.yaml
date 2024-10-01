@@ -21,7 +21,9 @@ includes:
 # -------------------------------------------------------------------------
 languages:
   # --- Common properties (valid for all languages) -------------------------
-  # type            (required): Specifies the output language (java | javascript | typescript | python | c | go).
+  # language        (required): Specifies the language plugin to use. If the plugin starts with 'ninja-bear-language-' it's possible
+  #                             to just use the language name (e.g. typescript) as it will internally be prefixed to result in
+  #                             'ninja-bear-language-typescript'.
   #
   # file_naming     (optional): Specifies the file naming convention (snake | screaming_snake | camel | pascal | kebap).
   #                             Defaults to the file-name without the extension.
@@ -47,7 +49,7 @@ languages:
   # --- Java specific properties --------------------------------------------
   # package (required): Specifies the Java package name.
   # -------------------------------------------------------------------------
-  - type: java
+  - language: java
     file_naming: pascal
     type_naming: pascal
     package: my.test.package
@@ -56,12 +58,12 @@ languages:
   # export (optional): Specifies how to export the class (esm | common_js | none).
   #                    Defaults to esm.
   # -------------------------------------------------------------------------
-  - type: javascript
+  - language: javascript
     file_naming: screaming_snake
     indent: 4
     export: common_js
 
-  - type: typescript
+  - language: typescript
     indent: 4
     export: esm
 
@@ -89,19 +91,19 @@ languages:
         ignore: true
 
   # -------------------------------------------------------------------------
-  - type: python
+  - language: python
     file_naming: snake
     property_naming: screaming_snake
 
   # -------------------------------------------------------------------------
-  - type: c
+  - language: c
     file_naming: snake
     property_naming: pascal
 
   # --- Go specific properties ----------------------------------------------
   # package (required): Specifies the Go package name.
   # -------------------------------------------------------------------------
-  - type: go
+  - language: go
     file_naming: snake
     package: myconfig
     transform: |  # If the property 'myString' is being processed, replace the value by 'Hello Mars'.

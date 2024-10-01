@@ -6,7 +6,6 @@ from typing import List, Type
 from .configuration_base import _DEFAULT_INDENT
 from .generator_base import GeneratorBase
 from .distributor_base import DistributorBase
-from .language_type import LanguageType
 from .language_config_configuration import LanguageConfigConfiguration
 from .language_config_naming_conventions import LanguageConfigNamingConventions
 from .config_file_info import ConfigFileInfo
@@ -63,7 +62,6 @@ class LanguageConfigBase(ABC):
         """
         config = LanguageConfigConfiguration(
             config_name=config_name,
-            language_type=self._language_type(),
             file_extension=self._file_extension(),
             generator_type=self._generator_type(),
             indent=indent,
@@ -89,7 +87,6 @@ class LanguageConfigBase(ABC):
 
             config.file_extension,
         )
-        self.language_type = config.language_type
         self.distributors = distributors if distributors else []
 
         # Check output file naming.
@@ -132,10 +129,6 @@ class LanguageConfigBase(ABC):
 
         [distributor.distribute(self.config_info.file_name_full, data) for distributor in self.distributors]            
         return self
-    
-    @abstractmethod
-    def _language_type(self) -> LanguageType:
-        pass
 
     @abstractmethod
     def _file_extension(self) -> str:

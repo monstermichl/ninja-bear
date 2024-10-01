@@ -1,12 +1,14 @@
 from enum import IntEnum, auto
-import pkgutil
+from importlib.metadata import entry_points
 import re
 from typing import List, Type
 
 from .distributor_base import DistributorBase
+from .language_config_base import LanguageConfigBase
 
 
 class PluginType(IntEnum):
+    LANGUAGE_CONFIG = 1
     DISTRIBUTOR = auto()
 
 
@@ -28,18 +30,35 @@ class Plugin:
 
 class PluginLoader:
     def __init__(self) -> None:
-        self._modules = [m for m in pkgutil.iter_modules() if re.match('ninja-bear-.+', m.name)]
+        self._plugins = self._load_plugins()
 
-    def load_distributors(self) -> List[Type[DistributorBase]]:
-        return self._load_plugins(PluginType.DISTRIBUTOR, 'Distributor')
+    def get_plugins(self) -> List[Type[Plugin]]:
+        return self._plugins
 
-    def _load_plugins(self, type: PluginType, class_name: str) -> List[Plugin]:
+    def get_language_config_plugins(self) -> List[Type[Plugin]]:
+        return self._get_plugins_by_type(PluginType.LANGUAGE_CONFIG)
+
+    def get_distributor_plugins(self) -> List[Type[Plugin]]:
+        return self._get_plugins_by_type(PluginType.DISTRIBUTOR)
+    
+    def _get_plugins_by_type(self, type: PluginType):
+        return [plugin for plugin in self._plugins if plugin.get_type() == type]
+
+    def _load_plugins(self) -> List[Plugin]:
         plugins = []
 
-        for module in self._modules:
-            loaded_module = __import__(module.name)
-            plugin = getattr(loaded_module, class_name)
+        for entry_point in [e for e in entry_points() if re.match('ninja-bear-.+', e.group)]:
+            plugin_class = entry_point.load()
 
-            if plugin:
-                plugins.append(Plugin(module.name, type, plugin))
+            if plugin_class:
+                plugin_type = None
+
+                # Specify plugin type by base-class.
+                if issubclass(plugin_class, LanguageConfigBase):
+                    plugin_type = PluginType.LANGUAGE_CONFIG
+                elif issubclass(plugin_class, DistributorBase):
+                    plugin_type = PluginType.DISTRIBUTOR
+
+                if plugin_type:
+                    plugins.append(Plugin(entry_point.group, plugin_type, plugin_class))
         return plugins

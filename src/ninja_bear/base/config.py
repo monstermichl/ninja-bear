@@ -1,5 +1,6 @@
 from __future__ import annotations
 import os
+import re
 from typing import Dict, List, Tuple, Type
 
 import yaml
@@ -26,6 +27,7 @@ _INCLUDE_KEY_PATH = 'path'
 _INCLUDE_KEY_AS = 'as'
 
 # Language keys.
+_LANGUAGE_KEY_LANGUAGE = 'language'
 _LANGUAGE_KEY_FILE_NAMING = 'file_naming'
 _LANGUAGE_KEY_DISTRIBUTIONS = 'distributions'
 _LANGUAGE_KEY_PROPERTY_NAMING = 'property_naming'
@@ -45,9 +47,6 @@ _PROPERTY_KEY_COMMENT = 'comment'
 # Distribution types.
 _DISTRIBUTION_TYPE_GIT = 'git'
 
-# Load the glue.
-_LANGUAGE_MAPPINGS = ConfigLanguageMapping.get_mappings()
-
 
 class UnknownPropertyTypeException(Exception):
     def __init__(self, property_type: str):
@@ -59,19 +58,14 @@ class UnknownLanguageException(Exception):
         super().__init__(f'Unknown language {language}')
 
 
-class SeveralLanguagesException(Exception):
+class SeveralLanguagePluginsException(Exception):
     def __init__(self, language: str):
-        super().__init__(f'Several languages matched for {language}')
+        super().__init__(f'Several language plugins found for {language}')
 
 
-class NoLanguageConfigException(Exception):
-    def __init__(self, language_type: LanguageType):
-        super().__init__(f'No language config found for {language_type}')
-
-
-class SeveralLanguageConfigsException(Exception):
-    def __init__(self, language_type: LanguageType):
-        super().__init__(f'Several languages configs found for {language_type}')
+class NoLanguagePluginException(Exception):
+    def __init__(self, language_names: List[str]):
+        super().__init__(f'No language plugin found for {' or '.join(language_names)}')
 
 
 class AliasAlreadyInUseException(Exception):
@@ -183,11 +177,13 @@ class Config:
         :return: Language configurations which further can be dumped as config files.
         :rtype:  List[LanguageConfigBase]
         """
+        plugin_loader = PluginLoader()
         yaml_object = yaml.safe_load(content)
         validated_object = Config._schema().validate(yaml_object)
         language_configs: List[LanguageConfigBase] = []
         properties: List[Property] = []
-        distributor_plugins = PluginLoader().load_distributors()
+        language_config_plugins = plugin_loader.get_language_config_plugins()
+        distributor_plugins = plugin_loader.get_distributor_plugins()
 
         # Since a default list cannot be assigned to the namespaces variable in the method header, because it only
         # gets initialized once and then the list gets re-used (see https://stackoverflow.com/a/1145781), make sure
@@ -243,9 +239,11 @@ class Config:
                 # If language shall not be ignored, include it.
                 if not ignore:
                     naming_conventions = LanguageConfigNamingConventions()
-                    language_type = language[_LANGUAGE_KEY_TYPE]
+                    language_name = language[_LANGUAGE_KEY_LANGUAGE]
                     indent = language[_LANGUAGE_KEY_INDENT] if _LANGUAGE_KEY_INDENT in language else None
                     transform = language[_LANGUAGE_KEY_TRANSFORM] if _LANGUAGE_KEY_TRANSFORM in language else None
+
+                    # Evaluate language.
 
                     # Evaluate file naming-convention.
                     naming_conventions.file_naming_convention = Config._evaluate_naming_convention_type(
@@ -261,7 +259,7 @@ class Config:
                     naming_conventions.type_naming_convention = Config._evaluate_naming_convention_type(
                         language[_LANGUAGE_KEY_TYPE_NAMING] if _LANGUAGE_KEY_TYPE_NAMING in language else None
                     )
-                    config_type = Config._evaluate_config_type(language_type)
+                    config_type = Config._evaluate_language_config(language_config_plugins, language_name)
 
                     language_configs.append(config_type(
                         config_name=config_name,
@@ -295,7 +293,7 @@ class Config:
                 Optional(_KEY_IGNORE): bool,
             }],
             Optional(_KEY_LANGUAGES): [{
-                _LANGUAGE_KEY_TYPE: Use(Config._evaluate_language_type),
+                _LANGUAGE_KEY_LANGUAGE: str,
                 Optional(_LANGUAGE_KEY_FILE_NAMING): str,
                 Optional(_LANGUAGE_KEY_INDENT): int,
                 Optional(_LANGUAGE_KEY_DISTRIBUTIONS): [{
@@ -318,6 +316,46 @@ class Config:
         })
     
     @staticmethod
+    def _evaluate_language_config(language_plugins: List[Plugin], language_name: str) -> Type[LanguageConfigBase]:
+        """
+        Evaluates the corresponding language config from a language plugin list for the given language name.
+
+        :param language_plugins: List of language plugins to search in.
+        :type language_plugins:  List[Plugin]
+        :param language_name:    Language name to look for.
+        :type language_name:     str
+
+        :raises SeveralLanguagePluginsException: Raised if several plugins were found for the requested language.
+        :raises UnknownLanguageException:        Raised if an unsupported language was used in the config.
+
+        :return: The corresponding language config class.
+        :rtype:  Type[LanguageConfigBase]
+        """
+        NINJA_BEAR_LANGUAGE_PREFIX = 'ninja-bear-language-'
+        language_config_type = None
+
+        # Make sure only language configs get processed.
+        language_plugins = [p for p in language_plugins if p.get_type() == PluginType.LANGUAGE_CONFIG]
+
+        # Remove ninja-bear prefix.
+        language_name_cleaned = re.sub(rf'^{NINJA_BEAR_LANGUAGE_PREFIX}', '', language_name)
+
+        # Create possible language names.
+        language_names = [f'{NINJA_BEAR_LANGUAGE_PREFIX}{language_name_cleaned}', language_name_cleaned]
+
+        for plugin in language_plugins:
+            if plugin.get_name() in language_names:
+                if not language_config_type:
+                    language_config_type = plugin.get_class_type()
+                else:
+                    raise SeveralLanguagePluginsException(language_name)
+
+        if not language_config_type:
+            raise UnknownLanguageException(language_names)
+        return language_config_type
+
+    
+    @staticmethod
     def _evaluate_data_type(type: str) -> PropertyType:
         """
         Evaluates a properties data type.
@@ -335,58 +373,6 @@ class Config:
         except ValueError:
             raise UnknownPropertyTypeException(type)
         return type
-
-    @staticmethod
-    def _evaluate_language_type(language: str) -> LanguageType:
-        """
-        Evaluates the requested language type.
-
-        :param language: Language to generate a config for (e.g., java | typescript | ...).
-        :type language:  str
-
-        :raises UnknownLanguageException:  Raised if an unsupported language was used in the config.
-        :raises SeveralLanguagesException: Raised if several mappings were found for the requested language. If this
-                                           error arises, it's a package error. Please open an issue at
-                                           https://github.com/monstermichl/ninja-bear/issues.
-
-        :return: The corresponding LanguageType enum value.
-        :rtype:  LanguageType
-        """
-        found = [mapping.type for mapping in _LANGUAGE_MAPPINGS if mapping.name == language]
-        length = len(found)
-
-        if length == 0:
-            raise UnknownLanguageException(language)
-        elif length > 1:
-            raise SeveralLanguagesException(language)
-        return found[0]
-    
-    @staticmethod
-    def _evaluate_config_type(language_type: LanguageType) -> Type[LanguageConfigBase]:
-        """
-        Evaluates the languages config type to use for further evaluation.
-
-        :param language_type: Language type to search the corresponding language config for (e.g., LanguageType.JAVA).
-        :type language_type:  LanguageType
-
-        :raises NoLanguageConfigException:       Raised if no language config mapping was provided for the specified
-                                                 language type. If this error arises, it's a package error. Please open
-                                                 an issue at https://github.com/monstermichl/ninja-bear/issues.
-        :raises SeveralLanguageConfigsException: Raised if several language config mappings were found for the specified
-                                                 language type. If this error arises, it's a package error. Please open
-                                                 an issue at https://github.com/monstermichl/ninja-bear/issues.
-
-        :return: The corresponding LanguageConfigBase derivate type (e.g., Type[JavaConfig]).
-        :rtype:  Type[LanguageConfigBase]
-        """
-        found = [mapping.config_type for mapping in _LANGUAGE_MAPPINGS if mapping.type == language_type]
-        length = len(found)
-
-        if length == 0:
-            raise NoLanguageConfigException(language_type)
-        elif length > 1:
-            raise SeveralLanguageConfigsException('Several language configs found')
-        return found[0]
     
     @staticmethod
     def _evaluate_distributors(
