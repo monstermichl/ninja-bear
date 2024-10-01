@@ -46,6 +46,7 @@ files = [
     ['src', 'ninja_bear_language', 'generator.py'],
     ['example', 'test-config.yaml'],
     ['tests', 'test.py'],
+    ['README.md'],
 ]
 
 # Iterate template files and replace corresponding strings.
