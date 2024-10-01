@@ -119,27 +119,18 @@ class GeneratorBase(ABC):
         # Remove hidden properties.
         properties_copy = [property for property in properties_copy if not property.hidden]
 
-        # Create the string for properties which shall be added before the class definition.
-        properties_before_type = self._create_properties_string(self._property_before_type, properties_copy)
+        # Update property names according to naming convention.
+        if self._naming_conventions.properties_naming_convention:
+            for property in properties_copy:
+                property.name = NameConverter.convert(
+                    property.name, 
+                    self._naming_conventions.properties_naming_convention
+                )
 
-        # Create the string for properties which shall be added after the class definition.
-        properties_after_type = self._create_properties_string(self._property_after_type, properties_copy)
+        s = f'{self._line_comment(f"Generated with ninja-bear v{VERSION} (https://pypi.org/project/ninja-bear/).").strip()}\n\n'
+        s += self._dump(self._type_name, properties_copy)
 
-        s = self._before_type()
-        s += f'{properties_before_type}\n' if properties_before_type else ''
-        s += f'{self._property_comment(f"Generated with ninja-bear v{VERSION} (https://pypi.org/project/ninja-bear/).").strip()}\n'
-        s += f'{self._start_type(self._type_name)}\n'
-        s += self._create_properties_string(self._create_property_in_type, properties_copy)
-
-        class_end = self._end_type()
-        s += f'\n{class_end}'
-        s = add_newline(s)
-
-        s += f'{properties_after_type}\n' if properties_after_type else ''
-        s += self._after_type()
-        s = add_newline(s)
-
-        return s
+        return add_newline(s)
     
     def get_type_name(self) -> str:
         """
@@ -161,101 +152,29 @@ class GeneratorBase(ABC):
         pass
 
     @abstractmethod
-    def _before_type(self) -> str:
+    def _line_comment(self, string: str) -> str:
         """
-        Abstract method which must be implemented by the deriving class to generate a possible string which will
-        be added in front of the generated class/struct. If not required, this method shall return an empty string.
+        Abstract method which must be implemented by the deriving class to turn a string into a line comment.
 
-        :return: String to insert before the generated class/struct.
-        :rtype:  str
-        """
-        pass
-    
-    @abstractmethod
-    def _property_before_type(self, property: Property) -> str:
-        """
-        Abstract method which must be implemented by the deriving class to generate a single property string before the
-        type definition starts. This might be useful in some cases to do some extra processing of the properties. If
-        it's not required, an empty string shall be returned.
+        :param string: String to turn into a line comment.
+        :type string:  str
 
-        :param property: Property to generate a property string from.
-        :type property:  Property
-
-        :return: A language specific property string which is added in front of the type definition (e.g.,
-                 "const MY_BOOLEAN = true;").
+        :return: Commented string.
         :rtype:  str
         """
         pass
 
     @abstractmethod
-    def _start_type(self, type_name: str) -> str:
+    def _dump(self, type_name: str, properties: List[Property]) -> str:
         """
-        Abstract method which must be implemented by the deriving class to generate the class'/struct's definition.
+        Abstract method which must be implemented by the deriving class to create a type string.
 
-        :return: The generated class/struct definition (e.g., "export class TestConfig {").
-        :rtype:  str
-        """
-        pass
+        :param type_name:  Struct/class type-name.
+        :type type_name:   str
+        :param properties: Properties list.
+        :type properties:  List[Property]
 
-    @abstractmethod
-    def _property_in_type(self, property: Property) -> str | List[str]:
-        """
-        Abstract method which must be implemented by the deriving class to generate a single property string.
-
-        :param property: Property to generate a property string from.
-        :type property:  Property
-
-        :return: A language specific property string (e.g., "public static readonly myBoolean = true;") or list of
-                 strings (if the property should span several lines).
-        :rtype:  str | List[str]
-        """
-        pass
-
-    @abstractmethod
-    def _property_comment(self, comment: str) -> str:
-        """
-        Abstract method which must be implemented by the deriving class to generate a comment string.
-
-        :param comment: Comment value.
-        :type comment:  str
-
-        :return: A language specific comment string (e.g., /* This is a comment. */).
-        :rtype:  str
-        """
-        pass
-
-    @abstractmethod
-    def _end_type(self) -> str:
-        """
-        Abstract method which must be implemented by the deriving class to generate the class'/struct's body end.
-
-        :return: The generated class'/struct's body end (e.g., "}").
-        :rtype:  str
-        """
-        pass
-
-    @abstractmethod
-    def _property_after_type(self, property: Property) -> str:
-        """
-        Abstract method which must be implemented by the deriving class to generate a single property string after the
-        type definition. This might be useful in some cases to do some extra processing of the properties. If it's not
-        required, an empty string shall be returned.
-
-        :param property: Property to generate a property string from.
-        :type property:  Property
-
-        :return: A language specific property string which is added in after the type definition.
-        :rtype:  str
-        """
-        pass
-
-    @abstractmethod
-    def _after_type(self) -> str:
-        """
-        Abstract method which must be implemented by the deriving class to generate a possible string which will
-        be added after the generated class/struct. If not required, this method shall return an empty string.
-
-        :return: String to insert after the generated class/struct.
+        :return: Dumped type string.
         :rtype:  str
         """
         pass
@@ -307,38 +226,6 @@ class GeneratorBase(ABC):
                 f'{callout(property)}' for property in properties_copy
             ] if property_string  # This clause makes sure that only property strings with a value are used.
         )
-
-    def _create_property_in_type(self, property: Property) -> str:
-        """
-        Creates a property string from a property.
-
-        :param property: Property to generate a property string from.
-        :type property:  Property
-
-        :return: A language specific property string including a possible comment (e.g.,
-                 "public static readonly myBoolean = true;" /* This is a comment. */).
-        :rtype:  str
-        """
-        INDENT = ' ' * self._indent  # Indent space.
-
-        # If provided, use specific property naming convention.
-        if self._naming_conventions.properties_naming_convention:
-            property.name = NameConverter.convert(
-                property.name, 
-                self._naming_conventions.properties_naming_convention
-            )
-        property_in_type = self._property_in_type(property)
-        comment = self._property_comment(property.comment) if property.comment else ''
-
-        # If the property is delivered as list, add the comment before it and indent each line.
-        if isinstance(property_in_type, list):#
-            comment = comment.strip()
-
-            s = f'{INDENT}{comment}\n' if comment else ''
-            s += '\n'.join([f'{INDENT}{value}' for value in property_in_type])
-        else:
-            s = f'{INDENT}{property_in_type}{comment if comment else ""}'
-        return s
     
     def _apply_transformation(self, properties_copy: List[Property]) -> None:
         """
