@@ -7,11 +7,9 @@ import yaml
 from schema import Schema, Use, Optional, Or
 
 from .plugin_loader import Plugin, PluginLoader, PluginType
-from .config_language_mapping import ConfigLanguageMapping
 from .name_converter import NamingConventionType
 from .property import Property
 from .property_type import PropertyType
-from .language_type import LanguageType
 from .language_config_base import LanguageConfigBase
 from .language_config_naming_conventions import LanguageConfigNamingConventions
 from .distributor_base import DistributorBase, DistributorCredentials
