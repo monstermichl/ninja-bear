@@ -44,6 +44,8 @@ files = [
     ['setup.py'],
     ['src', 'ninja_bear_language', 'config.py'],
     ['src', 'ninja_bear_language', 'generator.py'],
+    ['example', 'test-config.yaml'],
+    ['tests', 'test.py'],
 ]
 
 # Iterate template files and replace corresponding strings.
