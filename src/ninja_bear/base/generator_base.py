@@ -127,8 +127,8 @@ class GeneratorBase(ABC):
                     self._naming_conventions.properties_naming_convention
                 )
 
-        s = f'{self._line_comment(f"Generated with ninja-bear v{VERSION} (https://pypi.org/project/ninja-bear/).").strip()}\n\n'
-        s += self._dump(self._type_name, properties_copy)
+        s = add_newline(self._dump(self._type_name, properties_copy))
+        s += f'{self._line_comment(f"Generated with ninja-bear v{VERSION} (https://pypi.org/project/ninja-bear/).").strip()}'
 
         return add_newline(s)
     
