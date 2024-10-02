@@ -27,7 +27,10 @@ if not file_extension:
 repository_url = input('Repository URL (optinal): ').strip()
 
 dir_name = os.path.dirname(__file__)
-target_dir = os.path.join(dir_name, f'ninja-bear-language-{language_name_lower}')
+target_folder = f'ninja-bear-language-{language_name_lower}'
+target_dir = os.path.join(dir_name, target_folder)
+src_dir = os.path.join(target_dir, 'src')
+module_folder = NameConverter.convert(target_folder, NamingConventionType.SNAKE_CASE)
 
 # Extract template.
 with ZipFile(os.path.join(dir_name, 'template.zip')) as zip:
@@ -39,6 +42,7 @@ replacements = [
     ['language-lower', language_name_lower],
     ['file-extension', file_extension],
     ['repository-url', repository_url],
+    ['module-folder', module_folder],
 ]
 files = [
     ['setup.py'],
@@ -60,3 +64,6 @@ for path in files:
                 for replacement in replacements:
                     line = line.replace(f'<{replacement[0]}>', replacement[1])
                 print(line, end='')  # print prints to the file here (https://stackoverflow.com/a/76923807).
+
+# Rename module folder.
+os.rename(os.path.join(src_dir, 'ninja_bear_language'), os.path.join(src_dir, module_folder))
