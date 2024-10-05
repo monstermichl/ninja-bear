@@ -1,7 +1,8 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 import copy
-from typing import Callable, List
+from dataclasses import dataclass
+from typing import Callable, Dict, List
 
 from .info import VERSION
 from .configuration_base import _DEFAULT_INDENT
@@ -9,6 +10,14 @@ from .generator_configuration import GeneratorConfiguration
 from .generator_naming_conventions import GeneratorNamingConventions
 from .name_converter import NamingConventionType, NameConverter
 from .property import Property
+
+
+@dataclass  # https://stackoverflow.com/a/70259423
+class DumpInfo:
+    type_name: str
+    properties: List[Property]
+    indent: int
+    additional_props: Dict
 
 
 class PropertyAlreadyExistsException(Exception):
@@ -127,7 +136,12 @@ class GeneratorBase(ABC):
                     self._naming_conventions.properties_naming_convention
                 )
 
-        s = add_newline(self._dump(self._type_name, properties_copy))
+        s = add_newline(self._dump(DumpInfo(
+            self._type_name,
+            properties_copy,
+            self._indent,
+            self._additional_props,
+        )))
         s += f'{self._line_comment(f"Generated with ninja-bear v{VERSION} (https://pypi.org/project/ninja-bear/).").strip()}'
 
         return add_newline(s)
@@ -165,14 +179,12 @@ class GeneratorBase(ABC):
         pass
 
     @abstractmethod
-    def _dump(self, type_name: str, properties: List[Property]) -> str:
+    def _dump(self, info: DumpInfo) -> str:
         """
         Abstract method which must be implemented by the deriving class to create a type string.
 
-        :param type_name:  Struct/class type-name.
-        :type type_name:   str
-        :param properties: Properties list.
-        :type properties:  List[Property]
+        :param type_name:  Contains to required information to dump language specific code.
+        :type type_name:   DumpInfo
 
         :return: Dumped type string.
         :rtype:  str
