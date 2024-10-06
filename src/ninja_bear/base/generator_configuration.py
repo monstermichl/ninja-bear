@@ -1,8 +1,10 @@
+from dataclasses import dataclass
 from ..base.generator_naming_conventions import GeneratorNamingConventions
 
 from .configuration_base import ConfigurationBase
 
 
+@dataclass  # https://stackoverflow.com/a/70259423
 class GeneratorConfiguration(ConfigurationBase):
     """
     Encapsulates the configuration properties used by the GeneratorBase class.
