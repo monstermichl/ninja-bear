@@ -1,8 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 import copy
-from dataclasses import dataclass
-from typing import Callable, Dict, List
+from typing import Callable, List
 
 from .info import VERSION
 from .configuration_base import _DEFAULT_INDENT
@@ -10,14 +9,7 @@ from .generator_configuration import GeneratorConfiguration
 from .generator_naming_conventions import GeneratorNamingConventions
 from .name_converter import NamingConventionType, NameConverter
 from .property import Property
-
-
-@dataclass  # https://stackoverflow.com/a/70259423
-class DumpInfo:
-    type_name: str
-    properties: List[Property]
-    indent: int
-    additional_props: Dict
+from .dump_info import DumpInfo
 
 
 class PropertyAlreadyExistsException(Exception):

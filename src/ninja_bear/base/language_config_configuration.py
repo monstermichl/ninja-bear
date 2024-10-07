@@ -87,11 +87,9 @@ class LanguageConfigConfiguration(ConfigurationBase):
         :return: GeneratorConfiguration based on the current LanguageConfigConfiguration.
         :rtype:  GeneratorConfiguration
         """
-        generator_config = GeneratorConfiguration()
-
-        generator_config.type_name = self.config_name
-        generator_config.indent = self.indent
-        generator_config.transform = self.transform
-        generator_config.naming_conventions = self.naming_conventions
-
-        return generator_config
+        return GeneratorConfiguration(
+            indent = self.indent,
+            transform = self.transform,
+            type_name=self.config_name,
+            naming_conventions=self.naming_conventions,
+        )

@@ -1,6 +1,10 @@
+from dataclasses import dataclass
+
+
 _DEFAULT_INDENT = 4
 
 
+@dataclass(kw_only=True)  # https://medium.com/@aniscampos/python-dataclass-inheritance-finally-686eaf60fbb5
 class ConfigurationBase:
     """
     Serves as the base for several configuration classes.
@@ -9,7 +13,7 @@ class ConfigurationBase:
     """
     Whitespace indent before each property, defaults to _DEFAULT_INDENT
     """
-    transform: str
+    transform: str = None
     """
     Python function which can transform the provided value. The script has access to the following variables.
     - name: Property name.
