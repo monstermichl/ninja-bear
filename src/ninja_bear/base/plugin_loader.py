@@ -47,6 +47,10 @@ class PluginLoader:
     def _load_plugins(self) -> List[Plugin]:
         plugins = []
 
+        def inherits(check_type: Type, check_class: Type):
+            base_classes_names = list(map(lambda clazz: clazz.__name__, check_class.__bases__))
+            return check_type.__name__ in base_classes_names
+
         for entry_point in [e for e in entry_points() if re.match('ninja-bear-.+', e.group)]:
             plugin_class = entry_point.load()
 
@@ -54,9 +58,9 @@ class PluginLoader:
                 plugin_type = None
 
                 # Specify plugin type by base-class.
-                if issubclass(plugin_class, LanguageConfigBase):
+                if inherits(LanguageConfigBase, plugin_class):
                     plugin_type = PluginType.LANGUAGE_CONFIG
-                elif issubclass(plugin_class, DistributorBase):
+                elif inherits(DistributorBase, plugin_class):
                     plugin_type = PluginType.DISTRIBUTOR
 
                 if plugin_type:
