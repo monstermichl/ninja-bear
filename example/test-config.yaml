@@ -46,69 +46,19 @@ languages:
   # ignore          (optional): If true, the section gets ignored.
   # -------------------------------------------------------------------------
 
-  # --- Java specific properties --------------------------------------------
-  # package (required): Specifies the Java package name.
-  # -------------------------------------------------------------------------
-  - language: java
+  - language: ninja-bear-language-examplescript
     file_naming: pascal
     type_naming: pascal
-    package: my.test.package
 
-  # --- JavaScript/TypeScript specific properties ---------------------------
-  # export (optional): Specifies how to export the class (esm | common_js | none).
-  #                    Defaults to esm.
-  # -------------------------------------------------------------------------
-  - language: javascript
-    file_naming: screaming_snake
-    indent: 4
-    export: common_js
+    transform: |  # If the property 'myString' is being processed, replace the value by 'Hello Mars'.
+      if name == 'myString':
+        value = 'Hello Mars'
 
-  - language: typescript
-    indent: 4
-    export: esm
-
-    # --- File distribution ---------------------------------------------------
-    # Each language section can have a distributions section which specifies,
-    # to which locations to distribute the generated file to.
-    #
-    # IMPORTANT: The configs won't get distributed to the specified locations
-    #            by default. To distribute them via commandline, use the
-    #            -d/--distribute flag. To distribute them from within a
-    #            Python script, use the Orchestrator's distribute() method.
-    #
-    # distributor (required): Specifies which plugin to use to distribute.
-    # as          (optional): Specifies an alias for the distribution. With
-    #                         the alias it's possible to provide possible
-    #                         credentials via the command line.
-    # ignore      (optional): If true, the section gets ignored.
-    #
-    # The rest of the properties are distributor specific and (hopefully)
-    # described by the corresponding plugin.
-    # -------------------------------------------------------------------------
     distributions:
       - distributor: ninja-bear-example-distributor  # Specifies which distributor plugin to use.
         as: example-alias
         ignore: true
 
-  # -------------------------------------------------------------------------
-  - language: python
-    file_naming: snake
-    property_naming: screaming_snake
-
-  # -------------------------------------------------------------------------
-  - language: c
-    file_naming: snake
-    property_naming: pascal
-
-  # --- Go specific properties ----------------------------------------------
-  # package (required): Specifies the Go package name.
-  # -------------------------------------------------------------------------
-  - language: go
-    file_naming: snake
-    package: myconfig
-    transform: |  # If the property 'myString' is being processed, replace the value by 'Hello Mars'.
-      if name == 'myString':
-        value = 'Hello Mars'
 
 # --- Properties ----------------------------------------------------------
 # This mandatory section defines the actual properties.
