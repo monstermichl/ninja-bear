@@ -51,11 +51,6 @@ class UnknownPropertyTypeException(Exception):
         super().__init__(f'Unknown property type {property_type}')
 
 
-class UnknownLanguageException(Exception):
-    def __init__(self, language: str):
-        super().__init__(f'Unknown language {language}')
-
-
 class SeveralLanguagePluginsException(Exception):
     def __init__(self, language: str):
         super().__init__(f'Several language plugins found for {language}')
@@ -324,7 +319,7 @@ class Config:
         :type language_name:     str
 
         :raises SeveralLanguagePluginsException: Raised if several plugins were found for the requested language.
-        :raises UnknownLanguageException:        Raised if an unsupported language was used in the config.
+        :raises NoLanguagePluginException:       Raised if an unsupported language was used in the config.
 
         :return: The corresponding language config class.
         :rtype:  Type[LanguageConfigBase]
@@ -349,7 +344,7 @@ class Config:
                     raise SeveralLanguagePluginsException(language_name)
 
         if not language_config_type:
-            raise UnknownLanguageException(language_names)
+            raise NoLanguagePluginException(language_names)
         return language_config_type
 
     
