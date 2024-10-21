@@ -6,8 +6,7 @@ import shutil
 from typing import Dict, List, Type
 import unittest
 
-from ninja_bear.base.distribute_info import DistributeInfo
-from src.ninja_bear import GeneratorBase, PropertyType, NamingConventionType, DumpInfo, Plugin
+from src.ninja_bear import GeneratorBase, PropertyType, NamingConventionType, DumpInfo, DistributeInfo, Plugin
 from src.ninja_bear.base.orchestrator import Orchestrator
 from src.ninja_bear.base.generator_configuration import GeneratorConfiguration
 from src.ninja_bear.base.language_config_base import LanguageConfigBase
