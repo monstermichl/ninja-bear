@@ -3,15 +3,71 @@ import os
 import pathlib
 import re
 import shutil
-from typing import List
+from typing import List, Type
 import unittest
 
-from src.ninja_bear import Orchestrator
+from src.ninja_bear import GeneratorBase, PropertyType, NamingConventionType, DumpInfo, Plugin
+from src.ninja_bear.base.orchestrator import Orchestrator
+from src.ninja_bear.base.generator_configuration import GeneratorConfiguration
 from src.ninja_bear.base.language_config_base import LanguageConfigBase
 from src.ninja_bear.base.distributor_base import DistributorCredentials
 
 
-_CONFLUENT_REFERENCE_REGEX = r'Generated with ninja-bear v\d+\.\d+\.\d+'
+_NINJA_BEAR_REFERENCE_REGEX = r'Generated with ninja-bear v\d+\.\d+\.\d+'
+
+
+class ExampleScriptGenerator(GeneratorBase):
+    """
+    ExampleScript specific generator. For more information about the generator methods, refer to GeneratorBase.
+    """
+
+    def _default_type_naming_convention(self) -> NamingConventionType:
+        return NamingConventionType.PASCAL_CASE
+    
+    def _line_comment(self, string: str) -> str:
+        return f'-- {string}'
+    
+    def _dump(self, info: DumpInfo) -> str:
+        code = f'struct {info.type_name}:\n'
+
+        for property in info.properties:
+            type = property.type
+            value = property.value
+
+            if type == PropertyType.BOOL:
+                type_string = 'boolean'
+                value = 'true' if value else 'false'
+            elif type == PropertyType.INT:
+                type_string = 'int'
+            elif type == PropertyType.FLOAT:
+                type_string = 'float'
+            elif type == PropertyType.DOUBLE:
+                type_string = 'double'
+            elif type == PropertyType.STRING:
+                type_string = 'string'
+                value = f'\'{value}\''
+            elif type == PropertyType.REGEX:
+                type_string = 'regex'
+                value = f'/{value}/'
+
+            code += f'{' ' * info.indent}{type_string} {property.name} = {value}\n'
+
+        return code
+
+
+class ExampleScriptConfig(LanguageConfigBase):
+    """
+    ExampleScript specific config. For more information about the config methods, refer to LanguageConfigBase.
+    """
+
+    def _file_extension(self) -> str:
+        return 'es'
+
+    def _generator_type(self) -> Type[ExampleScriptGenerator]:
+        return ExampleScriptGenerator
+
+    def _allowed_file_name_pattern(self) -> str:
+        return r'.+'
 
 
 class Test(unittest.TestCase):
@@ -20,9 +76,12 @@ class Test(unittest.TestCase):
         self._test_path = pathlib.Path(__file__).parent.resolve()
         self._test_config_path = path.join(self._test_path, '..', 'example/test-config.yaml')
         self._test_compare_files_path = path.join(self._test_path, 'compare_files')
+        self._plugins = [
+            Plugin('examplescript', ExampleScriptConfig),
+        ]
 
     def test_read_config(self):
-        orchestrator = Orchestrator.read_config(self._test_config_path)
+        orchestrator = Orchestrator.read_config(self._test_config_path, plugins=self._plugins)
         self._evaluate_configs(orchestrator.language_configs)
 
     def test_parse_config(self):
@@ -30,34 +89,49 @@ class Test(unittest.TestCase):
 
         with open(self._test_config_path, 'r') as f:
             content = f.read().replace(TEST_INCLUDE, os.path.join(os.getcwd(), 'example', TEST_INCLUDE))
-        orchestrator = Orchestrator.parse_config(content, 'test-config')
+        orchestrator = Orchestrator.parse_config(content, 'test-config', plugins=self._plugins)
 
         self._evaluate_configs(orchestrator.language_configs)
 
     def test_run_generators(self):
-        orchestrator = Orchestrator.read_config(self._test_config_path)
+        orchestrator = Orchestrator.read_config(self._test_config_path, plugins=self._plugins)
+        language_configs = orchestrator.language_configs
 
-        for config in orchestrator.language_configs:
-            compare_file_path = path.join(
-                self._test_compare_files_path,
-                f'{config.config_info.file_name_full}'
-            )
-            
-            with open(compare_file_path, 'r') as f:
-                content = f.read()
+        self.assertEqual(len(language_configs), 1)
 
-            original_max_diff = self.maxDiff
-            self.maxDiff = None
-            self.assertEqual(
-                # Remove versions to keep tests working if version changed.
-                re.sub(_CONFLUENT_REFERENCE_REGEX, '', config.dump()), 
-                re.sub(_CONFLUENT_REFERENCE_REGEX, '', content),
-            )
-            self.maxDiff = original_max_diff
+        language_config = language_configs[0]
+        config_generator = language_config.generator
+        local_generator = ExampleScriptGenerator(
+            GeneratorConfiguration(
+                indent=config_generator._indent,
+                transform=config_generator.transform,
+                naming_conventions=config_generator._naming_conventions,
+                type_name=config_generator._type_name
+            ),
+            properties=config_generator._properties,
+            additional_props=config_generator._additional_props,
+        )
+
+        compare_file_path = path.join(
+            self._test_compare_files_path,
+            f'{language_config.config_info.file_name_full}'
+        )
+        
+        with open(compare_file_path, 'r') as f:
+            content = f.read()
+
+        original_max_diff = self.maxDiff
+        self.maxDiff = None
+        self.assertEqual(
+            # Remove versions to keep tests working if version changed.
+            re.sub(_NINJA_BEAR_REFERENCE_REGEX, '', local_generator.dump()), 
+            re.sub(_NINJA_BEAR_REFERENCE_REGEX, '', content),
+        )
+        self.maxDiff = original_max_diff
 
     def test_write_configs(self):
         OUTPUT_DIR = path.join(self._test_path, 'test_output')
-        orchestrator = Orchestrator.read_config(self._test_config_path)
+        orchestrator = Orchestrator.read_config(self._test_config_path, plugins=self._plugins)
 
         if not os.path.isdir(OUTPUT_DIR):
             os.mkdir(OUTPUT_DIR)
@@ -78,7 +152,7 @@ class Test(unittest.TestCase):
     def test_distribution(self):
         # Get secret from environment variables.
         credential = DistributorCredentials('example-alias', None, 'password')
-        orchestrator = Orchestrator.read_config(self._test_config_path, [credential])
+        orchestrator = Orchestrator.read_config(self._test_config_path, [credential], plugins=self._plugins)
 
         self._evaluate_configs(orchestrator.language_configs)
         orchestrator.distribute()
