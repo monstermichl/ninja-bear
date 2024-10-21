@@ -2,6 +2,8 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Dict
 
+from .distribute_info import DistributeInfo
+
 
 class NoAliasProvidedException(Exception):
     def __init__(self):
@@ -61,9 +63,7 @@ class DistributorBase(ABC):
         """
         Method to distribute a generated config which must be implemented by a derivative class.
 
-        :param file_name: Config file name.
-        :type file_name:  str
-        :param data:      Config file data.
-        :type data:       str
+        :param info: Contains the required information to distribute the generated config.
+        :type info:  DistributeInfo
         """
         pass
