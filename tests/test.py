@@ -50,7 +50,8 @@ class ExampleScriptGenerator(GeneratorBase):
                 type_string = 'regex'
                 value = f'/{value}/'
 
-            code += f'{' ' * info.indent}{type_string} {property.name} = {value}\n'
+            comment = f' {self._line_comment(property.comment)}' if property.comment else ''
+            code += f'{' ' * info.indent}{type_string} {property.name} = {value}{comment}\n'
 
         return code
 
