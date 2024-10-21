@@ -3,14 +3,15 @@ import os
 import pathlib
 import re
 import shutil
-from typing import List, Type
+from typing import Dict, List, Type
 import unittest
 
+from ninja_bear.base.distribute_info import DistributeInfo
 from src.ninja_bear import GeneratorBase, PropertyType, NamingConventionType, DumpInfo, Plugin
 from src.ninja_bear.base.orchestrator import Orchestrator
 from src.ninja_bear.base.generator_configuration import GeneratorConfiguration
 from src.ninja_bear.base.language_config_base import LanguageConfigBase
-from src.ninja_bear.base.distributor_base import DistributorCredentials
+from src.ninja_bear.base.distributor_base import DistributorBase, DistributorCredentials
 
 
 _NINJA_BEAR_REFERENCE_REGEX = r'Generated with ninja-bear v\d+\.\d+\.\d+'
@@ -81,6 +82,14 @@ class ExampleScriptConfig(LanguageConfigBase):
 
     def _allowed_file_name_pattern(self) -> str:
         return r'.+'
+    
+
+class ExampleDistributor(DistributorBase):
+    def __init__(self, config: Dict, credentials: DistributorCredentials = None) -> DistributorBase:
+        super().__init__(config, credentials)
+
+    def distribute(self, info: DistributeInfo):
+        return self
 
 
 class Test(unittest.TestCase):
@@ -90,6 +99,7 @@ class Test(unittest.TestCase):
         self._test_config_path = path.join(self._test_path, '..', 'example/test-config.yaml')
         self._plugins = [
             Plugin('examplescript', ExampleScriptConfig),
+            Plugin('exampledistributor', ExampleDistributor),
         ]
 
     def test_read_config(self):

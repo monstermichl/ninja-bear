@@ -55,9 +55,8 @@ languages:
         value = 'Hello Mars'
 
     distributions:
-      - distributor: ninja-bear-example-distributor  # Specifies which distributor plugin to use.
-        as: example-alias
-        ignore: true
+      - distributor: ninja-bear-distributor-exampledistributor  # Specifies which distributor plugin to use.
+        as: example-distributor
 
 
 # --- Properties ----------------------------------------------------------
