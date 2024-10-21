@@ -211,26 +211,6 @@ class GeneratorBase(ABC):
         )
         return self
     
-    def _create_properties_string(self, callout: Callable[[Property], str], properties_copy: List[Property]) -> str:
-        """
-        Creates a string of all properties based on the provided callout.
-
-        :param callout:         Callout to create a string based on the provided properties.
-        :type callout:          Callable[[Property], str]
-        :param properties_copy: Copy of all properties (to prevent modification of original).
-        :type properties_copy:  List[Property]
-
-        :return: Newline-separated properties string.
-        :rtype:  str
-        """
-        return '\n'.join(
-            # Loop in a loop. I know, it's a little bit confusing...
-            property_string for property_string in [
-                # This loop forms each property into a string.
-                f'{callout(property)}' for property in properties_copy
-            ] if property_string  # This clause makes sure that only property strings with a value are used.
-        )
-    
     def _apply_transformation(self, properties_copy: List[Property]) -> None:
         """
         Applies the user defined value transformation to each property value.
