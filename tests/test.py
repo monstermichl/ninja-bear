@@ -14,6 +14,18 @@ from src.ninja_bear.base.distributor_base import DistributorCredentials
 
 
 _NINJA_BEAR_REFERENCE_REGEX = r'Generated with ninja-bear v\d+\.\d+\.\d+'
+_COMPARE_FILE_CONTENT = """
+struct TestConfig:
+    boolean myBoolean = true
+    int myInteger = 142
+    float myFloat = 322.0
+    float myCombinedFloat = 45724.0
+    double myDouble = 233.9
+    regex myRegex = /Test Reg(E|e)x/ -- Just another RegEx.
+    string mySubstitutedString = 'Sometimes I just want to scream Hello Mars!'
+    string myCombinedString = 'I am telling you that this string got included from test-include.yaml.'
+-- Generated with ninja-bear v1.0.0 (https://pypi.org/project/ninja-bear/).
+"""
 
 
 class ExampleScriptGenerator(GeneratorBase):
@@ -76,7 +88,6 @@ class Test(unittest.TestCase):
         super().__init__(methodName)
         self._test_path = pathlib.Path(__file__).parent.resolve()
         self._test_config_path = path.join(self._test_path, '..', 'example/test-config.yaml')
-        self._test_compare_files_path = path.join(self._test_path, 'compare_files')
         self._plugins = [
             Plugin('examplescript', ExampleScriptConfig),
         ]
@@ -113,20 +124,13 @@ class Test(unittest.TestCase):
             additional_props=config_generator._additional_props,
         )
 
-        compare_file_path = path.join(
-            self._test_compare_files_path,
-            f'{language_config.config_info.file_name_full}'
-        )
-        
-        with open(compare_file_path, 'r') as f:
-            content = f.read()
-
         original_max_diff = self.maxDiff
         self.maxDiff = None
+
         self.assertEqual(
             # Remove versions to keep tests working if version changed.
-            re.sub(_NINJA_BEAR_REFERENCE_REGEX, '', local_generator.dump()), 
-            re.sub(_NINJA_BEAR_REFERENCE_REGEX, '', content),
+            re.sub(_NINJA_BEAR_REFERENCE_REGEX, '', local_generator.dump().strip()), 
+            re.sub(_NINJA_BEAR_REFERENCE_REGEX, '', _COMPARE_FILE_CONTENT.strip()),
         )
         self.maxDiff = original_max_diff
 
