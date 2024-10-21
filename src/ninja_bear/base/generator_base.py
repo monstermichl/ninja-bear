@@ -1,7 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 import copy
-from typing import Callable, List
+from typing import List
 
 from .info import VERSION
 from .configuration_base import _DEFAULT_INDENT
