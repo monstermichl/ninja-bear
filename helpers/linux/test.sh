@@ -6,9 +6,6 @@ function _exit() {
     exit $1
 }
 
-# Install ninja-bear-language-examplescript
-tests/ninja-bear-language-examplescript\helpers/linux/install.sh
-
 # Install required test packages.
 python -m pip install coverage
 
