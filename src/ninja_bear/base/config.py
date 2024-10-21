@@ -60,7 +60,7 @@ class SeveralLanguagePluginsException(SeveralPluginsException):
 
 class NoLanguagePluginException(Exception):
     def __init__(self, language_names: List[str]):
-        super().__init__(f'No language plugin found for {' or '.join(language_names)}')
+        super().__init__(f'No language plugin found for {" or ".join(language_names)}')
 
 
 class AliasAlreadyInUseException(Exception):
