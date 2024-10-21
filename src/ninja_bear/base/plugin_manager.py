@@ -48,8 +48,14 @@ class Plugin:
 
 
 class PluginManager:
-    def __init__(self, additional_plugins: List[Plugin]=[]) -> None:
+    def __init__(self, additional_plugins: List[Plugin]=FileNotFoundError) -> None:
         self._plugins = []
+
+        # Since a default list cannot be assigned to parameters in the method header, because it only gets initialized
+        # once and then the list gets re-used (see https://stackoverflow.com/a/1145781), make sure to set undefined
+        # variables to list (see also https://docs.python.org/3/reference/compound_stmts.html#function-definitions).
+        if not additional_plugins:
+            additional_plugins = []
 
         self._load_plugins()
         self.add_plugins(additional_plugins)

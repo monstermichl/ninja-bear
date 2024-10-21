@@ -86,8 +86,8 @@ class Config:
     @staticmethod
     def read(
         path: str,
-        distributor_credentials: List[DistributorCredentials]=[],
-        plugins: List[Plugin]=[],
+        distributor_credentials: List[DistributorCredentials]=None,
+        plugins: List[Plugin]=None,
     ) -> List[LanguageConfigBase]:
         """
         Reads the provided YAML configuration file and generates a list of language configurations.
@@ -109,8 +109,8 @@ class Config:
     def parse(
         content: str,
         config_name: str,
-        distributor_credentials: List[DistributorCredentials]=[],
-        plugins: List[Plugin]=[],
+        distributor_credentials: List[DistributorCredentials]=None,
+        plugins: List[Plugin]=None,
     ) -> List[LanguageConfigBase]:
         """
         Parses the provided YAML configuration string and returns the corresponding language configurations.
@@ -138,8 +138,8 @@ class Config:
         path: str,
         namespace: str='',
         namespaces: List[str]=None,
-        distributor_credentials: List[DistributorCredentials]=[],
-        plugins: List[Plugin]=[],
+        distributor_credentials: List[DistributorCredentials]=None,
+        plugins: List[Plugin]=None,
     ) -> List[LanguageConfigBase]:
         """
         Reads the provided YAML configuration file and generates a list of language configurations.
@@ -180,8 +180,8 @@ class Config:
         namespace: str='',
         directory: str='',
         namespaces: List[str]=None,
-        distributor_credentials: List[DistributorCredentials]=[],
-        plugins: List[Plugin]=[],
+        distributor_credentials: List[DistributorCredentials]=None,
+        plugins: List[Plugin]=None,
     ) -> Tuple[List[LanguageConfigBase], List[Property]]:
         """
         Parses the provided YAML configuration string and returns the corresponding language configurations.
@@ -209,11 +209,15 @@ class Config:
         language_config_plugins = plugin_manager.get_language_config_plugins()
         distributor_plugins = plugin_manager.get_distributor_plugins()
 
-        # Since a default list cannot be assigned to the namespaces variable in the method header, because it only
-        # gets initialized once and then the list gets re-used (see https://stackoverflow.com/a/1145781), make sure
-        # that namespaces gets set to a freshly created list if it hasn't already been until now.
+        # Since a default list cannot be assigned to parameters in the method header, because it only gets initialized
+        # once and then the list gets re-used (see https://stackoverflow.com/a/1145781), make sure to set undefined
+        # variables to list (see also https://docs.python.org/3/reference/compound_stmts.html#function-definitions).
         if not namespaces:
             namespaces = []
+        if not distributor_credentials:
+            distributor_credentials = []
+        if not plugins:
+            plugins = []
 
         # Evaluate included files and their properties.
         if _KEY_INCLUDES in validated_object:
@@ -410,8 +414,8 @@ class Config:
     @staticmethod
     def _evaluate_distributors(
         language_config: Dict[str, any],
-        distributor_plugins: List[Plugin]=[],
-        distributor_credentials: List[DistributorCredentials]=[]
+        distributor_plugins: List[Plugin]=None,
+        distributor_credentials: List[DistributorCredentials]=None
     ) -> List[DistributorBase]:
         """
         Evaluates specified distributors of a language.
@@ -426,6 +430,14 @@ class Config:
         """
         distributors = []
         credentials_map = {}
+
+        # Since a default list cannot be assigned to parameters in the method header, because it only gets initialized
+        # once and then the list gets re-used (see https://stackoverflow.com/a/1145781), make sure to set undefined
+        # variables to list (see also https://docs.python.org/3/reference/compound_stmts.html#function-definitions).
+        if not distributor_plugins:
+            distributor_plugins = []
+        if not distributor_credentials:
+            distributor_credentials = []
 
         # Make sure only language configs get processed.
         distributor_plugins = [p for p in distributor_plugins if p.get_type() == PluginType.DISTRIBUTOR]

@@ -49,8 +49,8 @@ class Orchestrator:
     @staticmethod
     def read_config(
         path: str,
-        distributor_credentials: List[DistributorCredentials]=[],
-        plugins: List[Plugin]=[],
+        distributor_credentials: List[DistributorCredentials]=None,
+        plugins: List[Plugin]=None,
     ) -> Orchestrator:
         """
         Reads the provided YAML configuration file and generates a list of language configurations.
@@ -67,8 +67,8 @@ class Orchestrator:
     def parse_config(
         config: str,
         config_name: str,
-        distributor_credentials: List[DistributorCredentials]=[],
-        plugins: List[Plugin]=[],
+        distributor_credentials: List[DistributorCredentials]=None,
+        plugins: List[Plugin]=None,
     ) -> Orchestrator:
         """
         Parses the provided YAML configuration string and generates a list of language configurations. 
