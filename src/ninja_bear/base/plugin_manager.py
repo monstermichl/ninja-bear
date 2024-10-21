@@ -47,7 +47,7 @@ class Plugin:
         return self._inherits(DistributorBase, check_class)
 
 
-class PluginLoader:
+class PluginManager:
     def __init__(self, additional_plugins: List[Plugin]=[]) -> None:
         self._plugins = []
 

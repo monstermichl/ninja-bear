@@ -6,7 +6,7 @@ from typing import Dict, List, Tuple, Type
 import yaml
 from schema import Schema, Use, Optional, Or
 
-from .plugin_loader import Plugin, PluginLoader, PluginType
+from .plugin_manager import Plugin, PluginManager, PluginType
 from .name_converter import NamingConventionType
 from .property import Property
 from .property_type import PropertyType
@@ -170,7 +170,7 @@ class Config:
         :return: Language configurations which further can be dumped as config files.
         :rtype:  List[LanguageConfigBase]
         """
-        plugin_loader = PluginLoader()
+        plugin_loader = PluginManager()
         yaml_object = yaml.safe_load(content)
         validated_object = Config._schema().validate(yaml_object)
         language_configs: List[LanguageConfigBase] = []
