@@ -32,6 +32,7 @@ setup(
         install_requires=[
             'pyyaml >= 6.0.1',
             'schema >= 0.7.5',
+            'importlib-metadata >= 8.5.0',
         ],
         extras_require={
             'dev': [

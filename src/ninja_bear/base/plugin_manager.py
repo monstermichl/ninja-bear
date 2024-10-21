@@ -1,5 +1,5 @@
 from enum import IntEnum, auto
-from importlib.metadata import entry_points
+from importlib_metadata import entry_points  # Since importlib.metadata changes way too often, use importlib_metadata.
 import re
 from typing import List, Type
 
