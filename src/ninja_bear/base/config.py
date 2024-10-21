@@ -42,18 +42,20 @@ _PROPERTY_KEY_VALUE = 'value'
 _PROPERTY_KEY_HIDDEN = 'hidden'
 _PROPERTY_KEY_COMMENT = 'comment'
 
-# Distribution types.
-_DISTRIBUTION_TYPE_GIT = 'git'
-
 
 class UnknownPropertyTypeException(Exception):
     def __init__(self, property_type: str):
         super().__init__(f'Unknown property type {property_type}')
 
 
-class SeveralLanguagePluginsException(Exception):
+class SeveralPluginsException(Exception):
+    def __init__(self, type: str, name: str):
+        super().__init__(f'Several {type} plugins found for {name}')
+
+
+class SeveralLanguagePluginsException(SeveralPluginsException):
     def __init__(self, language: str):
-        super().__init__(f'Several language plugins found for {language}')
+        super().__init__('language', language)
 
 
 class NoLanguagePluginException(Exception):
@@ -64,6 +66,11 @@ class NoLanguagePluginException(Exception):
 class AliasAlreadyInUseException(Exception):
     def __init__(self, alias: str):
         super().__init__(f'The include-alias \'{alias}\' is already in use')
+
+
+class SeveralDistributorPluginsException(SeveralPluginsException):
+    def __init__(self, distributor: str):
+        super().__init__('distributor', distributor)
 
 
 class DistributorNotFoundException(Exception):
@@ -331,7 +338,20 @@ class Config:
                 Optional(_KEY_IGNORE): bool,
             }]
         })
-    
+
+    @staticmethod
+    def _plugin_names(prefix: str, plugin_name: str) -> List[str]:
+        NINJA_BEAR_PLUGIN_PREFIX = 'ninja-bear-'
+
+        cleaned_prefix = re.sub(rf'^{NINJA_BEAR_PLUGIN_PREFIX}', '', prefix).strip('-')
+        prefix = f'{NINJA_BEAR_PLUGIN_PREFIX}{cleaned_prefix}-'
+
+        # Remove ninja-bear prefix.
+        plugin_name_cleaned = re.sub(rf'^{prefix}', '', plugin_name)
+
+        # Create possible plugin names.
+        return [f'{prefix}{plugin_name_cleaned}', plugin_name_cleaned]
+
     @staticmethod
     def _evaluate_language_config(language_plugins: List[Plugin], language_name: str) -> Type[LanguageConfigBase]:
         """
@@ -348,17 +368,13 @@ class Config:
         :return: The corresponding language config class.
         :rtype:  Type[LanguageConfigBase]
         """
-        NINJA_BEAR_LANGUAGE_PREFIX = 'ninja-bear-language-'
         language_config_type = None
 
         # Make sure only language configs get processed.
         language_plugins = [p for p in language_plugins if p.get_type() == PluginType.LANGUAGE_CONFIG]
 
-        # Remove ninja-bear prefix.
-        language_name_cleaned = re.sub(rf'^{NINJA_BEAR_LANGUAGE_PREFIX}', '', language_name)
-
         # Create possible language names.
-        language_names = [f'{NINJA_BEAR_LANGUAGE_PREFIX}{language_name_cleaned}', language_name_cleaned]
+        language_names = Config._plugin_names('language', language_name)
 
         for plugin in language_plugins:
             if plugin.get_name() in language_names:
@@ -408,9 +424,11 @@ class Config:
         :return: List of evaluated distributors for the given language.
         :rtype:  List[DistributorBase]
         """
-
         distributors = []
         credentials_map = {}
+
+        # Make sure only language configs get processed.
+        distributor_plugins = [p for p in distributor_plugins if p.get_type() == PluginType.DISTRIBUTOR]
 
         # Map credential list to dictionary based on the credential alias for easer access.
         for distributor_credential in distributor_credentials:
@@ -436,20 +454,28 @@ class Config:
                     def from_config(key: str):
                         return distributor_config[key] if key in distributor_config else None
 
-                    used_distributor = from_config(_LANGUAGE_KEY_DISTRIBUTOR)
-                    found_distributors_classes = [plugin.get_class_type() for plugin in distributor_plugins if
-                        plugin.get_type() == PluginType.DISTRIBUTOR and plugin.get_name() == used_distributor
+                    distributor_name = from_config(_LANGUAGE_KEY_DISTRIBUTOR)
+
+                    # Create possible distributor names.
+                    distributor_names = Config._plugin_names('distributor', distributor_name)
+
+                    found_distributors_classes = [
+                        plugin.get_class_type() for plugin in distributor_plugins if
+                        plugin.get_name() in distributor_names
                     ]
                     alias = from_config(_LANGUAGE_KEY_AS)
+                    length = len(found_distributors_classes)
 
-                    if len(found_distributors_classes):
+                    if length == 1:
                         found_distributor_class = found_distributors_classes[0]
                         distributors.append(found_distributor_class(
                             distributor_config,
                             credentials_map[alias] if alias in credentials_map else None
                         ))
+                    elif length > 1:
+                        raise SeveralDistributorPluginsException(distributor_name)
                     else:
-                        raise DistributorNotFoundException(used_distributor)
+                        raise DistributorNotFoundException(distributor_name)
 
         return distributors
     

@@ -7,7 +7,6 @@ from .distributor_base import DistributorCredentials
 from .plugin_manager import Plugin
 
 class Orchestrator:
-
     def __init__(self, language_configs: List[LanguageConfigBase]):
         # Make sure the configs-list is available.
         if not language_configs:

@@ -9,6 +9,7 @@ from .distributor_base import DistributorBase
 from .language_config_configuration import LanguageConfigConfiguration
 from .language_config_naming_conventions import LanguageConfigNamingConventions
 from .config_file_info import ConfigFileInfo
+from .distribute_info import DistributeInfo
 from .name_converter import NameConverter
 from .property import Property
 
@@ -127,7 +128,10 @@ class LanguageConfigBase(ABC):
         """
         data = self.dump()
 
-        [distributor.distribute(self.config_info.file_name_full, data) for distributor in self.distributors]            
+        [distributor.distribute(DistributeInfo(
+            self.config_info.file_name_full,
+            data
+        )) for distributor in self.distributors]            
         return self
 
     @abstractmethod
