@@ -54,13 +54,9 @@ class DistributorBase(ABC):
 
     def from_config(self, key: str):
         return self._config[key] if key in self._config else None
-    
-    @abstractmethod
-    def get_responsiblity_type(self) -> str:
-        pass
 
     @abstractmethod
-    def distribute(self, file_name: str, data: str) -> DistributorBase:
+    def distribute(self, info: DistributeInfo) -> DistributorBase:
 
         """
         Method to distribute a generated config which must be implemented by a derivative class.
