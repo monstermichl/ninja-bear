@@ -77,21 +77,34 @@ class Config:
     """
 
     @staticmethod
-    def read(path: str, distributor_credentials: List[DistributorCredentials]) -> List[LanguageConfigBase]:
+    def read(
+        path: str,
+        distributor_credentials: List[DistributorCredentials]=[],
+        plugins: List[Plugin]=[],
+    ) -> List[LanguageConfigBase]:
         """
         Reads the provided YAML configuration file and generates a list of language configurations.
 
         :param path: Path to load the YAML file from (see example/test-config.yaml for configuration details).
         :type path:  str
+        TODO: Update parameter documentation!!!
 
         :return: Language configurations which further can be dumped as config files.
         :rtype:  List[LanguageConfigBase]
         """
-        return Config._read(path, distributor_credentials=distributor_credentials)[0]
+        return Config._read(
+            path,
+            distributor_credentials=distributor_credentials,
+            plugins=plugins
+        )[0]
 
     @staticmethod
-    def parse(content: str, config_name: str, distributor_credentials: List[DistributorCredentials]) \
-        -> List[LanguageConfigBase]:
+    def parse(
+        content: str,
+        config_name: str,
+        distributor_credentials: List[DistributorCredentials]=[],
+        plugins: List[Plugin]=[],
+    ) -> List[LanguageConfigBase]:
         """
         Parses the provided YAML configuration string and returns the corresponding language configurations.
 
@@ -101,11 +114,17 @@ class Config:
         :param config_name: Output config file name. NOTE: The actual file name format might be overruled by
                             the specified file_naming rule from the config.
         :type config_name:  str
+        TODO: Update parameter documentation!!!
 
         :return: Language configurations which further can be dumped as config files.
         :rtype:  List[LanguageConfigBase]
         """
-        return Config._parse(content, config_name, distributor_credentials=distributor_credentials)[0]
+        return Config._parse(
+            content,
+            config_name,
+            distributor_credentials=distributor_credentials,
+            plugins=plugins
+        )[0]
 
     @staticmethod
     def _read(
@@ -113,6 +132,7 @@ class Config:
         namespace: str='',
         namespaces: List[str]=None,
         distributor_credentials: List[DistributorCredentials]=[],
+        plugins: List[Plugin]=[],
     ) -> List[LanguageConfigBase]:
         """
         Reads the provided YAML configuration file and generates a list of language configurations.
@@ -121,6 +141,7 @@ class Config:
         :type path:       str
         :param namespace: Specifies a namespace for the config. If None or empty, no namespace will be set.
         :type nammespace: str
+        TODO: Update parameter documentation!!!
 
         :return: Language configurations which further can be dumped as config files.
         :rtype:  List[LanguageConfigBase]
@@ -141,7 +162,8 @@ class Config:
             namespace,
             os.path.dirname(path),
             namespaces,
-            distributor_credentials
+            distributor_credentials,
+            plugins,
         )
 
     @staticmethod
@@ -152,6 +174,7 @@ class Config:
         directory: str='',
         namespaces: List[str]=None,
         distributor_credentials: List[DistributorCredentials]=[],
+        plugins: List[Plugin]=[],
     ) -> Tuple[List[LanguageConfigBase], List[Property]]:
         """
         Parses the provided YAML configuration string and returns the corresponding language configurations.
@@ -164,19 +187,20 @@ class Config:
         :type config_name:  str
         :param namespace:   Specifies a namespace for the config. If None or empty, no namespace will be set.
         :type nammespace:   str
+        TODO: Update parameter documentation!!!
 
         :raises AliasAlreadyInUseException: Raised if an included config file uses an already defined alias.
 
         :return: Language configurations which further can be dumped as config files.
         :rtype:  List[LanguageConfigBase]
         """
-        plugin_loader = PluginManager()
+        plugin_manager = PluginManager(plugins)
         yaml_object = yaml.safe_load(content)
         validated_object = Config._schema().validate(yaml_object)
         language_configs: List[LanguageConfigBase] = []
         properties: List[Property] = []
-        language_config_plugins = plugin_loader.get_language_config_plugins()
-        distributor_plugins = plugin_loader.get_distributor_plugins()
+        language_config_plugins = plugin_manager.get_language_config_plugins()
+        distributor_plugins = plugin_manager.get_distributor_plugins()
 
         # Since a default list cannot be assigned to the namespaces variable in the method header, because it only
         # gets initialized once and then the list gets re-used (see https://stackoverflow.com/a/1145781), make sure
