@@ -85,13 +85,14 @@ def create(
     replacements.extend([
         ('author', author),
         ('requirements', concat_requirements(requirements)),
-        ('dev_requirements', concat_requirements(dev_requirements)),
+        ('dev-requirements', concat_requirements(dev_requirements)),
         ('name-upper', type_name),
         ('name-lower', type_name_lower),
         ('repository-url', repository_url),
         ('module-folder', module_folder),
         ('module', entry_point_module),
         ('class', entry_point_class),
+        ('type', type_lower),
     ])
 
     # Iterate template files and replace corresponding strings (https://realpython.com/get-all-files-in-directory-python/#recursively-listing-with-rglob).
