@@ -70,7 +70,13 @@ def create(
         *map(lambda x: (x, plugin_dir), source_files),
         *map(lambda x: (x, 'tests'), test_files),
     ]:
-        shutil.copytree(join(template_files_dir, file), join(target_dir, target))
+        from_path = pathlib.Path(join(template_files_dir, file))
+        to_path = join(target_dir, target);
+
+        if from_path.is_file():
+            shutil.copy(from_path, to_path)
+        else:
+            shutil.copytree(from_path, join(to_path, file))
 
     def concat_requirements(requirements: List[str]) -> str:
         return ', '.join(map(lambda r: f'\'{r}\'', requirements))
