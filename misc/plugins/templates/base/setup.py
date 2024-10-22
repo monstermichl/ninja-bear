@@ -42,6 +42,6 @@ setup(
         'ninja-bear',
         'plugin',
         '<type>',
-        '<language-lower>',
+        '<name-lower>',
     ],
 )
