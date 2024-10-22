@@ -71,7 +71,7 @@ def create(type: str, additional_replacements_callout: Callable[[], List[Tuple[s
 
 def create_language_plugin():
     def callout():
-        file_extension = input('File extension: ').strip()
+        file_extension = input('Language file extension: ').strip()
 
         # Make sure a file extension got provided.
         if not file_extension:
