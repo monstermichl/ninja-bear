@@ -78,6 +78,11 @@ def create(
         else:
             shutil.copytree(from_path, join(to_path, file))
 
+    # Create requirements.txt.
+    with open(join(target_dir, 'requirements.txt'), 'w') as f:
+        f.writelines(requirements)
+
+    # Helper function to create a requirements-string.
     def concat_requirements(requirements: List[str]) -> str:
         return ', '.join(map(lambda r: f'\'{r}\'', requirements))
 
