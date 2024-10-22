@@ -8,7 +8,7 @@ from typing import Callable, List, Tuple
 from fileinput import FileInput
 
 # Add parent directory to path to be able to import from 'src' (https://www.geeksforgeeks.org/python-import-from-parent-directory/).
-sys.path.append(str(pathlib.Path(os.path.dirname(__file__)).parent.absolute()))
+sys.path.append(str(pathlib.Path(os.path.dirname(__file__)).parent.parent.absolute()))
 
 from src.ninja_bear.base.name_converter import NameConverter, NamingConventionType
 
