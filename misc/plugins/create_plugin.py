@@ -66,7 +66,7 @@ def create(type: str, additional_replacements_callout: Callable[[], List[Tuple[s
                     print(line, end='')  # print prints to the file here (https://stackoverflow.com/a/76923807).
 
     # Rename module folder.
-    os.rename(os.path.join(src_dir, f'ninja_bear_{type_lower}'), os.path.join(src_dir, module_folder))
+    os.rename(os.path.join(src_dir, 'ninja_bear_plugin'), os.path.join(src_dir, module_folder))
 
 
 def create_language_plugin():
