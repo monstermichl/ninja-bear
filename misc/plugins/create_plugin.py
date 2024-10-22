@@ -1,9 +1,10 @@
-import inspect
 import os
+import shutil
 import sys
 import pathlib
+
+from os.path import join
 from typing import Callable, List, Tuple
-from zipfile import ZipFile
 from fileinput import FileInput
 
 # Add parent directory to path to be able to import from 'src' (https://www.geeksforgeeks.org/python-import-from-parent-directory/).
@@ -11,7 +12,16 @@ sys.path.append(str(pathlib.Path(os.path.dirname(__file__)).parent.absolute()))
 
 from src.ninja_bear.base.name_converter import NameConverter, NamingConventionType
 
-def create(type: str, additional_replacements_callout: Callable[[], List[Tuple[str, str]]]=None):
+def create(
+    type: str,
+    requirements: List[str],
+    dev_requirements: List[str],
+    source_files: List[str],
+    test_files: List[str],
+    entry_point_module: str,
+    entry_point_class: str,
+    additional_replacements_callout: Callable[[], List[Tuple[str, str]]]=None
+):
     type_capitalized = type.capitalize()
     type_lower = type.lower()
     type_name = input(f'{type_capitalized} name: ')
@@ -33,24 +43,49 @@ def create(type: str, additional_replacements_callout: Callable[[], List[Tuple[s
     if additional_replacements_callout:
         replacements.extend(additional_replacements_callout())
 
+    author = input('Plugin author: ')
+
+    # Make sure an author got provided.
+    if not author:
+        raise Exception('No name provided')
+
     repository_url = input('Repository URL (optional): ').strip()
 
     dir_name = os.path.dirname(__file__)
     target_folder = f'ninja-bear-{type_lower}-{type_name_lower}'
-    target_dir = os.path.join(dir_name, target_folder)
-    src_dir = os.path.join(target_dir, 'src')
+    target_dir = join(dir_name, target_folder)
+    src_dir = join(target_dir, 'src')
+    plugin_dir = join(src_dir, 'ninja_bear_plugin')
     module_folder = NameConverter.convert(target_folder, NamingConventionType.SNAKE_CASE)
+    templates_dir = join(dir_name, 'templates')
+    template_files_dir = join(templates_dir, type_lower)
 
-    # Extract template.
-    with ZipFile(os.path.join(dir_name, f'{type_lower}-template.zip')) as zip:
-        zip.extractall(target_dir)
+    # Create copy of base.
+    shutil.copytree(join(templates_dir, 'base'), target_dir)
+
+    # Copy required files.
+    for file, target in [
+        ('README.md', ''),
+        ('test-config.yaml', 'example'),
+        *map(lambda x: (x, plugin_dir), source_files),
+        *map(lambda x: (x, 'tests'), test_files),
+    ]:
+        shutil.copytree(join(template_files_dir, file), join(target_dir, target))
+
+    def concat_requirements(requirements: List[str]) -> str:
+        return ', '.join(map(lambda r: f'\'{r}\'', requirements))
 
     # Add additional replacements.
     replacements.extend([
-        (f'{type_lower}-upper', type_name),
-        (f'{type_lower}-lower', type_name_lower),
+        ('author', author),
+        ('requirements', concat_requirements(requirements)),
+        ('dev_requirements', concat_requirements(dev_requirements)),
+        ('name-upper', type_name),
+        ('name-lower', type_name_lower),
         ('repository-url', repository_url),
         ('module-folder', module_folder),
+        ('module', entry_point_module),
+        ('class', entry_point_class),
     ])
 
     # Iterate template files and replace corresponding strings (https://realpython.com/get-all-files-in-directory-python/#recursively-listing-with-rglob).
@@ -66,7 +101,7 @@ def create(type: str, additional_replacements_callout: Callable[[], List[Tuple[s
                     print(line, end='')  # print prints to the file here (https://stackoverflow.com/a/76923807).
 
     # Rename module folder.
-    os.rename(os.path.join(src_dir, 'ninja_bear_plugin'), os.path.join(src_dir, module_folder))
+    os.rename(plugin_dir, join(src_dir, module_folder))
 
 
 def create_language_plugin():
@@ -81,11 +116,28 @@ def create_language_plugin():
             ('file-extension', file_extension),
         ]
 
-    create('language', callout)
+    create(
+        type='language',
+        requirements=[],
+        dev_requirements=[],
+        source_files=['config.py', 'generator.py'],
+        test_files=['test.py', 'compare_files'],
+        entry_point_module='config',
+        entry_point_class='Config',
+        additional_replacements_callout=callout,
+    )
 
 
 def create_distributor_plugin():
-    create('distributor')
+    create(
+        type='distributor',
+        requirements=[],
+        dev_requirements=[],
+        source_files=['distributor.py'],
+        test_files=['test.py'],
+        entry_point_module='distributor',
+        entry_point_class='Distributor',
+    )
 
 
 if __name__ == '__main__':
