@@ -1,4 +1,5 @@
 import os
+import re
 import shutil
 import sys
 import pathlib
@@ -39,6 +40,9 @@ def create(
     # Make sure a lowered type name got provided.
     if not type_name_lower:
         raise Exception('No lowered {type_lower} name provided')
+    
+    # Replace all special characters with underline.
+    type_name_lower = re.sub(r'_+', '_', re.sub('[^a-z0-9]', '_', type_name_lower))
     
     if additional_replacements_callout:
         replacements.extend(additional_replacements_callout())
