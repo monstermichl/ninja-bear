@@ -1,5 +1,5 @@
 languages:
-  - language: ninja-bear-language-c
+  - language: ninja-bear-language-examplescript
     distributions:
       - distributor: ninja-bear-distributor-<name-lower>  # Specifies which distributor plugin to use.
         as: <name-lower>
