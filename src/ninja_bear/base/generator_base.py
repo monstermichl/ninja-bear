@@ -22,6 +22,11 @@ class NoTypeNameProvidedException(Exception):
         super().__init__('No type name has been provided')
 
 
+class InvalidDumpTypeException(Exception):
+    def __init__(self):
+        super().__init__('The returned dump value is not a string')
+
+
 class GeneratorBase(ABC):
     """
     Abstract class that acts as the base for all Generator implementations.
@@ -128,12 +133,18 @@ class GeneratorBase(ABC):
                     self._naming_conventions.properties_naming_convention
                 )
 
-        s = add_newline(self._dump(DumpInfo(
+        s = self._dump(DumpInfo(
             self._type_name,
             properties_copy,
             self._indent,
             self._additional_props,
-        )))
+        ))
+
+        # Make sure a string has been returned from _dump.
+        if not isinstance(s, str):
+            raise InvalidDumpTypeException()
+
+        s = add_newline(s)
         s += f'{self._line_comment(f"Generated with ninja-bear v{VERSION} (https://pypi.org/project/ninja-bear/).").strip()}'
 
         return add_newline(s)
