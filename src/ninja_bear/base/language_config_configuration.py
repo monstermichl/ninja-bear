@@ -32,9 +32,9 @@ class LanguageConfigConfiguration(ConfigurationBase):
     """
     Which generator to use to generate the config.
     """
-    transform: str
+    transformers: List[str]
     """
-    Function string to transform property values.
+    Function strings to transform property values.
     """
     naming_conventions: LanguageConfigNamingConventions
     """
@@ -53,7 +53,7 @@ class LanguageConfigConfiguration(ConfigurationBase):
         file_extension: str,
         generator_type: Type[GeneratorBase],
         indent: int = _DEFAULT_INDENT,
-        transform: str = None,
+        transformers: List[str] = None,
         naming_conventions: LanguageConfigNamingConventions = None,
         distributors: List[DistributorBase] = None,
     ) -> None:
@@ -63,7 +63,7 @@ class LanguageConfigConfiguration(ConfigurationBase):
         self.file_extension = file_extension.lstrip('.')
         self.generator_type = generator_type
         self.indent = indent
-        self.transform = transform
+        self.transformers = transformers
         self.naming_conventions = naming_conventions
         self.distributors = distributors
 
@@ -88,8 +88,8 @@ class LanguageConfigConfiguration(ConfigurationBase):
         :rtype:  GeneratorConfiguration
         """
         return GeneratorConfiguration(
-            indent = self.indent,
-            transform = self.transform,
+            indent=self.indent,
+            transformers=self.transformers,
             type_name=self.config_name,
             naming_conventions=self.naming_conventions,
         )

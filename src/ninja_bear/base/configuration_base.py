@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import List
 
 
 _DEFAULT_INDENT = 4
@@ -13,9 +14,9 @@ class ConfigurationBase:
     """
     Whitespace indent before each property, defaults to _DEFAULT_INDENT
     """
-    transform: str = None
+    transformers: List[str] = None
     """
-    Python function which can transform the provided value. The script has access to the following variables.
+    Python scripts which can transform the provided value. The script has access to the following variables.
     - name: Property name.
     - value: Property value.
     - type: Property type value (see values PropertyType).

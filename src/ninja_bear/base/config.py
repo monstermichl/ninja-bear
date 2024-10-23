@@ -16,14 +16,23 @@ from .distributor_base import DistributorBase, DistributorCredentials
 
 # Main keys.
 _KEY_INCLUDES = 'includes'
+_KEY_TRANSFORMERS = 'transformers'
 _KEY_DISTRIBUTORS = 'distributors'
 _KEY_LANGUAGES = 'languages'
 _KEY_PROPERTIES = 'properties'
+
+# Common keys.
+_KEY_AS = 'as'
 _KEY_IGNORE = 'ignore'
 
 # Include keys.
 _INCLUDE_KEY_PATH = 'path'
-_INCLUDE_KEY_AS = 'as'
+
+# Transformer keys.
+_TRANSFORMER_KEY_TRANSFORMER = 'transformer'
+
+# Distributor keys.
+_DISTRIBUTOR_KEY_DISTRIBUTOR = 'distributor'
 
 # Language keys.
 _LANGUAGE_KEY_LANGUAGE = 'language'
@@ -31,11 +40,11 @@ _LANGUAGE_KEY_FILE_NAMING = 'file_naming'
 _LANGUAGE_KEY_PROPERTY_NAMING = 'property_naming'
 _LANGUAGE_KEY_TYPE_NAMING = 'type_naming'
 _LANGUAGE_KEY_INDENT = 'indent'
-_LANGUAGE_KEY_TRANSFORM = 'transform'
+_LANGUAGE_KEY_TRANSFORMERS = _KEY_TRANSFORMERS
+_LANGUAGE_KEY_DISTRIBUTORS = _KEY_DISTRIBUTORS
+
 _LANGUAGE_KEY_TYPE = 'type'
 _LANGUAGE_KEY_NAME = 'name'
-_LANGUAGE_KEY_AS = 'as'
-_LANGUAGE_KEY_DISTRIBUTOR = 'distributor'
 
 # Property keys.
 _PROPERTY_KEY_VALUE = 'value'
@@ -78,9 +87,19 @@ class DistributorNotFoundException(Exception):
         super().__init__(f'The distributor \'{distributor}\' could not be found')
 
 
-class DistributorAliasNotFoundException(Exception):
+class DefinitionAliasNotFoundException(Exception):
+    def __init__(self, type: str, alias: str):
+        super().__init__(f'The {type} alias \'{alias}\' could not be found')
+
+
+class TransformerAliasNotFoundException(DefinitionAliasNotFoundException):
     def __init__(self, alias: str):
-        super().__init__(f'The distributor alias \'{alias}\' could not be found')
+        super().__init__('transformer', alias)
+
+
+class DistributorAliasNotFoundException(DefinitionAliasNotFoundException):
+    def __init__(self, alias: str):
+        super().__init__('distributor', alias)
 
 
 class Config:
@@ -212,6 +231,7 @@ class Config:
         language_configs: List[LanguageConfigBase] = []
         properties: List[Property] = []
         language_config_plugins = plugin_manager.get_language_config_plugins()
+        transformers = Config._evaluate_transformers(validated_object)
         distributor_plugins = plugin_manager.get_distributor_plugins()
         distributors = Config._evaluate_distributors(validated_object, distributor_plugins, distributor_credentials)
 
@@ -232,7 +252,7 @@ class Config:
 
                 # If inclusion shall not be ignored, include it.
                 if not ignore:
-                    inclusion_namespace = inclusion[_INCLUDE_KEY_AS]
+                    inclusion_namespace = inclusion[_KEY_AS]
 
                     # Make sure that a included config file does not re-define an alias.
                     if inclusion_namespace in namespaces:
@@ -276,7 +296,6 @@ class Config:
                     naming_conventions = LanguageConfigNamingConventions()
                     language_name = language[_LANGUAGE_KEY_LANGUAGE]
                     indent = language[_LANGUAGE_KEY_INDENT] if _LANGUAGE_KEY_INDENT in language else None
-                    transform = language[_LANGUAGE_KEY_TRANSFORM] if _LANGUAGE_KEY_TRANSFORM in language else None
 
                     # Evaluate language.
 
@@ -300,7 +319,7 @@ class Config:
                         config_name=config_name,
                         properties=properties,
                         indent=indent,
-                        transform=transform,
+                        transformers=Config._evaluate_language_transformers(language, transformers),
                         naming_conventions=naming_conventions,
                         distributors=Config._evaluate_language_distributors(language, distributors),
 
@@ -322,12 +341,18 @@ class Config:
         return Schema({
             Optional(_KEY_INCLUDES): [{
                 _INCLUDE_KEY_PATH: str,
-                _INCLUDE_KEY_AS: str,
+                _KEY_AS: str,
                 Optional(_KEY_IGNORE): bool,
             }],
+            Optional(_KEY_TRANSFORMERS): [{
+                _TRANSFORMER_KEY_TRANSFORMER: str,
+                _KEY_AS: str,
+                Optional(_KEY_IGNORE): bool,
+                Optional(object): object,  # Collect other properties.
+            }],
             Optional(_KEY_DISTRIBUTORS): [{
-                _LANGUAGE_KEY_DISTRIBUTOR: str,
-                Optional(_LANGUAGE_KEY_AS): str,
+                _DISTRIBUTOR_KEY_DISTRIBUTOR: str,
+                _KEY_AS: str,
                 Optional(_KEY_IGNORE): bool,
                 Optional(object): object,  # Collect other properties.
             }],
@@ -335,8 +360,9 @@ class Config:
                 _LANGUAGE_KEY_LANGUAGE: str,
                 Optional(_LANGUAGE_KEY_FILE_NAMING): str,
                 Optional(_LANGUAGE_KEY_INDENT): int,
+                Optional(_LANGUAGE_KEY_TRANSFORMERS): [str],
+                Optional(_LANGUAGE_KEY_DISTRIBUTORS): [str],
                 Optional(_KEY_IGNORE): bool,
-                Optional(_KEY_DISTRIBUTORS): [str],
                 Optional(object): object  # Collect other properties.
             }],
             _KEY_PROPERTIES: [{
@@ -418,17 +444,115 @@ class Config:
         return type
     
     @staticmethod
+    def _evaluate_transformers(validated_object: object) -> Dict[str, DistributorBase]:
+        """
+        Evaluates specified transformers.
+
+        :param validated_object: Schema validated config object.
+        :type validated_object:  object
+
+        :return: Dictionary of defined transformer-scripts where the key is the alias.
+        :rtype:  Dict[str, str], optional
+        """
+        transformers = {}
+
+        if _KEY_TRANSFORMERS in validated_object:
+            transformer_configs = validated_object[_KEY_TRANSFORMERS]
+
+            for transformer_config in transformer_configs:
+                ignore = transformer_config[_KEY_IGNORE] if _KEY_IGNORE in transformer_config else False
+
+                # If distributor shall not be ignored, include it.
+                if not ignore:
+                    def from_config(key: str):
+                        return transformer_config[key] if key in transformer_config else None
+
+                    transformer_script = from_config(_TRANSFORMER_KEY_TRANSFORMER)
+                    alias = from_config(_KEY_AS)
+
+                    transformers[alias] = transformer_script
+
+        return transformers
+    
+    @staticmethod
+    def _evaluate_language_referenced_definitions(
+        language_config: Dict[str, any],
+        definitions: Dict[str, any],
+        key: str,
+        exception_type: Type[DefinitionAliasNotFoundException],
+    ) -> List[any]:
+        """
+        Evaluates specified transformers of a language.
+
+        :param language_config: Language config object.
+        :type language_config:  Dict[str, any]
+        :param definitions:     Dictionary of defined definitions (e.g. distributors) where the key is the alias.
+        :type definitions:      Dict[str, any]
+        :param key:             Key to look for in the language config.
+        :type key:              str
+        :param exception_type:  Exception type to instantiate if an alias could not be found.
+        :type exception_type:   Type[DefinitionAliasNotFoundException]
+
+        :return: List of evaluated definitions (e.g. distributors) for the given language.
+        :rtype:  List[any]
+        """
+        language_definitions = []
+
+        # This time better safe than sorry.
+        if not language_config:
+            language_config = {}
+        if not definitions:
+            definitions = {}
+
+        # Get definition references if provided.
+        definition_aliases = language_config[key] if key in language_config else []
+        
+        # Collect all definitions that belong to the language.
+        for language_alias in definition_aliases:
+            if language_alias not in definitions:
+                raise exception_type(language_alias)
+            language_definitions.append(definitions[language_alias])
+
+        return language_definitions
+    
+    @staticmethod
+    def _evaluate_language_transformers(
+        language_config: Dict[str, any],
+        transformers: Dict[str, str]
+    ) -> List[str]:
+        """
+        Evaluates specified transformers of a language.
+
+        :param language_config: Language config object.
+        :type language_config:  Dict[str, any]
+        :param distributors:    Dictionary of defined transformer scripts where the key is the alias.
+        :type distributors:     Dict[str, str], optional
+
+        :return: List of evaluated transformer scripts for the given language.
+        :rtype:  List[str]
+        """
+        return Config._evaluate_language_referenced_definitions(
+            language_config,
+            transformers,
+            _LANGUAGE_KEY_TRANSFORMERS,
+            TransformerAliasNotFoundException,
+        )
+    
+    @staticmethod
     def _evaluate_distributors(
         validated_object: object,
         distributor_plugins: List[Plugin]=None,
         distributor_credentials: List[DistributorCredentials]=None
     ) -> Dict[str, DistributorBase]:
         """
-        Evaluates specified distributors of a language.
+        Evaluates specified distributors.
 
-        :param distributor_credentials: Potentially required credentials, defaults to []
+        :param validated_object:        Schema validated config object.
+        :type validated_object:         object
+        :param distributor_plugins:     List of all discovered distributor plugins, defaults to None
+        :type distributor_plugins:      List[Plugin], optional
+        :param distributor_credentials: Potentially required credentials, defaults to None
         :type distributor_credentials:  List[DistributorCredential], optional
-        TODO: Update parameter documentation!!!
 
         :return: Dictionary of defined distributors where the key is the alias.
         :rtype:  Dict[str, DistributorBase], optional
@@ -455,10 +579,6 @@ class Config:
             for distributor_credential in distributor_credentials:
                 credentials_map[distributor_credential.distributor_alias] = distributor_credential
 
-            # Make sure distributor_configs is a list.
-            if not isinstance(distributor_configs, list):
-                distributor_configs = [distributor_configs]
-
             for distributor_config in distributor_configs:
                 ignore = distributor_config[_KEY_IGNORE] if _KEY_IGNORE in distributor_config else False
 
@@ -467,7 +587,7 @@ class Config:
                     def from_config(key: str):
                         return distributor_config[key] if key in distributor_config else None
 
-                    distributor_name = from_config(_LANGUAGE_KEY_DISTRIBUTOR)
+                    distributor_name = from_config(_DISTRIBUTOR_KEY_DISTRIBUTOR)
 
                     # Create possible distributor names.
                     distributor_names = Config._plugin_names('distributor', distributor_name)
@@ -476,7 +596,7 @@ class Config:
                         plugin.get_class_type() for plugin in distributor_plugins if
                         plugin.get_name() in distributor_names
                     ]
-                    alias = from_config(_LANGUAGE_KEY_AS)
+                    alias = from_config(_KEY_AS)
                     length = len(found_distributors_classes)
 
                     if length == 1:
@@ -508,22 +628,13 @@ class Config:
         :return: List of evaluated distributors for the given language.
         :rtype:  List[DistributorBase]
         """
-        language_distributors = []
+        return Config._evaluate_language_referenced_definitions(
+            language_config,
+            distributors,
+            _LANGUAGE_KEY_DISTRIBUTORS,
+            DistributorAliasNotFoundException,
+        )
 
-        # Get distributions config if provided.
-        distributor_aliases = language_config[_KEY_DISTRIBUTORS] \
-            if _KEY_DISTRIBUTORS in language_config \
-            else []
-        
-        # Return all distributors that .
-        for distributor_alias in distributor_aliases:
-            if distributor_alias not in distributors:
-                raise DistributorAliasNotFoundException(distributor_alias)
-            language_distributors.append(distributors[distributor_alias])
-
-        return language_distributors
-
-    
     @staticmethod
     def _evaluate_naming_convention_type(naming_convention: str) -> NamingConventionType:
         """

@@ -29,7 +29,7 @@ class Test(unittest.TestCase):
         local_generator = Generator(
             GeneratorConfiguration(
                 indent=config_generator._indent,
-                transform=config_generator.transform,
+                transformers=config_generator.transformers,
                 naming_conventions=config_generator._naming_conventions,
                 type_name=config_generator._type_name
             ),

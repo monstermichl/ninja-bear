@@ -36,7 +36,7 @@ class LanguageConfigBase(ABC):
         config_name: str,
         properties: List[Property],
         indent: int = _DEFAULT_INDENT,
-        transform: str = None,
+        transformers: List[str] = None,
         naming_conventions: LanguageConfigNamingConventions = None,
         distributors: List[DistributorBase] = None,
         additional_props = {},
@@ -52,8 +52,8 @@ class LanguageConfigBase(ABC):
         :type properties:          List[Property]
         :param indent:             Property indent for the generated config, defaults to _DEFAULT_INDENT
         :type indent:              int, optional
-        :param transform:          Python function which can transform the provided value, defaults to None
-        :type transform:           str, optional
+        :param transformers:       Python functions which can transform the provided value, defaults to None
+        :type transformers:        List[str], optional
         :param naming_conventions: Naming convention to use for the generated config file, defaults to None
         :type naming_conventions:  LanguageConfigNamingConventions, optional
         :param distributors:       List of distributors, defaults to None
@@ -66,7 +66,7 @@ class LanguageConfigBase(ABC):
             file_extension=self._file_extension(),
             generator_type=self._generator_type(),
             indent=indent,
-            transform=transform,
+            transformers=transformers,
             naming_conventions=naming_conventions,
             distributors=distributors,
         )

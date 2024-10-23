@@ -14,7 +14,7 @@ includes:
   - path: test-include.yaml
     as: ti
 
-# --- Includes ------------------------------------------------------------
+# --- Distributors --------------------------------------------------------
 # This optional section allows to create distributors to distribute the
 # generated files to differnt locations. Some distributors might need
 # additional attributes to function properly. Those properties must be
@@ -23,14 +23,43 @@ includes:
 # -------------------------------------------------------------------------
 distributors:
   # --- Common properties (valid for all distributors) ----------------------
-  # distributor (required): Specifies the distributor plugin to use. If the plugin starts with 'ninja-bear-plugin-' it's possible
-  #                         to just use the distributor name (e.g. git) as it will internally be prefixed to result in
-  #                         'ninja-bear-distributor-git'.
-  # as          (required): Specifies how the distributor will be referenced at the language level.
+  # distributor (required): Specifies the distributor plugin to use. If the
+  #                         plugin starts with 'ninja-bear-plugin-' it's
+  #                         possible to just use the distributor name (e.g.
+  #                         git) as it will internally be prefixed to result
+  #                         in 'ninja-bear-distributor-git'.
+  # as          (required): Specifies how the distributor will be referenced
+  #                         at the language level.
   # ignore      (optional): If true, the section gets ignored.
   # -------------------------------------------------------------------------
   - distributor: ninja-bear-distributor-exampledistributor  # Specifies which distributor plugin to use.
     as: example-distributor
+
+# --- Transformers --------------------------------------------------------
+# This optional section allows to specify transformer-scripts to transform
+# property values before being dumped.
+# -------------------------------------------------------------------------
+transformers:
+  # --- Common properties ---------------------------------------------------
+  # transformer (required): Specifies a Python script to transform the currently
+  #                         processed property. To reflect changes to the outside
+  #                         of the script, the value variable must be modified.
+  #                         The script has access to the following variables:
+  #
+  #                         name: Property name.
+  #                         value: Property value.
+  #                         type: Property type.
+  #                         properties: List of all properties (must not be modified).
+  #
+  # as          (required): Specifies how the distributor will be referenced at
+  #                         the language level.
+  # ignore      (optional): If true, the section gets ignored.
+  # -------------------------------------------------------------------------
+  - transformer: |  # If the property 'myString' is being processed, replace the value by 'Hello Mars'.
+      if name == 'myString':
+        value = 'Hello Mars'
+
+    as: example-transformer
 
 # --- Languages -----------------------------------------------------------
 # This optional section defines for which languages to generate files. It is
@@ -42,42 +71,33 @@ distributors:
 # -------------------------------------------------------------------------
 languages:
   # --- Common properties (valid for all languages) -------------------------
-  # language        (required): Specifies the language plugin to use. If the plugin starts with 'ninja-bear-language-' it's possible
-  #                             to just use the language name (e.g. typescript) as it will internally be prefixed to result in
-  #                             'ninja-bear-language-typescript'.
-  #
-  # file_naming     (optional): Specifies the file naming convention (snake | screaming_snake | camel | pascal | kebap).
+  # language        (required): Specifies the language plugin to use. If the
+  #                             plugin starts with 'ninja-bear-language-' it's
+  #                             possible to just use the language name (e.g.
+  #                             typescript) as it will internally be prefixed
+  #                             to result in 'ninja-bear-language-typescript'.
+  # file_naming     (optional): Specifies the file naming convention (snake |
+  #                             screaming_snake | camel | pascal | kebap).
   #                             Defaults to the file-name without the extension.
-  # property_naming (optional): Specifies the property naming convention (snake | screaming_snake | camel | pascal | kebap).
-  # type_naming     (optional): Specifies the naming convention for the generated type (snake | screaming_snake | camel | pascal | kebap).
-  #                             The default value is language specific.
+  # property_naming (optional): Specifies the property naming convention (snake |
+  #                             screaming_snake | camel | pascal | kebap).
+  # type_naming     (optional): Specifies the naming convention for the generated
+  #                             type (snake | screaming_snake | camel | pascal |
+  #                             kebap). The default value is language specific.
   # indent          (optional): Specifies the amount of spaces before each
   #                             constant. Defaults to 4.
-  # transform       (optional): Specifies a Python script to transform the
-  #                             currently processed property. To reflect
-  #                             changes to the outside of the script, the
-  #                             value variable must be modified. The script
-  #                             has access to the following variables:
-  #
-  #                             name: Property name.
-  #                             value: Property value.
-  #                             type: Property type.
-  #                             properties: List of all properties (must not be modified).
-  #
-  # distributors    (optional): Specifies a list of distributors to distribute the generated config with.
-  #
+  # distributors    (optional): Specifies a list of distributors to distribute
+  #                             the generated config with.
   # ignore          (optional): If true, the section gets ignored.
   # -------------------------------------------------------------------------
-
   - language: ninja-bear-language-examplescript
     file_naming: pascal
     property_naming: camel
     type_naming: pascal
     indent: 4
 
-    transform: |  # If the property 'myString' is being processed, replace the value by 'Hello Mars'.
-      if name == 'myString':
-        value = 'Hello Mars'
+    transformers:
+      - example-transformer
 
     distributors:
       - example-distributor
@@ -97,7 +117,6 @@ properties:
   #                     the final result.
   # ignore  (optional): If true, the section gets ignored.
   # -------------------------------------------------------------------------
-
   - type: bool
     name: myBoolean
     value: true

@@ -51,7 +51,7 @@ class GeneratorBase(ABC):
         type_name = config.type_name
         indent = config.indent
 
-        self.transform = config.transform
+        self.transformers = config.transformers
         self._properties: List[Property] = []
         self._naming_conventions = \
             config.naming_conventions if config.naming_conventions else GeneratorNamingConventions()
@@ -116,7 +116,7 @@ class GeneratorBase(ABC):
         properties_copy = [copy.deepcopy(property) for property in self._properties]
 
         # Transform properties if transform function was provided.
-        self._apply_transformation(properties_copy)
+        self._apply_transformations(properties_copy)
 
         # Substitute property values.
         for property in properties_copy:
@@ -222,14 +222,14 @@ class GeneratorBase(ABC):
         )
         return self
     
-    def _apply_transformation(self, properties_copy: List[Property]) -> None:
+    def _apply_transformations(self, properties_copy: List[Property]) -> None:
         """
         Applies the user defined value transformation to each property value.
 
         :param properties_copy: Copy of all properties (to prevent modification of original).
         :type properties_copy:  List[Property]
         """
-        if self.transform:
+        if self.transformers:
             NAME_KEY = 'name'
             VALUE_KEY = 'value'
             TYPE_KEY = 'type'
@@ -245,15 +245,16 @@ class GeneratorBase(ABC):
                     PROPERTIES_KEY: properties_copy,
                 }
 
-                # Execute user defined Python script.
-                exec(self.transform, None, local_variables)
-                
-                # Create new property from modified value.
-                properties_copy[i] = Property(
-                    name=property.name,
-                    value=local_variables[VALUE_KEY],
-                    property_type=property.type,
-                    hidden=property.hidden,
-                    comment=property.comment,
-                    namespace=property.namespace,
-                )
+                # Execute user defined Python scripts to transform properties.
+                for transformer in self.transformers:
+                    exec(transformer, None, local_variables)
+                    
+                    # Create new property from modified value.
+                    properties_copy[i] = Property(
+                        name=property.name,
+                        value=local_variables[VALUE_KEY],
+                        property_type=property.type,
+                        hidden=property.hidden,
+                        comment=property.comment,
+                        namespace=property.namespace,
+                    )
