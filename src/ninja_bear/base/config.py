@@ -16,6 +16,7 @@ from .distributor_base import DistributorBase, DistributorCredentials
 
 # Main keys.
 _KEY_INCLUDES = 'includes'
+_KEY_DISTRIBUTORS = 'distributors'
 _KEY_LANGUAGES = 'languages'
 _KEY_PROPERTIES = 'properties'
 _KEY_IGNORE = 'ignore'
@@ -27,7 +28,6 @@ _INCLUDE_KEY_AS = 'as'
 # Language keys.
 _LANGUAGE_KEY_LANGUAGE = 'language'
 _LANGUAGE_KEY_FILE_NAMING = 'file_naming'
-_LANGUAGE_KEY_DISTRIBUTIONS = 'distributions'
 _LANGUAGE_KEY_PROPERTY_NAMING = 'property_naming'
 _LANGUAGE_KEY_TYPE_NAMING = 'type_naming'
 _LANGUAGE_KEY_INDENT = 'indent'
@@ -76,6 +76,11 @@ class SeveralDistributorPluginsException(SeveralPluginsException):
 class DistributorNotFoundException(Exception):
     def __init__(self, distributor: str):
         super().__init__(f'The distributor \'{distributor}\' could not be found')
+
+
+class DistributorAliasNotFoundException(Exception):
+    def __init__(self, alias: str):
+        super().__init__(f'The distributor alias \'{alias}\' could not be found')
 
 
 class Config:
@@ -208,6 +213,7 @@ class Config:
         properties: List[Property] = []
         language_config_plugins = plugin_manager.get_language_config_plugins()
         distributor_plugins = plugin_manager.get_distributor_plugins()
+        distributors = Config._evaluate_distributors(validated_object, distributor_plugins, distributor_credentials)
 
         # Since a default list cannot be assigned to parameters in the method header, because it only gets initialized
         # once and then the list gets re-used (see https://stackoverflow.com/a/1145781), make sure to set undefined
@@ -243,6 +249,7 @@ class Config:
                     for inclusion_property in Config._read(inclusion_path, inclusion_namespace, namespaces)[1]:
                         inclusion_property.hidden = True  # Included properties are not being exported by default.
                         properties.append(inclusion_property)
+                
 
         # Collect properties as they are the same for all languages.
         for property in validated_object[_KEY_PROPERTIES]:
@@ -295,9 +302,7 @@ class Config:
                         indent=indent,
                         transform=transform,
                         naming_conventions=naming_conventions,
-                        distributors=Config._evaluate_distributors(
-                            language, distributor_plugins, distributor_credentials
-                        ),
+                        distributors=Config._evaluate_language_distributors(language, distributors),
 
                         # Pass all language props as additional_props to let the specific
                         # generator decide which props it requires additionally.
@@ -320,17 +325,18 @@ class Config:
                 _INCLUDE_KEY_AS: str,
                 Optional(_KEY_IGNORE): bool,
             }],
+            Optional(_KEY_DISTRIBUTORS): [{
+                _LANGUAGE_KEY_DISTRIBUTOR: str,
+                Optional(_LANGUAGE_KEY_AS): str,
+                Optional(_KEY_IGNORE): bool,
+                Optional(object): object,  # Collect other properties.
+            }],
             Optional(_KEY_LANGUAGES): [{
                 _LANGUAGE_KEY_LANGUAGE: str,
                 Optional(_LANGUAGE_KEY_FILE_NAMING): str,
                 Optional(_LANGUAGE_KEY_INDENT): int,
-                Optional(_LANGUAGE_KEY_DISTRIBUTIONS): [{
-                    _LANGUAGE_KEY_DISTRIBUTOR: str,
-                    Optional(_LANGUAGE_KEY_AS): str,
-                    Optional(object): object,  # Collect other properties.
-                    Optional(_KEY_IGNORE): bool,
-                }],
                 Optional(_KEY_IGNORE): bool,
+                Optional(_KEY_DISTRIBUTORS): [str],
                 Optional(object): object  # Collect other properties.
             }],
             _KEY_PROPERTIES: [{
@@ -413,46 +419,41 @@ class Config:
     
     @staticmethod
     def _evaluate_distributors(
-        language_config: Dict[str, any],
+        validated_object: object,
         distributor_plugins: List[Plugin]=None,
         distributor_credentials: List[DistributorCredentials]=None
-    ) -> List[DistributorBase]:
+    ) -> Dict[str, DistributorBase]:
         """
         Evaluates specified distributors of a language.
 
-        :param language_config:         Language config object.
-        :type language_config:          Dict[str, any]
         :param distributor_credentials: Potentially required credentials, defaults to []
         :type distributor_credentials:  List[DistributorCredential], optional
+        TODO: Update parameter documentation!!!
 
-        :return: List of evaluated distributors for the given language.
-        :rtype:  List[DistributorBase]
+        :return: Dictionary of defined distributors where the key is the alias.
+        :rtype:  Dict[str, DistributorBase], optional
         """
-        distributors = []
-        credentials_map = {}
+        distributors = {}
 
-        # Since a default list cannot be assigned to parameters in the method header, because it only gets initialized
-        # once and then the list gets re-used (see https://stackoverflow.com/a/1145781), make sure to set undefined
-        # variables to list (see also https://docs.python.org/3/reference/compound_stmts.html#function-definitions).
-        if not distributor_plugins:
-            distributor_plugins = []
-        if not distributor_credentials:
-            distributor_credentials = []
+        if _KEY_DISTRIBUTORS in validated_object:
+            distributor_configs = validated_object[_KEY_DISTRIBUTORS]
+            credentials_map = {}
 
-        # Make sure only language configs get processed.
-        distributor_plugins = [p for p in distributor_plugins if p.get_type() == PluginType.DISTRIBUTOR]
+            # Since a default list cannot be assigned to parameters in the method header, because it only gets
+            # initialized once and then the list gets re-used (see https://stackoverflow.com/a/1145781), make
+            # sure to set undefined variables to list (see also
+            # https://docs.python.org/3/reference/compound_stmts.html#function-definitions).
+            if not distributor_plugins:
+                distributor_plugins = []
+            if not distributor_credentials:
+                distributor_credentials = []
 
-        # Map credential list to dictionary based on the credential alias for easer access.
-        for distributor_credential in distributor_credentials:
-            credentials_map[distributor_credential.distribution_alias] = distributor_credential
+            # Make sure only language configs get processed.
+            distributor_plugins = [p for p in distributor_plugins if p.get_type() == PluginType.DISTRIBUTOR]
 
-        # Get distributions config if provided.
-        distributor_configs = language_config[_LANGUAGE_KEY_DISTRIBUTIONS] \
-            if _LANGUAGE_KEY_DISTRIBUTIONS in language_config \
-            else None
-        
-        # Check if distributions are provided.
-        if distributor_configs:
+            # Map credential list to dictionary based on the credential alias for easer access.
+            for distributor_credential in distributor_credentials:
+                credentials_map[distributor_credential.distributor_alias] = distributor_credential
 
             # Make sure distributor_configs is a list.
             if not isinstance(distributor_configs, list):
@@ -480,16 +481,48 @@ class Config:
 
                     if length == 1:
                         found_distributor_class = found_distributors_classes[0]
-                        distributors.append(found_distributor_class(
+                        distributors[alias] = found_distributor_class(
                             distributor_config,
                             credentials_map[alias] if alias in credentials_map else None
-                        ))
+                        )
                     elif length > 1:
                         raise SeveralDistributorPluginsException(distributor_name)
                     else:
                         raise DistributorNotFoundException(distributor_name)
 
         return distributors
+    
+    @staticmethod
+    def _evaluate_language_distributors(
+        language_config: Dict[str, any],
+        distributors: Dict[str, DistributorBase]
+    ) -> List[DistributorBase]:
+        """
+        Evaluates specified distributors of a language.
+
+        :param language_config: Language config object.
+        :type language_config:  Dict[str, any]
+        :param distributors:    Dictionary of defined distributors where the key is the alias.
+        :type distributors:     Dict[str, DistributorBase], optional
+
+        :return: List of evaluated distributors for the given language.
+        :rtype:  List[DistributorBase]
+        """
+        language_distributors = []
+
+        # Get distributions config if provided.
+        distributor_aliases = language_config[_KEY_DISTRIBUTORS] \
+            if _KEY_DISTRIBUTORS in language_config \
+            else []
+        
+        # Return all distributors that .
+        for distributor_alias in distributor_aliases:
+            if distributor_alias not in distributors:
+                raise DistributorAliasNotFoundException(distributor_alias)
+            language_distributors.append(distributors[distributor_alias])
+
+        return language_distributors
+
     
     @staticmethod
     def _evaluate_naming_convention_type(naming_convention: str) -> NamingConventionType:

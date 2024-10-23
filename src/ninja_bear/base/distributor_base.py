@@ -15,28 +15,28 @@ class DistributorCredentials:
     Class to encapsulate credentials for specific distributor types.
     """
 
-    distribution_alias: str
+    distributor_alias: str
     user: str
     password: str
 
-    def __init__(self, distribution_alias: str, user: str='', password: str=''):
+    def __init__(self, distributor_alias: str, user: str='', password: str=''):
         """
         DistributorBase constructor.
 
-        :param distribution_alias: Alias to identify the credentials.
-        :type distribution_alias:  str
-        :param user:               Credential user, defaults to ''
-        :type user:                str, optional
-        :param password:           Credential password, defaults to ''
-        :type password:            str, optional
+        :param distributor_alias: Alias to identify the credentials.
+        :type distributor_alias:  str
+        :param user:              Credential user, defaults to ''
+        :type user:               str, optional
+        :param password:          Credential password, defaults to ''
+        :type password:           str, optional
 
         :raises NoAliasProvidedException: Raised if no distribution alias has been provided.
         """
         # Make sure there's an alias for the credentials.
-        if not distribution_alias:
+        if not distributor_alias:
             raise NoAliasProvidedException()
 
-        self.distribution_alias = distribution_alias
+        self.distributor_alias = distributor_alias
         self.user = user
         self.password = password
 
