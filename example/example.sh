@@ -8,7 +8,7 @@ if [ ! -d ${OUTPUT_DIR} ]; then
     mkdir ${OUTPUT_DIR}
 fi
 
-# Generate Java and Typescript files from test config.
+# Generate files from test config.
 ninja-bear -c test-config.yaml -o generated $*
 
 # Go back to original directory.
