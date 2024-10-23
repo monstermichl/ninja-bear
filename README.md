@@ -123,5 +123,5 @@ orchestrator.write('generated')
 orchestrator.distribute()
 ```
 
-## How to participate
-If you feel that there's a need for another language, feel free to add it. For detailed information how to add support for a new language, please refer to [README.md](https://github.com/monstermichl/ninja-bear/tree/main/misc/language_support/README.md).
+## Create a plugin
+To create a new plugin, run the [create_plugin.py](https://github.com/monstermichl/confluent/blob/main/misc/plugins/create_plugin.py) script and select the corresponding plugin type. The script guides you through the required steps and creates a new folder (e.g. ninja-bear-language-examplescript), which contains all required files to get started. All files that require some implementation contain the comment **"TODO: Implement"**. The method comments contain information about what to implement.

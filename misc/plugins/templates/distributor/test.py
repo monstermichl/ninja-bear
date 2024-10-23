@@ -19,6 +19,7 @@ class Test(unittest.TestCase):
 
         orchestrator.distribute()
 
+        # TODO: Implement
         # TODO: Add distributor result check here (e.g. if file has been distributed to Git or whatever
         # your distributor does).
         raise Exception('Distributor result checking has not been implemented')

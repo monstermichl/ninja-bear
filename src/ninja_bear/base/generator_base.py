@@ -1,7 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 import copy
-from typing import List
+from typing import Dict, List
 
 from .info import VERSION
 from .configuration_base import _DEFAULT_INDENT
@@ -35,21 +35,29 @@ class GeneratorBase(ABC):
     def __init__(
         self,
         config: GeneratorConfiguration,
-        properties: List[Property] = [],
-        additional_props = {}
+        properties: List[Property]=None,
+        additional_props: Dict[str, any]=None
     ):
         """
         Constructor
 
         :param config:           Generator configuration.
         :type config:            GeneratorConfiguration
-        :param properties:       List of properties to generator by the GeneratorBase derivate, defaults to []
+        :param properties:       List of properties to generator by the GeneratorBase derivate, defaults to None
         :type properties:        List[Property], optional
-        :param additional_props: All props that might need to be used by the derivating class, defaults to {}
-        :type additional_props:  dict, optional
+        :param additional_props: All props that might need to be used by the derivating class, defaults to None
+        :type additional_props:  Dict[str, any], optional
         """
         type_name = config.type_name
         indent = config.indent
+
+        # Since a default list cannot be assigned to parameters in the method header, because it only gets initialized
+        # once and then the list gets re-used (see https://stackoverflow.com/a/1145781), make sure to set undefined
+        # variables to list (see also https://docs.python.org/3/reference/compound_stmts.html#function-definitions).
+        if not properties:
+            properties = []
+        if not additional_props:
+            additional_props = {}
 
         self.transformers = config.transformers
         self._properties: List[Property] = []
