@@ -11,7 +11,7 @@ if not exist %OUTPUT_DIR% (
 )
 
 rem Generate files from test config.
-ninja-bear -c test-config.yaml -o generated %*
+ninja-bear -c readme-config.yaml -o generated %*
 
 rem Go back to original directory.
 popd
