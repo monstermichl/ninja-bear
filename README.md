@@ -1,5 +1,5 @@
 # ninja-bear
-In times of distributed systems and en vogue micro-architecture it can get quite cumbersome to keep constants that are required by several components up-to-date and in sync. It can get especially hard when these components or services are written in different languages. *ninja-bear* targets this issue by using a language neutral YAML configuration that lets you generate language specific config files.
+In times of distributed systems and en vogue micro-architecture it can get quite cumbersome to keep constants that are required by several components up-to-date and in sync. It can get especially hard when these components or services are written in different languages. ninja-bear targets this issue by using a language neutral YAML configuration that lets you generate language specific config files.
 
 ## Concept
 ninja-bear uses a plugin-based approach in which each language and distributor is an independend Python module. This gives developers a high amount of flexibility by letting them define and publish their own languages and distributors without the need to modify ninja-bear directly.
