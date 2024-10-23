@@ -1,17 +1,45 @@
+# ----------------------------------------------------
+# This section defines languages and properties which
+# are usually the settings that you'll use the most.
+# ----------------------------------------------------
 languages:
-  - type: typescript
+  - language: typescript
     property_naming: screaming_snake
     export: esm
 
-  - type: python
+  - language: python
     file_naming: snake
     property_naming: screaming_snake
 
-  - type: c
+  - language: c
     file_naming: snake
     property_naming: pascal
+
+    transformers:
+      - mars-transformer
+
+    distributors:
+      - git-distributor
 
 properties:
   - type: string
     name: opener
     value: Hello World
+
+# ----------------------------------------------------
+# This sections defines the available transformers
+# and distributors. They are used if property values
+# need to be transformed before they get written or
+# if specific language configs shall be distributed.
+# To use a transformer and/or a distributor, its alias
+# needs to be used in the language section (refer to
+# to c-example).
+# ----------------------------------------------------
+transformers:
+  - transformer: |
+      value = 'Hello Mars'
+    as: mars-transformer
+
+distributors:
+  - distributor: git
+    as: git-distributor

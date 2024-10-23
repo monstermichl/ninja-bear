@@ -1,34 +1,66 @@
 # ninja-bear
-In times of distributed systems and en vogue micro-architecture it can get quite cumbersome to keep constants that are required by several components up-to-date and in sync. It can get especially hard when these components or services are written in different languages. *ninja-bear* targets this issue by using a language neutral YAML configuration that lets you generate language specific config files in the style of classes, structs or consts.
+In times of distributed systems and en vogue micro-architecture it can get quite cumbersome to keep constants that are required by several components up-to-date and in sync. It can get especially hard when these components or services are written in different languages. *ninja-bear* targets this issue by using a language neutral YAML configuration that lets you generate language specific config files.
+
+## Concept
+ninja-bear uses a plugin-based approach in which each language and distributor is an independend Python module. This gives developers a high amount of flexibility by letting them define and publish their own languages and distributors without the need to modify ninja-bear directly.
+
+## Installation
+```bash
+pip install ninja-bear
+```
 
 ## Example
-Alright, after all this confusing nerd-talk, lets just have a look at a simple example to see what *ninja-bear* can do for you.
+Lets have a look at a simple example to see what *ninja-bear* can do for you.
 
-The example YAML file contains a property named **opener** with the value **Hello World**. Output files shall be generated for *TypeScript*, *Python* and *C*. In addition, the *C*-file shall be distributed to a Git server's *config*-folder using the ninja-bear-git-distributor plugin. For more information please have a look at [test-config.yaml](https://github.com/monstermichl/ninja-bear/blob/2bce469b112c4da295026b00d0421ac50995ed3c/example/test-config.yaml#L81).
+The example YAML file contains a property named *greeting* with the value "Hello World". Config files shall be generated for [TypeScript](https://pypi.org/project/ninja-bear-language-typescript/), [Python](https://pypi.org/project/ninja-bear-language-python/) and [C](https://pypi.org/project/ninja-bear-language-c/) (using the corresponding plugins). In case of *C*, the value shall be changed to *"Hello Mars"* and the file shall be distributed to Git using the [ninja-bear-distributor-git](https://pypi.org/project/ninja-bear-distributor-git/) plugin.
 
 ### Input (readme-config.yaml)
 ```yaml
+# ----------------------------------------------------
+# This section defines languages and properties which
+# are usually the settings that you'll use the most.
+# ----------------------------------------------------
 languages:
-  - type: typescript
+  - language: typescript
     property_naming: screaming_snake
     export: esm
 
-  - type: python
+  - language: python
     file_naming: snake
     property_naming: screaming_snake
 
-  - type: c
+  - language: c
     file_naming: snake
     property_naming: pascal
-    distributions:
-      - distributor: ninja-bear-git-distributor
-        path: config
-        url: https://github.com/idontknow/example.git
+
+    transformers:
+      - mars-transformer
+
+    distributors:
+      - git-distributor
 
 properties:
   - type: string
     name: opener
     value: Hello World
+
+# ----------------------------------------------------
+# This sections defines the available transformers
+# and distributors. They are used if property values
+# need to be transformed before they get written or
+# if specific language configs shall be distributed.
+# To use a transformer and/or a distributor, its alias
+# needs to be used in the language section (refer to
+# to c-example).
+# ----------------------------------------------------
+transformers:
+  - transformer: |
+      value = 'Hello Mars'
+    as: mars-transformer
+
+distributors:
+  - distributor: git
+    as: git-distributor
 ```
 
 ### Execute ninja-bear
@@ -42,12 +74,17 @@ ninja-bear -c readme-config.yaml -d
 export const ReadmeConfig = {
     OPENER: 'Hello World',
 } as const;
+// Generated with ninja-bear v1.0.0 (https://pypi.org/project/ninja-bear/).
 ```
 
 ### Output (readme_config.py)
 ```python
+from dataclasses import dataclass
+
+@dataclass(frozen=True)
 class ReadmeConfig:
     OPENER = 'Hello World'
+# Generated with ninja-bear v1.0.0 (https://pypi.org/project/ninja-bear/).
 ```
 
 ### Output (readme_config.h)
@@ -55,27 +92,14 @@ class ReadmeConfig:
 #ifndef README_CONFIG_H
 #define README_CONFIG_H
 
-/* Generated with ninja-bear v1.0.0 (https://pypi.org/project/ninja-bear/). */
 const struct {
-    char* Opener;
+    char Opener[11];
 } ReadmeConfig = {
-    "Hello World",
+    "Hello Mars",
 };
 
 #endif /* README_CONFIG_H */
-```
-
-## Currently supported languages
-- [x] Java
-- [x] JavaScript
-- [x] TypeScript
-- [x] Python
-- [x] C
-- [x] Go
-
-## Installation
-```bash
-pip install ninja-bear
+/* Generated with ninja-bear v1.0.0 (https://pypi.org/project/ninja-bear/). */
 ```
 
 ## Configuration
@@ -84,7 +108,6 @@ For detailed configuration information, please check [example/test-config.yaml](
 ## Usage
 ### Commandline
 ```bash
-# For more information run "python3 -m ninja-bear -h".
 ninja-bear -c test-config.yaml -o generated
 ```
 
