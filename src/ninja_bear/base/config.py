@@ -383,16 +383,19 @@ class Config:
         # Remove ninja-bear prefix.
         plugin_name_cleaned = re.sub(rf'^{prefix}', '', plugin_name)
 
-        # Replace dash with underscore.
-        plugin_name_cleaned_underscored = plugin_name_cleaned.replace('-', '_')
+        # Add prefix.
+        prefixed_plugin_name_cleaned = f'{prefix}{plugin_name_cleaned}'
+
+        def replace_dashes(s: str):
+            return s.replace('-', '_')
 
         # Create possible plugin names.
-        return [
-            f'{prefix}{plugin_name_cleaned}',
+        return list(set([
             plugin_name_cleaned,
-            f'{prefix}{plugin_name_cleaned_underscored}',
-            plugin_name_cleaned_underscored,
-        ]
+            prefixed_plugin_name_cleaned,
+            replace_dashes(plugin_name_cleaned),
+            replace_dashes(prefixed_plugin_name_cleaned),
+        ]))
 
     @staticmethod
     def _evaluate_language_config(language_plugins: List[Plugin], language_name: str) -> Type[LanguageConfigBase]:
