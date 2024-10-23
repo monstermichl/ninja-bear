@@ -17,7 +17,7 @@ setup(
     packages=find_packages(where='src'),
     py_modules=['<module-folder>'],
     entry_points = {
-        'ninja-bear-<type>-<name-lower>': ['config=<module-folder>.<module>:<class>']
+        'ninja_bear_<type>_<name-lower>': ['config=<module-folder>.<module>:<class>']
     },
     install_requires=[
         <requirements>

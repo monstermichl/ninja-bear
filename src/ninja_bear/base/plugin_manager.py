@@ -78,7 +78,7 @@ class PluginManager:
     def _load_plugins(self):
         plugins = []
 
-        for entry_point in [e for e in entry_points() if re.match('ninja-bear-.+', e.group)]:
+        for entry_point in [e for e in entry_points() if re.match('ninja(-|_)bear(-|_).+', e.group)]:
             plugin_class = entry_point.load()
 
             if plugin_class:
