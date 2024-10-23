@@ -10,7 +10,8 @@ from src.ninja_bear import GeneratorBase, PropertyType, NamingConventionType, Du
 from src.ninja_bear.base.orchestrator import Orchestrator
 from src.ninja_bear.base.generator_configuration import GeneratorConfiguration
 from src.ninja_bear.base.language_config_base import LanguageConfigBase
-from src.ninja_bear.base.distributor_base import DistributorBase, DistributorCredentials
+from src.ninja_bear.base.distributor_base import DistributorBase
+from src.ninja_bear.base.distributor_credentials import DistributorCredentials
 
 
 _NINJA_BEAR_REFERENCE_REGEX = r'Generated with ninja-bear v\d+\.\d+\.\d+'
@@ -87,10 +88,10 @@ class ExampleScriptConfig(LanguageConfigBase):
     
 
 class ExampleDistributor(DistributorBase):
-    def __init__(self, config: Dict, credentials: DistributorCredentials = None) -> DistributorBase:
+    def __init__(self, config: Dict, credentials: DistributorCredentials=None) -> DistributorBase:
         super().__init__(config, credentials)
 
-    def distribute(self, info: DistributeInfo):
+    def _distribute(self, info: DistributeInfo):
         return self
 
 

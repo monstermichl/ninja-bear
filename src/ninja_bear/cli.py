@@ -3,7 +3,7 @@ from os import path
 from typing import List
 
 from .base.orchestrator import Orchestrator
-from .base.distributor_base import DistributorCredentials
+from .base.distributor_credentials import DistributorCredentials
 
 _CONFIG_PARAMETER = 'config'
 _OUTPUT_PARAMETER = 'output'

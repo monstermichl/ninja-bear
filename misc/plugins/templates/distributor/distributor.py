@@ -7,7 +7,7 @@ class Distributor(DistributorBase):
     refer to DistributorBase.
     """
 
-    def distribute(self, info: DistributeInfo) -> DistributorBase:
+    def _distribute(self, info: DistributeInfo) -> DistributorBase:
         """
         Distributes the generated config. Here goes all the logic to distribute the generated
         config according to the plugin's functionality (e.g. commit to Git, copy to a different
@@ -17,4 +17,4 @@ class Distributor(DistributorBase):
         :type info:  DistributeInfo
         """
         # TODO: Implement
-        raise Exception('distribute method not implemented')
+        raise Exception('_distribute method not implemented')

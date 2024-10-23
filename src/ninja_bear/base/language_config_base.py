@@ -133,10 +133,7 @@ class LanguageConfigBase(ABC):
         """
         data = self.dump()
 
-        [distributor.distribute(DistributeInfo(
-            self.config_info.file_name_full,
-            data
-        )) for distributor in self.distributors]            
+        [distributor.distribute(self.config_info.file_name_full, data) for distributor in self.distributors]            
         return self
 
     @abstractmethod

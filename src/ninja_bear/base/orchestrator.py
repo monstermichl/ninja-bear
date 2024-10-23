@@ -3,7 +3,7 @@ from typing import List
 
 from .language_config_base import LanguageConfigBase
 from .config import Config
-from .distributor_base import DistributorCredentials
+from .distributor_credentials import DistributorCredentials
 from .plugin_manager import Plugin
 
 class Orchestrator:

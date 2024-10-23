@@ -12,7 +12,8 @@ from .property import Property
 from .property_type import PropertyType
 from .language_config_base import LanguageConfigBase
 from .language_config_naming_conventions import LanguageConfigNamingConventions
-from .distributor_base import DistributorBase, DistributorCredentials
+from .distributor_base import DistributorBase
+from .distributor_credentials import DistributorCredentials
 
 # Main keys.
 _KEY_INCLUDES = 'includes'
