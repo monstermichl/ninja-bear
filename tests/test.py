@@ -78,6 +78,9 @@ class ExampleScriptConfig(LanguageConfigBase):
 
     def _generator_type(self) -> Type[ExampleScriptGenerator]:
         return ExampleScriptGenerator
+    
+    def _default_file_naming_convention(self) -> NamingConventionType:
+        return NamingConventionType.KEBAP_CASE
 
     def _allowed_file_name_pattern(self) -> str:
         return r'.+'
