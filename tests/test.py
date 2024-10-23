@@ -79,7 +79,7 @@ class ExampleScriptConfig(LanguageConfigBase):
     def _generator_type(self) -> Type[ExampleScriptGenerator]:
         return ExampleScriptGenerator
 
-    def _allowed_file_naming_conventions(self) -> str:
+    def _allowed_file_name_pattern(self) -> str:
         return r'.+'
     
 
