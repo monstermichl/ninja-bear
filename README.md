@@ -16,10 +16,9 @@ The example YAML file contains a property named *greeting* with the value "Hello
 
 ### Input (readme-config.yaml)
 ```yaml
-# ----------------------------------------------------
-# This section defines languages and properties which
-# are usually the settings that you'll use the most.
-# ----------------------------------------------------
+# --------------------------------------------------------------------------------------------------------
+# This section defines languages and properties which are usually the settings that you'll use the most.
+# --------------------------------------------------------------------------------------------------------
 languages:
   - language: typescript
     property_naming: screaming_snake
@@ -44,15 +43,12 @@ properties:
     name: opener
     value: Hello World
 
-# ----------------------------------------------------
-# This sections defines the available transformers
-# and distributors. They are used if property values
-# need to be transformed before they get written or
-# if specific language configs shall be distributed.
-# To use a transformer and/or a distributor, its alias
-# needs to be used in the language section (refer to
+# --------------------------------------------------------------------------------------------------------
+# This sections defines the available transformers and distributors. They are used if property values
+# need to be transformed before they get written or if specific language configs shall be distributed.
+# To use a transformer and/or a distributor, its alias needs to be used in the language section (refer
 # to c-example).
-# ----------------------------------------------------
+# --------------------------------------------------------------------------------------------------------
 transformers:
   - transformer: |
       value = 'Hello Mars'
