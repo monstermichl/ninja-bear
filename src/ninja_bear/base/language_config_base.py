@@ -8,6 +8,7 @@ from .generator_base import GeneratorBase
 from .distributor_base import DistributorBase
 from .language_config_configuration import LanguageConfigConfiguration
 from .language_config_naming_conventions import LanguageConfigNamingConventions
+from .name_converter import NamingConventionType
 from .config_file_info import ConfigFileInfo
 from .distribute_info import DistributeInfo
 from .name_converter import NameConverter
@@ -79,13 +80,17 @@ class LanguageConfigBase(ABC):
             properties,
             additional_props,
         )
+        file_naming_convention = config.naming_conventions.file_naming_convention
+        file_naming_convention = file_naming_convention \
+            if file_naming_convention else self._default_file_naming_convention()
+
         self.config_info = ConfigFileInfo(
             # Convert config file name according to naming convention if a convention was provided. Otherwise, just use
             # the config name directly.
-            NameConverter.convert(config.config_name, config.naming_conventions.file_naming_convention) if
-                config.naming_conventions.file_naming_convention else
+            NameConverter.convert(
                 config.config_name,
-
+                file_naming_convention if file_naming_convention else NamingConventionType.SNAKE_CASE,
+            ),
             config.file_extension,
         )
         self.distributors = distributors if distributors else []
@@ -140,6 +145,10 @@ class LanguageConfigBase(ABC):
 
     @abstractmethod
     def _generator_type(self) -> Type[GeneratorBase]:
+        pass
+
+    @abstractmethod
+    def _default_file_naming_convention(self) -> NamingConventionType:
         pass
 
     @abstractmethod

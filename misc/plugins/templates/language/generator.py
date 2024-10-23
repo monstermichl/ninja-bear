@@ -25,7 +25,7 @@ class Generator(GeneratorBase):
     def _default_type_naming_convention(self) -> NamingConventionType:
         """
         Specifies the default type naming convention. This is necessary because some languages (e.g. Java)
-        the classes/structs/etc. to have a specific kind of naming format.
+        require the classes/structs/etc. to have a specific kind of naming format.
 
         :return: Default naming convention.
         :rtype:  NamingConventionType

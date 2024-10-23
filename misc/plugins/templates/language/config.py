@@ -1,7 +1,7 @@
 from typing import Type
 
 from .generator import Generator
-from ninja_bear import LanguageConfigBase
+from ninja_bear import LanguageConfigBase, NamingConventionType
 
 
 class Config(LanguageConfigBase):
@@ -31,7 +31,18 @@ class Config(LanguageConfigBase):
         """
         return Generator
 
-    def _allowed_file_naming_conventions(self) -> str:
+    def _default_file_naming_convention(self) -> NamingConventionType:
+        """
+        Specifies the default file naming convention. This is necessary because some languages (e.g. Java)
+        require files to have a specific kind of naming format.
+
+        :return: Default naming convention.
+        :rtype:  NamingConventionType
+        """
+        # TODO: Implement
+        raise Exception('_default_file_naming_convention method not implemented')
+
+    def _allowed_file_name_pattern(self) -> str:
         """
         Specifies the allowed file name pattern for the generated config file. This is necessary
         because some languages (e.g. Java) require the file to have a specific kind of naming format.
@@ -39,4 +50,5 @@ class Config(LanguageConfigBase):
         :return: File naming regex.
         :rtype:  str
         """
-        return r'.+'  # TODO: Probably needs to be changed by the implementer.
+        # TODO: Implement
+        return r'.+'
