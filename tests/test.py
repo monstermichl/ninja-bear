@@ -14,7 +14,6 @@ from src.ninja_bear.base.distributor_base import DistributorBase
 from src.ninja_bear.base.distributor_credentials import DistributorCredentials
 
 
-_NINJA_BEAR_REFERENCE_REGEX = r'Generated with ninja-bear v\d+\.\d+\.\d+'
 _COMPARE_FILE_CONTENT = """
 struct TestConfig:
     boolean myBoolean = true
@@ -139,11 +138,7 @@ class Test(unittest.TestCase):
         original_max_diff = self.maxDiff
         self.maxDiff = None
 
-        self.assertEqual(
-            # Remove versions to keep tests working if version changed.
-            re.sub(_NINJA_BEAR_REFERENCE_REGEX, '', local_generator.dump().strip()), 
-            re.sub(_NINJA_BEAR_REFERENCE_REGEX, '', _COMPARE_FILE_CONTENT.strip()),
-        )
+        self.assertEqual(local_generator.dump().strip(), _COMPARE_FILE_CONTENT.strip())
         self.maxDiff = original_max_diff
 
     def test_write_configs(self):
