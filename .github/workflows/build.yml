@@ -17,9 +17,6 @@ on:
     types:
       - 'created'
 
-env:
-    SECRET: ${{ secrets.CONFLUENT_TEST_TOKEN }}
-
 jobs:
   test_and_lint:
     name: Test and lint
