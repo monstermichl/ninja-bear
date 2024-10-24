@@ -62,13 +62,13 @@ def create(
 
     repository_url = input('Repository URL (optional): ').strip()
 
-    dir_name = os.path.dirname(__file__)
+    current_dir = os.path.dirname(__file__)
     target_folder = f'ninja-bear-{type_lower}-{type_name_lower}'
-    target_dir = join(dir_name, target_folder)
+    target_dir = join(current_dir, target_folder)
     src_dir = join(target_dir, 'src')
     plugin_dir = join(src_dir, 'ninja_bear_plugin')
     module_folder = NameConverter.convert(target_folder, NamingConventionType.SNAKE_CASE)
-    templates_dir = join(dir_name, 'templates')
+    templates_dir = join(current_dir, 'templates')
     template_files_dir = join(templates_dir, type_lower)
 
     # Create copy of base.
@@ -113,17 +113,21 @@ def create(
         ('year', str(datetime.date.today().year)),
     ])
 
-    # Iterate template files and replace corresponding strings (https://realpython.com/get-all-files-in-directory-python/#recursively-listing-with-rglob).
-    for file_path in pathlib.Path(target_dir).rglob('*'):
-        
-        # Make sure it's actually a file.
-        if file_path.is_file():
-            # Replace content directly in files (https://www.geeksforgeeks.org/how-to-search-and-replace-text-in-a-file-in-python/).
-            with FileInput(file_path, inplace=True) as f:
-                for line in f:
-                    for replacement in replacements:
-                        line = line.replace(f'<{replacement[0]}>', replacement[1])
-                    print(line, end='')  # print prints to the file here (https://stackoverflow.com/a/76923807).
+    def substitute():
+        # Iterate template files and replace corresponding strings (https://realpython.com/get-all-files-in-directory-python/#recursively-listing-with-rglob).
+        for file_path in pathlib.Path(target_dir).rglob('*'):
+
+            # Make sure it's actually a file.
+            if file_path.is_file():
+                # Replace content directly in files (https://www.geeksforgeeks.org/how-to-search-and-replace-text-in-a-file-in-python/).
+                with FileInput(file_path, inplace=True) as f:
+                    for line in f:
+                        for replacement in replacements:
+                            line = line.replace(f'<{replacement[0]}>', replacement[1])
+                        print(line, end='')  # print prints to the file here (https://stackoverflow.com/a/76923807).
+
+    # Substitute.
+    substitute()
 
     # Rename module folder.
     os.rename(plugin_dir, join(src_dir, module_folder))
