@@ -1,6 +1,16 @@
 distributors:  # Specifies which distributor plugins to load.
+  # -------------------------------------------------------------------------
+  # Property description for ninja-bear-<type>-<name-lower>.
+  #
+  # distributor (required): ninja-bear-<type>-<name-lower>
+  # as          (required): Specifies how the distributor will be referenced
+  #                         at the language level (in this case <name-lower>).
+  # TODO: Implement. Add your property descriptions here.
+  # ignore      (optional): If true, the section gets ignored.
+  # -------------------------------------------------------------------------
   - distributor: ninja-bear-distributor-<name-lower>
     as: <name-lower>
+    # TODO: Implement. Add your properties here.
 
 languages:
   - language: ninja-bear-language-examplescript

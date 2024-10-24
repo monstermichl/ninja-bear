@@ -66,4 +66,4 @@ jobs:
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         user: __token__
-        password: ${{ secrets.YOUR_PYPI_TOKEN }}  # TODO: Define your PyPi token here if you want to upload your package on release.
+        password: ${{ secrets.YOUR_PYPI_TOKEN }}  # TODO: Implement. Define your PyPi token here if you want to upload your package on release.

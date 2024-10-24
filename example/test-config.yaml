@@ -85,9 +85,9 @@ languages:
   #                             type (snake | screaming_snake | camel | pascal |
   #                             kebap). The default value is language specific.
   # indent          (optional): Specifies the amount of spaces before each
-  #                             constant. Defaults to 4.
-  # distributors    (optional): Specifies a list of distributors to distribute
-  #                             the generated config with.
+  #                             property. Defaults to 4.
+  # transformers    (optional): Specifies a list of transformers (alias) to use.
+  # distributors    (optional): Specifies a list of distributors (alias) to use.
   # ignore          (optional): If true, the section gets ignored.
   # -------------------------------------------------------------------------
   - language: ninja-bear-language-examplescript
