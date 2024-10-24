@@ -1,8 +1,11 @@
+distributors:  # Specifies which distributor plugins to load.
+  - distributor: ninja-bear-distributor-<name-lower>
+    as: <name-lower>
+
 languages:
   - language: ninja-bear-language-examplescript
-    distributions:
-      - distributor: ninja-bear-distributor-<name-lower>  # Specifies which distributor plugin to use.
-        as: <name-lower>
+    distributors:  # Specifies which distributor plugins to use for the language.
+      - <name-lower>
 
 properties:
   - type: bool
