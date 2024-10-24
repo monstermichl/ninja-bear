@@ -8,9 +8,6 @@ from ninja_bear.base.generator_configuration import GeneratorConfiguration
 from src.<module-folder>.generator import Generator
 
 
-_NINJA_BEAR_REFERENCE_REGEX = r'Generated with ninja-bear v\d+\.\d+\.\d+'
-
-
 class Test(unittest.TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
@@ -47,9 +44,5 @@ class Test(unittest.TestCase):
 
         original_max_diff = self.maxDiff
         self.maxDiff = None
-        self.assertEqual(
-            # Remove versions to keep tests working if version changed.
-            re.sub(_NINJA_BEAR_REFERENCE_REGEX, '', local_generator.dump()), 
-            re.sub(_NINJA_BEAR_REFERENCE_REGEX, '', content),
-        )
+        self.assertEqual(local_generator.dump()), content)
         self.maxDiff = original_max_diff
