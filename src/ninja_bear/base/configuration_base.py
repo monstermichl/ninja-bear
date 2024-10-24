@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import List
+from .meta_data_settings import MetaDataSettings
 
 
 _DEFAULT_INDENT = 4
@@ -23,4 +24,8 @@ class ConfigurationBase:
     - properties: List of all properties (must not be modified).
 
     To reflect changes to the outside of the script, the value variable must be modified.
+    """
+    meta_data_settings: MetaDataSettings = None
+    """
+    Defines which meta data to include in the generated file as comment.
     """

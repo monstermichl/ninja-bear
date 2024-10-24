@@ -14,6 +14,7 @@ from .language_config_base import LanguageConfigBase
 from .language_config_naming_conventions import LanguageConfigNamingConventions
 from .distributor_base import DistributorBase
 from .distributor_credentials import DistributorCredentials
+from .meta_data_settings import MetaDataSettings
 
 # Main keys.
 _KEY_INCLUDES = 'includes'
@@ -21,6 +22,7 @@ _KEY_TRANSFORMERS = 'transformers'
 _KEY_DISTRIBUTORS = 'distributors'
 _KEY_LANGUAGES = 'languages'
 _KEY_PROPERTIES = 'properties'
+_KEY_META = 'meta'
 
 # Common keys.
 _KEY_AS = 'as'
@@ -51,6 +53,13 @@ _LANGUAGE_KEY_NAME = 'name'
 _PROPERTY_KEY_VALUE = 'value'
 _PROPERTY_KEY_HIDDEN = 'hidden'
 _PROPERTY_KEY_COMMENT = 'comment'
+
+# Meta keys.
+_META_KEY_USER = 'user'
+_META_KEY_DATE = 'date'
+_META_KEY_TIME = 'time'
+_META_KEY_VERSION = 'version'
+_META_KEY_LINK = 'link'
 
 
 class UnknownPropertyTypeException(Exception):
@@ -235,6 +244,7 @@ class Config:
         transformers = Config._evaluate_transformers(validated_object)
         distributor_plugins = plugin_manager.get_distributor_plugins()
         distributors = Config._evaluate_distributors(validated_object, distributor_plugins, distributor_credentials)
+        meta_data_settings = Config._evaluate_meta_data_settings(validated_object)
 
         # Since a default list cannot be assigned to parameters in the method header, because it only gets initialized
         # once and then the list gets re-used (see https://stackoverflow.com/a/1145781), make sure to set undefined
@@ -323,6 +333,7 @@ class Config:
                         transformers=Config._evaluate_language_transformers(language, transformers),
                         naming_conventions=naming_conventions,
                         distributors=Config._evaluate_language_distributors(language, distributors),
+                        meta_data_settings=meta_data_settings,
 
                         # Pass all language props as additional_props to let the specific
                         # generator decide which props it requires additionally.
@@ -371,7 +382,14 @@ class Config:
                 Optional(_PROPERTY_KEY_HIDDEN): bool,
                 Optional(_PROPERTY_KEY_COMMENT): str,
                 Optional(_KEY_IGNORE): bool,
-            }]
+            }],
+            Optional(_KEY_META): {
+                Optional(_META_KEY_USER): bool,
+                Optional(_META_KEY_DATE): bool,
+                Optional(_META_KEY_TIME): bool,
+                Optional(_META_KEY_VERSION): bool,
+                Optional(_META_KEY_LINK): bool,
+            },
         })
 
     @staticmethod
@@ -397,6 +415,33 @@ class Config:
             replace_dashes(plugin_name_cleaned),
             replace_dashes(prefixed_plugin_name_cleaned),
         ]))
+    
+    @staticmethod
+    def _evaluate_meta_data_settings(validated_object: object) -> MetaDataSettings:
+        """
+        Evaluates the specified meta data settings.
+
+        :param validated_object: Schema validated config object.
+        :type validated_object:  object
+
+        :return: Dictionary of defined transformer-scripts where the key is the alias.
+        :rtype:  MetaDataSettings
+        """
+        meta_data_settings = MetaDataSettings()
+
+        if _KEY_META in validated_object:
+            settings = validated_object[_KEY_META]
+
+            def from_settings(key: str) -> bool:
+                return settings[key] if key in settings else None
+
+            meta_data_settings.user = from_settings(_META_KEY_USER)
+            meta_data_settings.date = from_settings(_META_KEY_DATE)
+            meta_data_settings.time = from_settings(_META_KEY_TIME)
+            meta_data_settings.version = from_settings(_META_KEY_VERSION)
+            meta_data_settings.link = from_settings(_META_KEY_LINK)
+
+        return meta_data_settings
 
     @staticmethod
     def _evaluate_language_config(language_plugins: List[Plugin], language_name: str) -> Type[LanguageConfigBase]:
@@ -462,7 +507,7 @@ class Config:
         :type validated_object:  object
 
         :return: Dictionary of defined transformer-scripts where the key is the alias.
-        :rtype:  Dict[str, str], optional
+        :rtype:  Dict[str, str]
         """
         transformers = {}
 
@@ -565,7 +610,7 @@ class Config:
         :type distributor_credentials:  List[DistributorCredential], optional
 
         :return: Dictionary of defined distributors where the key is the alias.
-        :rtype:  Dict[str, DistributorBase], optional
+        :rtype:  Dict[str, DistributorBase]
         """
         distributors = {}
 

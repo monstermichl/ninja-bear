@@ -5,6 +5,7 @@ from .language_config_naming_conventions import LanguageConfigNamingConventions
 from .generator_base import GeneratorBase
 from .distributor_base import DistributorBase
 from .generator_configuration import GeneratorConfiguration
+from .meta_data_settings import MetaDataSettings
 
 
 class NoConfigNameProvidedException(Exception):
@@ -32,10 +33,6 @@ class LanguageConfigConfiguration(ConfigurationBase):
     """
     Which generator to use to generate the config.
     """
-    transformers: List[str]
-    """
-    Function strings to transform property values.
-    """
     naming_conventions: LanguageConfigNamingConventions
     """
     Specifies which case convention to use for the properties. If not provided,
@@ -52,10 +49,11 @@ class LanguageConfigConfiguration(ConfigurationBase):
         config_name: str,
         file_extension: str,
         generator_type: Type[GeneratorBase],
-        indent: int = _DEFAULT_INDENT,
-        transformers: List[str] = None,
-        naming_conventions: LanguageConfigNamingConventions = None,
-        distributors: List[DistributorBase] = None,
+        indent: int=_DEFAULT_INDENT,
+        transformers: List[str]=None,
+        naming_conventions: LanguageConfigNamingConventions=None,
+        distributors: List[DistributorBase]=None,
+        meta_data_settings: MetaDataSettings=None
     ) -> None:
         super().__init__()
 
@@ -66,6 +64,7 @@ class LanguageConfigConfiguration(ConfigurationBase):
         self.transformers = transformers
         self.naming_conventions = naming_conventions
         self.distributors = distributors
+        self.meta_data_settings = meta_data_settings
 
     def validate(self):
         """
@@ -92,4 +91,5 @@ class LanguageConfigConfiguration(ConfigurationBase):
             transformers=self.transformers,
             type_name=self.config_name,
             naming_conventions=self.naming_conventions,
+            meta_data_settings=self.meta_data_settings
         )

@@ -12,6 +12,7 @@ from .name_converter import NamingConventionType
 from .config_file_info import ConfigFileInfo
 from .name_converter import NameConverter
 from .property import Property
+from .meta_data_settings import MetaDataSettings
 
 
 class InvalidFileNameException(Exception):
@@ -39,6 +40,7 @@ class LanguageConfigBase(ABC):
         transformers: List[str] = None,
         naming_conventions: LanguageConfigNamingConventions = None,
         distributors: List[DistributorBase] = None,
+        meta_data_settings: MetaDataSettings = None,
         additional_props = {},
     ):
         """
@@ -69,6 +71,7 @@ class LanguageConfigBase(ABC):
             transformers=transformers,
             naming_conventions=naming_conventions,
             distributors=distributors,
+            meta_data_settings=meta_data_settings,
         )
 
         # Make sure, config is valid.

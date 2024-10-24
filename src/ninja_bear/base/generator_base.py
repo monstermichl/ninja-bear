@@ -1,6 +1,8 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 import copy
+import datetime
+import os
 from typing import Dict, List
 
 from .info import VERSION
@@ -60,6 +62,7 @@ class GeneratorBase(ABC):
             additional_props = {}
 
         self.transformers = config.transformers
+        self._meta_data_settings = config.meta_data_settings
         self._properties: List[Property] = []
         self._naming_conventions = \
             config.naming_conventions if config.naming_conventions else GeneratorNamingConventions()
@@ -114,11 +117,6 @@ class GeneratorBase(ABC):
         :return: Config file string.
         :rtype:  str
         """
-        def add_newline(s):
-            # Add trailing newline if required.
-            if s[-1] != '\n':
-                s += '\n'
-            return s
         
         # Create copies of the properties to avoid messing around with the originals.
         properties_copy = [copy.deepcopy(property) for property in self._properties]
@@ -151,11 +149,11 @@ class GeneratorBase(ABC):
         # Make sure a string has been returned from _dump.
         if not isinstance(s, str):
             raise InvalidDumpTypeException()
+        
+        # Add meta data if required.
+        s = self._add_meta_data(s)
 
-        s = add_newline(s)
-        s += f'{self._line_comment(f"Generated with ninja-bear v{VERSION} (https://pypi.org/project/ninja-bear/).").strip()}'
-
-        return add_newline(s)
+        return self._add_newline(s)
     
     def get_type_name(self) -> str:
         """
@@ -201,6 +199,60 @@ class GeneratorBase(ABC):
         :rtype:  str
         """
         pass
+
+    def _add_newline(self, s: str) -> str:
+        """
+        Adds a trailing newline if required.
+
+        :param s: String to add the newline to.
+        :type s:  str
+
+        :return: Updated string.
+        :rtype:  str
+        """
+        if s[-1] != '\n':
+            s += '\n'
+        return s
+    
+    def _add_meta_data(self, s: str) -> str:
+        """
+        Adds a meta data comment to the generated config string.
+
+        :param s: Config string.
+        :type s:  str
+
+        :return: Updated config string.
+        :rtype:  str
+        """
+        settings = self._meta_data_settings
+
+        if settings:
+            meta_data = {}
+
+            if settings.user:
+                meta_data['user'] = os.getlogin()
+            if settings.date:
+                meta_data['date'] = datetime.date.today().isoformat()
+            if settings.time:
+                meta_data['time'] = datetime.datetime.now().time().isoformat()
+            if settings.version:
+                meta_data['version'] = VERSION
+            if settings.link:
+                meta_data['link'] = 'https://pypi.org/project/ninja-bear/'
+
+            items = meta_data.items()
+            
+            if len(items):
+                s = self._add_newline(s) + '\n'
+                s += self._add_newline(self._line_comment('------- metadata begin -------'))
+
+                for attribute, value in items:
+                    s += self._add_newline(
+                        self._line_comment(f'{attribute}: {str(value)}')
+                    )
+                s += self._line_comment('------- metadata end ---------')
+
+            return s
 
     def _set_type_name(self, name: str) -> GeneratorBase:
         """

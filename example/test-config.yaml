@@ -108,7 +108,8 @@ languages:
 # -------------------------------------------------------------------------
 properties:
   # -------------------------------------------------------------------------
-  # type    (required): Specifies the constant data type (bool | int | float | double | string | regex).
+  # type    (required): Specifies the constant data type (bool | int | float |
+  #                     double | string | regex).
   # name    (required): Specifies the constant's name.
   # value   (required): Specifies the constant's value.
   #
@@ -155,3 +156,21 @@ properties:
     name: myCombinedString
     value: I am telling you that ${ti.myIncludedString}.  # To use the value of another property from an included file, simply use the file's
                                                           # alias and the corresponding property name. E.g., ${ti.myIncludedString}.
+
+# --- Meta data -----------------------------------------------------------
+# This optional section defines which meta data to add as comments to the
+# generated config files.
+# -------------------------------------------------------------------------
+meta:
+  # -------------------------------------------------------------------------
+  # user    (optional): Include the user.
+  # date    (optional): Include the date.
+  # time    (optional): Include the time.
+  # version (optional): Include the used ninja-bear version.
+  # link    (optional): Include the link to ninja-bear.
+  # -------------------------------------------------------------------------
+  user: true
+  date: true
+  time: true
+  version: true
+  link: true
