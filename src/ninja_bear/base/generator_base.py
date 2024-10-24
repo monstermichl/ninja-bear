@@ -252,7 +252,7 @@ class GeneratorBase(ABC):
                     )
                 s += self._line_comment('------- metadata end ---------')
 
-            return s
+        return s
 
     def _set_type_name(self, name: str) -> GeneratorBase:
         """
