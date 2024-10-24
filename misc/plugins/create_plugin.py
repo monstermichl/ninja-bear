@@ -1,3 +1,4 @@
+import datetime
 import os
 import re
 import shutil
@@ -102,6 +103,7 @@ def create(
         ('module', entry_point_module),
         ('class', entry_point_class),
         ('type', type_lower),
+        ('year', datetime.date.today().year),
     ])
 
     # Iterate template files and replace corresponding strings (https://realpython.com/get-all-files-in-directory-python/#recursively-listing-with-rglob).
