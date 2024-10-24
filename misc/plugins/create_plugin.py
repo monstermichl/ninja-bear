@@ -63,7 +63,8 @@ def create(
     repository_url = input('Repository URL (optional): ').strip()
 
     current_dir = os.path.dirname(__file__)
-    target_folder = f'ninja-bear-{type_lower}-{type_name_lower}'
+    plugin_name = f'ninja-bear-{type_lower}-{type_name_lower}'
+    target_folder = plugin_name
     target_dir = join(current_dir, target_folder)
     src_dir = join(target_dir, 'src')
     plugin_dir = join(src_dir, 'ninja_bear_plugin')
@@ -105,6 +106,7 @@ def create(
         ('dev-requirements', concat_requirements(dev_requirements)),
         ('name-upper', type_name),
         ('name-lower', type_name_lower),
+        ('plugin', plugin_name),
         ('repository-url', repository_url),
         ('module-folder', module_folder),
         ('module', entry_point_module),

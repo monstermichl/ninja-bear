@@ -3,7 +3,7 @@
 # For more information see:
 # https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
 
-name: ninja-bear-<type>-<name-lower> pipeline
+name: <plugin> pipeline
 
 on:
   push:

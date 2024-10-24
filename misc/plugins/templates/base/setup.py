@@ -7,7 +7,7 @@ DESCRIPTION = '<name-upper> <type> support for ninja-bear'
 LONG_DESCRIPTION = Path(__file__).parent.absolute().joinpath('README.md').read_text()
 
 setup(
-    name='ninja-bear-<type>-<name-lower>', 
+    name='<plugin>', 
     version='0.1.0',
     author='<author>',
     description=DESCRIPTION,

@@ -1,8 +1,8 @@
 languages:
   # -------------------------------------------------------------------------
-  # Property description for ninja-bear-<type>-<name-lower>.
+  # Property description for <plugin>.
   #
-  # language        (required): ninja-bear-<type>-<name-lower>
+  # language        (required): <plugin>
   # TODO: Implement. Add your property descriptions here.
   # file_naming     (optional): Specifies the file naming convention (snake |
   #                             screaming_snake | camel | pascal | kebap).
