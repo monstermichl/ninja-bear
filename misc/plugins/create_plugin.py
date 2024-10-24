@@ -54,6 +54,12 @@ def create(
     if not author:
         raise Exception('No name provided')
 
+    author_real = input(f'Plugin license author ({author}): ')
+
+    # Make sure a license author got provided.
+    if not author_real:
+        author_real = author
+
     repository_url = input('Repository URL (optional): ').strip()
 
     dir_name = os.path.dirname(__file__)
@@ -94,6 +100,7 @@ def create(
     # Add additional replacements.
     replacements.extend([
         ('author', author),
+        ('author-real', author_real),
         ('requirements', concat_requirements(requirements)),
         ('dev-requirements', concat_requirements(dev_requirements)),
         ('name-upper', type_name),
