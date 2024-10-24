@@ -1,6 +1,5 @@
 from os import path
 import pathlib
-import re
 import unittest
 
 from ninja_bear import Orchestrator

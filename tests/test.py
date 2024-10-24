@@ -1,7 +1,6 @@
 from os import path
 import os
 import pathlib
-import re
 import shutil
 from typing import Dict, List, Type
 import unittest
