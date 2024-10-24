@@ -124,4 +124,4 @@ orchestrator.distribute()
 ```
 
 ## Create a plugin
-To create a new plugin, run the [create_plugin.py](https://github.com/monstermichl/confluent/blob/main/misc/plugins/create_plugin.py) script and select the corresponding plugin type. The script guides you through the required steps and creates a new folder (e.g. ninja-bear-language-examplescript), which contains all required files to get started. All files that require some implementation contain the comment **"TODO: Implement"**. The method comments contain information about what to implement.
+To create a new plugin, run the [create_plugin.py](https://github.com/monstermichl/confluent/blob/main/misc/plugins/create_plugin.py) script and select the corresponding plugin type. The script guides you through the required steps and creates a new folder (e.g. ninja-bear-language-examplescript), which contains all necessary files to get started. All files that require some implementation contain the comment **"TODO: Implement"**. The method comments contain information about what to implement.
