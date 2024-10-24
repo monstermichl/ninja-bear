@@ -44,5 +44,5 @@ class Test(unittest.TestCase):
 
         original_max_diff = self.maxDiff
         self.maxDiff = None
-        self.assertEqual(local_generator.dump()), content)
+        self.assertEqual(local_generator.dump(), content)
         self.maxDiff = original_max_diff
