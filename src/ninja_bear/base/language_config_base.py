@@ -10,7 +10,6 @@ from .language_config_configuration import LanguageConfigConfiguration
 from .language_config_naming_conventions import LanguageConfigNamingConventions
 from .name_converter import NamingConventionType
 from .config_file_info import ConfigFileInfo
-from .distribute_info import DistributeInfo
 from .name_converter import NameConverter
 from .property import Property
 
