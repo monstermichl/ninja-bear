@@ -54,7 +54,7 @@ def create(
     if not author:
         raise Exception('No name provided')
 
-    author_real = input(f'Plugin license author ({author}): ')
+    author_real = input(f'License author ({author}): ')
 
     # Make sure a license author got provided.
     if not author_real:
