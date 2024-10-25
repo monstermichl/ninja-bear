@@ -365,6 +365,7 @@ class Config:
                 _DISTRIBUTOR_KEY_DISTRIBUTOR: str,
                 _KEY_AS: str,
                 Optional(_KEY_IGNORE): bool,
+                Optional(object): object  # Collect other properties.
             }],
             Optional(_KEY_LANGUAGES): [{
                 _LANGUAGE_KEY_LANGUAGE: str,
