@@ -19,8 +19,21 @@ class DistributorBase(ABC):
         self._config = config
         self._credentials = credentials
 
-    def from_config(self, key: str):
-        return self._config[key] if key in self._config else None
+    def from_config(self, key: str) -> Tuple[any, bool]:
+        """
+        Retrieves a value from the distributor config. If the key doesn't exist,
+        None is returned.
+
+        :param key: Value key.
+        :type key:  str
+
+        :return: Returns a tuple where the first entry is the value and the second
+                 a boolean which states if the key exists.
+        :rtype:  (any, bool)
+        """
+        key_exists = key in self._config
+
+        return self._config[key] if key_exists else None, key_exists
     
     def distribute(self, file_name: str, data: str) -> DistributorBase:
         return self._distribute(DistributeInfo(
