@@ -1,7 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 import re
-from typing import List, Self, Type
+from typing import List, Type
 
 from .configuration_base import _DEFAULT_INDENT
 from .generator_base import GeneratorBase
@@ -109,7 +109,7 @@ class LanguageConfigBase(ABC):
         """
         return self.generator.dump()
     
-    def write(self, path: str = '') -> Self:
+    def write(self, path: str = ''):
         """
         Generates a config file string and writes the config file to the provided directory.
 
@@ -126,7 +126,7 @@ class LanguageConfigBase(ABC):
             f.write(self.dump())
         return self
     
-    def distribute(self) -> Self:
+    def distribute(self):
         """
         Distributes the generated config file via the specified distributors.
 

@@ -1,7 +1,7 @@
 from enum import IntEnum, auto
 from importlib_metadata import entry_points  # Since importlib.metadata changes way too often, use importlib_metadata.
 import re
-from typing import List, Self, Type
+from typing import List, Type
 
 from .distributor_base import DistributorBase
 from .language_config_base import LanguageConfigBase
@@ -60,7 +60,7 @@ class PluginManager:
         self._load_plugins()
         self.add_plugins(additional_plugins)
 
-    def add_plugins(self, plugins: List[Plugin]) -> Self:
+    def add_plugins(self, plugins: List[Plugin]):
         self._plugins.extend([p for p in plugins if p and p.get_type() != PluginType.UNKNOWN])
         return self
 

@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import Dict, Self, Tuple
+from typing import Dict, Tuple
 
 from .distribute_info import DistributeInfo
 from .distributor_credentials import DistributorCredentials
@@ -35,7 +35,7 @@ class DistributorBase(ABC):
 
         return self._config[key] if key_exists else None, key_exists
     
-    def distribute(self, file_name: str, data: str) -> Self:
+    def distribute(self, file_name: str, data: str):
         """
         Distributes the config according to the derivative implementation.
 

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List, Self
+from typing import List
 
 from .language_config_base import LanguageConfigBase
 from .config import Config
@@ -23,7 +23,7 @@ class Orchestrator:
         """
         return [config.dump() for config in self.language_configs]
     
-    def write(self, path: str = '') -> Self:
+    def write(self, path: str = ''):
         """
         Writes all language configs to the specified output path.
 
@@ -36,7 +36,7 @@ class Orchestrator:
         [config.write(path) for config in self.language_configs]
         return self
     
-    def distribute(self) -> Self:
+    def distribute(self):
         """
         Distributes all generated config files via their specified distributors.
 
@@ -51,7 +51,7 @@ class Orchestrator:
         path: str,
         distributor_credentials: List[DistributorCredentials]=None,
         plugins: List[Plugin]=None,
-    ) -> Self:
+    ):
         """
         Reads the provided YAML configuration file and generates a list of language configurations.
 
@@ -69,7 +69,7 @@ class Orchestrator:
         config_name: str,
         distributor_credentials: List[DistributorCredentials]=None,
         plugins: List[Plugin]=None,
-    ) -> Self:
+    ):
         """
         Parses the provided YAML configuration string and generates a list of language configurations. 
 
