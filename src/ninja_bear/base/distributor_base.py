@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import Dict
+from typing import Dict, Self, Tuple
 
 from .distribute_info import DistributeInfo
 from .distributor_credentials import DistributorCredentials
@@ -13,7 +13,7 @@ class DistributorBase(ABC):
     distributor implementation).
     """
 
-    def __init__(self, config: Dict, credentials: DistributorCredentials=None) -> DistributorBase:
+    def __init__(self, config: Dict, credentials: DistributorCredentials=None):
         super().__init__()
 
         self._config = config
@@ -35,15 +35,27 @@ class DistributorBase(ABC):
 
         return self._config[key] if key_exists else None, key_exists
     
-    def distribute(self, file_name: str, data: str) -> DistributorBase:
-        return self._distribute(DistributeInfo(
+    def distribute(self, file_name: str, data: str) -> Self:
+        """
+        Distributes the config according to the derivative implementation.
+
+        :param file_name: Config file name.
+        :type file_name:  str
+        :param data:      Config file data.
+        :type data:       str
+
+        :return: The current instance.
+        :rtype:  DistributorBase
+        """
+        self._distribute(DistributeInfo(
             file_name,
             data,
             self._credentials,
         ))
+        return self
 
     @abstractmethod
-    def _distribute(self, info: DistributeInfo) -> DistributorBase:
+    def _distribute(self, info: DistributeInfo):
 
         """
         Method to distribute a generated config which must be implemented by a derivative class.

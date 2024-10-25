@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 import copy
 import datetime
 import os
-from typing import Dict, List
+from typing import Dict, List, Self
 
 from .info import VERSION
 from .configuration_base import _DEFAULT_INDENT
@@ -74,7 +74,7 @@ class GeneratorBase(ABC):
         # Add properties one by one.
         [self.add_property(property) for property in properties]
 
-    def add_property(self, property: Property):
+    def add_property(self, property: Property) -> Self:
         """
         Adds a property to the properties list. IMPORTANT: Property names must be unique.
 
@@ -97,7 +97,7 @@ class GeneratorBase(ABC):
         self._properties.append(property)
         return self
 
-    def set_indent(self, indent: int):
+    def set_indent(self, indent: int) -> Self:
         """
         Sets the whitespace indent for the properties.
 
@@ -254,7 +254,7 @@ class GeneratorBase(ABC):
 
         return s
 
-    def _set_type_name(self, name: str) -> GeneratorBase:
+    def _set_type_name(self, name: str) -> Self:
         """
         Sets the type name to the specified name. If no naming convention was set, the default
         naming convention, specified by the deriving class, will be used.
