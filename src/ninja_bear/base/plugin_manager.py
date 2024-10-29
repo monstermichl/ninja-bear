@@ -49,7 +49,7 @@ class Plugin:
 
 class PluginManager:
     def __init__(self, additional_plugins: List[Plugin]=FileNotFoundError) -> None:
-        self._plugins = []
+        self._plugins: List[Plugin] = []
 
         # Since a default list cannot be assigned to parameters in the method header, because it only gets initialized
         # once and then the list gets re-used (see https://stackoverflow.com/a/1145781), make sure to set undefined
@@ -61,7 +61,18 @@ class PluginManager:
         self.add_plugins(additional_plugins)
 
     def add_plugins(self, plugins: List[Plugin]):
-        self._plugins.extend([p for p in plugins if p and p.get_type() != PluginType.UNKNOWN])
+        # Added plugins overwrite loaded ones, doubles are removed.
+        for plugin in [p for p in plugins if p and p.get_type() != PluginType.UNKNOWN]:
+            for i, plugin_temp in enumerate(self._plugins):
+                replaced = False
+
+                if plugin_temp.get_name() == plugin.get_type():
+                    # If not replace yet, replace the plugin, otherwise remove.
+                    if not replaced:
+                        self._plugins[i] = plugin
+                        replaced = True
+                    else:
+                        del self._plugins[i]
         return self
 
     def get_plugins(self) -> List[Type[Plugin]]:
