@@ -65,7 +65,7 @@ class Orchestrator:
 
     @staticmethod
     def parse_config(
-        config: str,
+        config: str | object,
         config_name: str,
         distributor_credentials: List[DistributorCredentials]=None,
         plugins: List[Plugin]=None,

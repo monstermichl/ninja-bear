@@ -141,7 +141,7 @@ class Config:
 
     @staticmethod
     def parse(
-        content: str,
+        content: str | object,
         config_name: str,
         distributor_credentials: List[DistributorCredentials]=None,
         plugins: List[Plugin]=None,
@@ -209,7 +209,7 @@ class Config:
 
     @staticmethod
     def _parse(
-        content: str,
+        content: str | object,
         config_name: str,
         namespace: str='',
         directory: str='',
@@ -236,7 +236,7 @@ class Config:
         :rtype:  List[LanguageConfigBase]
         """
         plugin_manager = PluginManager(plugins)
-        yaml_object = yaml.safe_load(content)
+        yaml_object = yaml.safe_load(content) if isinstance(content, str) else content
         validated_object = Config._schema().validate(yaml_object)
         language_configs: List[LanguageConfigBase] = []
         properties: List[Property] = []

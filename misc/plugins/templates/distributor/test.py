@@ -1,7 +1,10 @@
-from os import path
 import pathlib
-from typing import Type
 import unittest
+
+from typing import Type
+from os.path import join
+
+import yaml
 
 from ninja_bear import (
     DistributorCredentials,
@@ -92,19 +95,23 @@ class Test(unittest.TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
         self._test_path = pathlib.Path(__file__).parent.resolve()
-        self._test_config_path = path.join(self._test_path, '..', 'example/test-config.yaml')
+        self._test_config_path = join(self._test_path, '..', 'example/test-config.yaml')
         self._plugins = [
             Plugin('examplescript', ExampleScriptConfig),
         ]
 
     def test_distribution(self):
-        # Get secret from environment variables.
-        credential = DistributorCredentials('example-alias', None, 'password')
-        orchestrator = Orchestrator.read_config(self._test_config_path, [credential], plugins=self._plugins)
+        # Load test-config.yaml directly in test file to allow implementer to modify properties if required.
+        with open(self._test_config_path, 'r') as f:
+            config = yaml.safe_load(f)
 
-        orchestrator.distribute()
+            # Get secret from environment variables.
+            credential = DistributorCredentials('example-alias', None, 'password')
+            orchestrator = Orchestrator.read_config(self._test_config_path, [credential], plugins=self._plugins)
 
-        # TODO: Implement
-        # TODO: Add distributor result check here (e.g. if file has been distributed to Git or whatever
-        # your distributor does).
-        raise Exception('Distributor result checking has not been implemented')
+            orchestrator.distribute()
+
+            # TODO: Implement
+            # TODO: Add distributor result check here (e.g. if file has been distributed to Git or whatever
+            # your distributor does).
+            raise Exception('Distributor result checking has not been implemented')
