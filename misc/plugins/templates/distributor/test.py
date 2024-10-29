@@ -94,9 +94,10 @@ class ExampleScriptConfig(LanguageConfigBase):
 class Test(unittest.TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
-        self._config_name = 'test-config.yaml'
+        self._config_name = 'test-config'
+        self._config_file = f'{self._config_name}.yaml'
         self._test_path = pathlib.Path(__file__).parent.resolve()
-        self._test_config_path = join(self._test_path, '..', f'example/{self._config_name}')
+        self._test_config_path = join(self._test_path, '..', f'example/{self._config_file}')
         self._plugins = [
             Plugin('examplescript', ExampleScriptConfig),
         ]
