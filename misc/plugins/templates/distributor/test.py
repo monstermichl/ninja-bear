@@ -3,7 +3,16 @@ import pathlib
 from typing import Type
 import unittest
 
-from ninja_bear import Orchestrator, DistributorCredentials, GeneratorBase, NamingConventionType, DumpInfo, PropertyType, LanguageConfigBase, Plugin
+from ninja_bear import (
+    DistributorCredentials,
+    DumpInfo,
+    GeneratorBase,
+    LanguageConfigBase,
+    NamingConventionType,
+    Orchestrator,
+    Plugin,
+    PropertyType,
+)
 from src.<module-folder>.distributor import Distributor
 
 
