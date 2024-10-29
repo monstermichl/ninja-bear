@@ -94,8 +94,9 @@ class ExampleScriptConfig(LanguageConfigBase):
 class Test(unittest.TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
+        self._config_name = 'test-config.yaml'
         self._test_path = pathlib.Path(__file__).parent.resolve()
-        self._test_config_path = join(self._test_path, '..', 'example/test-config.yaml')
+        self._test_config_path = join(self._test_path, '..', f'example/{self._config_name}')
         self._plugins = [
             Plugin('examplescript', ExampleScriptConfig),
         ]
@@ -107,7 +108,7 @@ class Test(unittest.TestCase):
 
             # Get secret from environment variables.
             credential = DistributorCredentials('example-alias', None, 'password')
-            orchestrator = Orchestrator.parse_config(config, [credential], plugins=self._plugins)
+            orchestrator = Orchestrator.parse_config(config, self._config_name, [credential], plugins=self._plugins)
 
             orchestrator.distribute()
 
