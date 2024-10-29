@@ -244,14 +244,11 @@ class GeneratorBase(ABC):
             
             if len(items):
                 s = self._add_newline(s) + '\n'
-                s += self._add_newline(self._line_comment('------- metadata begin -------'))
 
                 for attribute, value in items:
                     s += self._add_newline(
                         self._line_comment(f'{attribute}: {str(value)}')
                     )
-                s += self._line_comment('------- metadata end ---------')
-
         return s
 
     def _set_type_name(self, name: str):
