@@ -126,9 +126,13 @@ class Config:
         """
         Reads the provided YAML configuration file and generates a list of language configurations.
 
-        :param path: Path to load the YAML file from (see example/test-config.yaml for configuration details).
-        :type path:  str
-        TODO: Update parameter documentation!!!
+        :param path:                    Path to load the YAML file from (see example/test-config.yaml for configuration
+                                        details).
+        :type path:                     str
+        :param distributor_credentials: Credentials for distributors, defaults to None
+        :type distributor_credentials:  List[DistributorCredentials], optional
+        :param plugins:                 Caller-provided plugins (overwrite loaded plugins), defaults to None
+        :type plugins:                  List[Plugin], optional
 
         :return: Language configurations which further can be dumped as config files.
         :rtype:  List[LanguageConfigBase]
@@ -149,13 +153,16 @@ class Config:
         """
         Parses the provided YAML configuration string and returns the corresponding language configurations.
 
-        :param content:     YAML configuration strings. For config details, please check the test-config.yaml in
-                            the example folder.
-        :type content:      str
-        :param config_name: Output config file name. NOTE: The actual file name format might be overruled by
-                            the specified file_naming rule from the config.
-        :type config_name:  str
-        TODO: Update parameter documentation!!!
+        :param content:                 YAML configuration string. For config details, please check the test-config.yaml
+                                        in the example folder. HINT: This can also be an already parsed object.
+        :type content:                  str | object
+        :param config_name:             Output config file name. NOTE: The actual file name format might be overruled by
+                                        the specified file_naming rule from the config.
+        :type config_name:              str
+        :param distributor_credentials: Credentials for distributors, defaults to None
+        :type distributor_credentials:  List[DistributorCredentials], optional
+        :param plugins:                 Caller-provided plugins (overwrite loaded plugins), defaults to None
+        :type plugins:                  List[Plugin], optional
 
         :return: Language configurations which further can be dumped as config files.
         :rtype:  List[LanguageConfigBase]
@@ -178,11 +185,18 @@ class Config:
         """
         Reads the provided YAML configuration file and generates a list of language configurations.
 
-        :param path:      Path to load the YAML file from (see example/test-config.yaml for configuration details).
-        :type path:       str
-        :param namespace: Specifies a namespace for the config. If None or empty, no namespace will be set.
-        :type nammespace: str
-        TODO: Update parameter documentation!!!
+        :param path:                    Path to load the YAML file from (see example/test-config.yaml for configuration
+                                        details).
+        :type path:                     str
+        :param namespace:               Specifies a namespace for the config. If None or empty, no namespace will
+                                        be set.
+        :type nammespace:               str
+        :param namespaces:              List of namespaces.
+        :type nammespaces:              List[str]
+        :param distributor_credentials: Credentials for distributors, defaults to None
+        :type distributor_credentials:  List[DistributorCredentials], optional
+        :param plugins:                 Caller-provided plugins (overwrite loaded plugins), defaults to None
+        :type plugins:                  List[Plugin], optional
 
         :return: Language configurations which further can be dumped as config files.
         :rtype:  List[LanguageConfigBase]
@@ -220,15 +234,21 @@ class Config:
         """
         Parses the provided YAML configuration string and returns the corresponding language configurations.
 
-        :param content:     YAML configuration strings. For config details, please check the test-config.yaml in
-                            the example folder.
-        :type content:      str
-        :param config_name: Output config file name. NOTE: The actual file name format might be overruled by
-                            the specified file_naming rule from the config.
-        :type config_name:  str
-        :param namespace:   Specifies a namespace for the config. If None or empty, no namespace will be set.
-        :type nammespace:   str
-        TODO: Update parameter documentation!!!
+        :param content:                 YAML configuration strings. For config details, please check the
+                                        test-config.yaml in the example folder.
+        :type content:                  str
+        :param config_name:             Output config file name. NOTE: The actual file name format might be overruled by
+                                        the specified file_naming rule from the config.
+        :type config_name:              str
+        :param namespace:               Specifies a namespace for the config. If None or empty, no namespace will
+                                        be set.
+        :type nammespace:               str
+        :param namespaces:              List of namespaces.
+        :type nammespaces:              List[str]
+        :param distributor_credentials: Credentials for distributors, defaults to None
+        :type distributor_credentials:  List[DistributorCredentials], optional
+        :param plugins:                 Caller-provided plugins (overwrite loaded plugins), defaults to None
+        :type plugins:                  List[Plugin], optional
 
         :raises AliasAlreadyInUseException: Raised if an included config file uses an already defined alias.
 
