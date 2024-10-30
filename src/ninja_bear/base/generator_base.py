@@ -2,7 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 import copy
 import datetime
-import os
+import getpass
 from typing import Dict, List
 
 from .info import VERSION
@@ -230,7 +230,7 @@ class GeneratorBase(ABC):
             meta_data = {}
 
             if settings.user:
-                meta_data['user'] = os.getlogin()
+                meta_data['user'] = getpass.getuser()  # https://bugs.python.org/issue40821#msg383161
             if settings.date:
                 meta_data['date'] = datetime.date.today().isoformat()
             if settings.time:
