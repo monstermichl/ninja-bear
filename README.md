@@ -14,6 +14,8 @@ Lets have a look at a simple example to see what *ninja-bear* can do for you.
 
 The example YAML file contains a property named *greeting* with the value "Hello World". Config files shall be generated for [TypeScript](https://pypi.org/project/ninja-bear-language-typescript/), [Python](https://pypi.org/project/ninja-bear-language-python/) and [C](https://pypi.org/project/ninja-bear-language-c/) (using the corresponding plugins). In case of *C*, the value shall be changed to *"Hello Mars"* and the file shall be distributed to Git using the [ninja-bear-distributor-git](https://pypi.org/project/ninja-bear-distributor-git/) plugin.
 
+For detailed configuration information, please check [test-config.yaml](https://github.com/monstermichl/ninja-bear/blob/main/example/test-config.yaml). All possible values are described there.
+
 ### Input (readme-config.yaml)
 ```yaml
 # -----------------------------------------------------------------------------
@@ -96,9 +98,6 @@ const struct {
 
 #endif /* README_CONFIG_H */
 ```
-
-## Configuration
-For detailed configuration information, please check [example/test-config.yaml](https://github.com/monstermichl/ninja-bear/blob/main/example/test-config.yaml). All possible values are described there.
 
 ## Usage
 ### Commandline
