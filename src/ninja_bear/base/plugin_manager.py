@@ -48,31 +48,41 @@ class Plugin:
 
 
 class PluginManager:
-    def __init__(self, additional_plugins: List[Plugin]=FileNotFoundError) -> None:
+    def __init__(self, plugins: List[Plugin]=None) -> None:
         self._plugins: List[Plugin] = []
 
         # Since a default list cannot be assigned to parameters in the method header, because it only gets initialized
         # once and then the list gets re-used (see https://stackoverflow.com/a/1145781), make sure to set undefined
         # variables to list (see also https://docs.python.org/3/reference/compound_stmts.html#function-definitions).
-        if not additional_plugins:
-            additional_plugins = []
+        if not plugins:
+            plugins = []
 
         self._load_plugins()
-        self.add_plugins(additional_plugins)
+        self.add_plugins(plugins)
 
-    def add_plugins(self, plugins: List[Plugin]):
-        # Added plugins overwrite loaded ones, doubles are removed.
+    def add_plugins(self, plugins: List[Plugin], replace=True):
+        def plugin_name(plugin: Plugin):
+            return plugin.get_name().replace('-', '_').strip()
+
+        # Added plugins overwrite loaded ones if names match, doubles are removed.
         for plugin in [p for p in plugins if p and p.get_type() != PluginType.UNKNOWN]:
-            for i, plugin_temp in enumerate(self._plugins):
-                replaced = False
+            found = False
 
-                if plugin_temp.get_name() == plugin.get_type():
-                    # If not replace yet, replace the plugin, otherwise remove.
-                    if not replaced:
-                        self._plugins[i] = plugin
-                        replaced = True
-                    else:
-                        del self._plugins[i]
+            if replace:
+                for i, plugin_temp in enumerate(self._plugins):
+                    if plugin_name(plugin_temp) == plugin_name(plugin):
+
+                        # If not found yet, replace the plugin, otherwise remove it.
+                        if not found:
+                            self._plugins[i] = plugin
+                        else:
+                            del self._plugins[i]
+                        found = True
+
+            # If not found, append the plugin to the list.
+            if not found:
+                self._plugins.append(plugin)
+
         return self
 
     def get_plugins(self) -> List[Type[Plugin]]:
