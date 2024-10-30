@@ -13,6 +13,7 @@ from fileinput import FileInput
 sys.path.append(str(pathlib.Path(os.path.dirname(__file__)).parent.parent.absolute()))
 
 from src.ninja_bear.base.name_converter import NameConverter, NamingConventionType
+from src.ninja_bear.base.info import VERSION
 
 def create(
     type: str,
@@ -113,6 +114,7 @@ def create(
         ('class', entry_point_class),
         ('type', type_lower),
         ('year', str(datetime.date.today().year)),
+        ('ninja-bear-version', str(VERSION)),
     ])
 
     def substitute():
