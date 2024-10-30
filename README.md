@@ -72,7 +72,6 @@ ninja-bear -c readme-config.yaml -d
 export const ReadmeConfig = {
     OPENER: 'Hello World',
 } as const;
-// Generated with ninja-bear v1.0.0 (https://pypi.org/project/ninja-bear/).
 ```
 
 ### Output (readme_config.py)
@@ -82,7 +81,6 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class ReadmeConfig:
     OPENER = 'Hello World'
-# Generated with ninja-bear v1.0.0 (https://pypi.org/project/ninja-bear/).
 ```
 
 ### Output (readme_config.h)
@@ -97,7 +95,6 @@ const struct {
 };
 
 #endif /* README_CONFIG_H */
-/* Generated with ninja-bear v1.0.0 (https://pypi.org/project/ninja-bear/). */
 ```
 
 ## Configuration
