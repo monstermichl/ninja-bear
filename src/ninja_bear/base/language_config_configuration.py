@@ -66,11 +66,11 @@ class LanguageConfigConfiguration(ConfigurationBase):
         last_part = config_file_path.replace(r'\\', '/').split('/')[-1]
 
         if '.' in last_part:
-            config_file_path = '.'.join(last_part.split('.')[0:-1])
+            config_name = '.'.join(last_part.split('.')[0:-1])
         else:
-            config_file_path = last_part
+            config_name = last_part
 
-        self.config_name = config_file_path
+        self.config_name = config_name
         self.config_file_path = pathlib.Path(config_file_path)
         self.file_extension = file_extension.lstrip('.')
         self.generator_type = generator_type
