@@ -131,13 +131,16 @@ class GeneratorBase(ABC):
         # Remove hidden properties.
         properties_copy = [property for property in properties_copy if not property.hidden]
 
+        # If not naming conventation has been provided, use camel-case as default.
+        if not self._naming_conventions.properties_naming_convention:
+            self._naming_conventions.properties_naming_convention = NamingConventionType.CAMEL_CASE
+
         # Update property names according to naming convention.
-        if self._naming_conventions.properties_naming_convention:
-            for property in properties_copy:
-                property.name = NameConverter.convert(
-                    property.name, 
-                    self._naming_conventions.properties_naming_convention
-                )
+        for property in properties_copy:
+            property.name = NameConverter.convert(
+                property.name, 
+                self._naming_conventions.properties_naming_convention
+            )
 
         s = self._dump(DumpInfo(
             self._type_name,
