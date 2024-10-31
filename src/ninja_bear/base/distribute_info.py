@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+from pathlib import Path
+
 from .distributor_credentials import DistributorCredentials
 
 
@@ -6,5 +8,5 @@ from .distributor_credentials import DistributorCredentials
 class DistributeInfo:
     file_name: str
     data: str
-    input_path: str
+    input_path: Path
     credentials: DistributorCredentials

@@ -1,5 +1,5 @@
-import pathlib
 from typing import List, Type
+from pathlib import Path
 
 from .configuration_base import _DEFAULT_INDENT, ConfigurationBase
 from .language_config_naming_conventions import LanguageConfigNamingConventions
@@ -26,7 +26,7 @@ class LanguageConfigConfiguration(ConfigurationBase):
     GeneratorBase will be used if no naming convention for the type name
     was provided (see GeneratorBase._default_type_naming_convention).
     """
-    input_path: str
+    input_path: Path
     """
     Path to the input configuration file.
     """
@@ -71,7 +71,7 @@ class LanguageConfigConfiguration(ConfigurationBase):
             config_name = last_part
 
         self.config_name = config_name
-        self.input_path = pathlib.Path(input_path)
+        self.input_path = Path(input_path)
         self.file_extension = file_extension.lstrip('.')
         self.generator_type = generator_type
         self.indent = indent
