@@ -77,12 +77,12 @@ languages:
   #                             typescript) as it will internally be prefixed
   #                             to result in 'ninja-bear-language-typescript'.
   # file_naming     (optional): Specifies the file naming convention (snake |
-  #                             screaming_snake | camel | pascal | kebap).
+  #                             screaming-snake | camel | pascal | kebap).
   #                             Defaults to the file-name without the extension.
   # property_naming (optional): Specifies the property naming convention (snake |
-  #                             screaming_snake | camel | pascal | kebap).
+  #                             screaming-snake | camel | pascal | kebap).
   # type_naming     (optional): Specifies the naming convention for the generated
-  #                             type (snake | screaming_snake | camel | pascal |
+  #                             type (snake | screaming-snake | camel | pascal |
   #                             kebap). The default value is language specific.
   # indent          (optional): Specifies the amount of spaces before each
   #                             property. Defaults to 4.

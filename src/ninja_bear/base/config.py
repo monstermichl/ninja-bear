@@ -724,7 +724,7 @@ class Config:
         """
         if naming_convention == 'snake':
             naming_convention = NamingConventionType.SNAKE_CASE
-        elif naming_convention == 'screaming_snake':
+        elif naming_convention.replace('_', '-') == 'screaming-snake':
             naming_convention = NamingConventionType.SCREAMING_SNAKE_CASE
         elif naming_convention == 'camel':
             naming_convention = NamingConventionType.CAMEL_CASE
