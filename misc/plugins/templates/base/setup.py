@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 # Setup process taken from here: https://www.freecodecamp.org/news/build-your-first-python-package/.
 
 DESCRIPTION = '<name-upper> <type> support for ninja-bear'
-LONG_DESCRIPTION = Path(__file__).parent.absolute().joinpath('README.md').read_text()
+LONG_DESCRIPTION = Path(__file__).parent.absolute().joinpath('README.md').read_text('utf-8')
 
 setup(
     name='<plugin>', 
