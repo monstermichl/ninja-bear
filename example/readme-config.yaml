@@ -23,7 +23,7 @@ languages:
 
 properties:
   - type: string
-    name: opener
+    name: greeting
     value: Hello World
 
 # -----------------------------------------------------------------------------

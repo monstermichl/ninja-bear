@@ -43,7 +43,7 @@ languages:
 
 properties:
   - type: string
-    name: opener
+    name: greeting
     value: Hello World
 
 # -----------------------------------------------------------------------------
@@ -72,7 +72,7 @@ ninja-bear -c readme-config.yaml -d
 ### Output (readme-config.ts)
 ```typescript
 export const ReadmeConfig = {
-    OPENER: 'Hello World',
+    GREETING: 'Hello World',
 } as const;
 ```
 
@@ -82,7 +82,7 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class ReadmeConfig:
-    OPENER = 'Hello World'
+    GREETING = 'Hello World'
 ```
 
 ### Output (readme_config.h)
@@ -91,7 +91,7 @@ class ReadmeConfig:
 #define README_CONFIG_H
 
 const struct {
-    char Opener[11];
+    char Greeting[11];
 } ReadmeConfig = {
     "Hello Mars",
 };
