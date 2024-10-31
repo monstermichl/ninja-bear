@@ -722,14 +722,15 @@ class Config:
         :return: The corresponding NamingConventionType enum value.
         :rtype:  NamingConventionType
         """
-        if naming_convention == 'snake':
-            naming_convention = NamingConventionType.SNAKE_CASE
-        elif naming_convention.replace('_', '-') == 'screaming-snake':
-            naming_convention = NamingConventionType.SCREAMING_SNAKE_CASE
-        elif naming_convention == 'camel':
-            naming_convention = NamingConventionType.CAMEL_CASE
-        elif naming_convention == 'pascal':
-            naming_convention = NamingConventionType.PASCAL_CASE
-        elif naming_convention == 'kebap':
-            naming_convention = NamingConventionType.KEBAP_CASE
+        if naming_convention:
+            if naming_convention == 'snake':
+                naming_convention = NamingConventionType.SNAKE_CASE
+            elif naming_convention.replace('_', '-') == 'screaming-snake':
+                naming_convention = NamingConventionType.SCREAMING_SNAKE_CASE
+            elif naming_convention == 'camel':
+                naming_convention = NamingConventionType.CAMEL_CASE
+            elif naming_convention == 'pascal':
+                naming_convention = NamingConventionType.PASCAL_CASE
+            elif naming_convention == 'kebap':
+                naming_convention = NamingConventionType.KEBAP_CASE
         return naming_convention
