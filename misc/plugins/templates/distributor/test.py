@@ -108,7 +108,7 @@ class Test(unittest.TestCase):
 
             # Get secret from environment variables.
             credential = DistributorCredentials('example-alias', None, 'password')
-            orchestrator = Orchestrator.parse_config(config, self._config_name, [credential], plugins=self._plugins)
+            orchestrator = Orchestrator.parse_config(config, self._test_config_path, [credential], plugins=self._plugins)
 
             orchestrator.distribute()
 
