@@ -24,12 +24,12 @@ For detailed configuration information, please check [test-config.yaml](https://
 # -----------------------------------------------------------------------------
 languages:
   - language: typescript
-    property_naming: screaming_snake
+    property_naming: screaming-snake
     export: esm
 
   - language: python
     file_naming: snake
-    property_naming: screaming_snake
+    property_naming: screaming-snake
 
   - language: c
     file_naming: snake

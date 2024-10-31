@@ -23,7 +23,8 @@ def create(
     test_files: List[str],
     entry_point_module: str,
     entry_point_class: str,
-    additional_replacements_callout: Callable[[], List[Tuple[str, str]]]=None
+    call_flags: List[str],
+    additional_replacements_callout: Callable[[], List[Tuple[str, str]]]=None,
 ):
     type_capitalized = type.capitalize()
     type_lower = type.lower()
@@ -115,6 +116,7 @@ def create(
         ('type', type_lower),
         ('year', str(datetime.date.today().year)),
         ('ninja-bear-version', str(VERSION)),
+        ('ninja-bear-flags', ' '.join(call_flags)),
     ])
 
     def substitute():
@@ -154,9 +156,10 @@ def create_language_plugin():
         requirements=[],
         dev_requirements=[],
         source_files=['config.py', 'generator.py'],
-        test_files=['test.py', 'compare_files'],
+        test_files=['test.py'],
         entry_point_module='config',
         entry_point_class='Config',
+        call_flags=[],
         additional_replacements_callout=callout,
     )
 
@@ -170,6 +173,7 @@ def create_distributor_plugin():
         test_files=['test.py'],
         entry_point_module='distributor',
         entry_point_class='Distributor',
+        call_flags=['-d'],
     )
 
 
