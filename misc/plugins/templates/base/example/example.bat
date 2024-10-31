@@ -10,7 +10,7 @@ if not exist %OUTPUT_DIR% (
     mkdir %OUTPUT_DIR%
 )
 
-rem Generate Java and Typescript files from test config.
+rem Generate files from test config.
 ninja-bear -c test-config.yaml -o generated <ninja-bear-flags> %*
 
 rem Go back to original directory.
