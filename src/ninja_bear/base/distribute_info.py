@@ -6,4 +6,5 @@ from .distributor_credentials import DistributorCredentials
 class DistributeInfo:
     file_name: str
     data: str
+    config_path: str
     credentials: DistributorCredentials

@@ -204,16 +204,9 @@ class Config:
         with open(path, 'r') as f:
             content = f.read()
 
-        # Prepare config name.
-        last_part = path.replace(r'\\', '/').split('/')[-1]
-
-        if '.' in last_part:
-            config_name = '.'.join(last_part.split('.')[0:-1])
-        else:
-            config_name = last_part
         return Config._parse(
             content,
-            config_name,
+            path,
             namespace,
             os.path.dirname(path),
             namespaces,
@@ -224,7 +217,7 @@ class Config:
     @staticmethod
     def _parse(
         content: str | object,
-        config_name: str,
+        config_path: str,
         namespace: str='',
         directory: str='',
         namespaces: List[str]=None,
@@ -237,9 +230,9 @@ class Config:
         :param content:                 YAML configuration strings. For config details, please check the
                                         test-config.yaml in the example folder.
         :type content:                  str
-        :param config_name:             Output config file name. NOTE: The actual file name format might be overruled by
+        :param config_path:             Output config file path. NOTE: The actual file name format might be overruled by
                                         the specified file_naming rule from the config.
-        :type config_name:              str
+        :type config_path:              str
         :param namespace:               Specifies a namespace for the config. If None or empty, no namespace will
                                         be set.
         :type nammespace:               str
@@ -347,7 +340,7 @@ class Config:
                     config_type = Config._evaluate_language_config(language_config_plugins, language_name)
 
                     language_configs.append(config_type(
-                        config_name=config_name,
+                        config_path,
                         properties=properties,
                         indent=indent,
                         transformers=Config._evaluate_language_transformers(language, transformers),

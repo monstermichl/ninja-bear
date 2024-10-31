@@ -1,3 +1,4 @@
+import pathlib
 from typing import List, Type
 
 from .configuration_base import _DEFAULT_INDENT, ConfigurationBase
@@ -25,6 +26,10 @@ class LanguageConfigConfiguration(ConfigurationBase):
     GeneratorBase will be used if no naming convention for the type name
     was provided (see GeneratorBase._default_type_naming_convention).
     """
+    config_file_path: str
+    """
+    Path to the read configuration file.
+    """
     file_extension: str
     """
     Which file extension to use for the output file.
@@ -46,7 +51,7 @@ class LanguageConfigConfiguration(ConfigurationBase):
 
     def __init__(
         self,
-        config_name: str,
+        config_file_path: str,
         file_extension: str,
         generator_type: Type[GeneratorBase],
         indent: int=_DEFAULT_INDENT,
@@ -57,7 +62,16 @@ class LanguageConfigConfiguration(ConfigurationBase):
     ) -> None:
         super().__init__()
 
-        self.config_name = config_name
+        # Prepare config name.
+        last_part = config_file_path.replace(r'\\', '/').split('/')[-1]
+
+        if '.' in last_part:
+            config_file_path = '.'.join(last_part.split('.')[0:-1])
+        else:
+            config_file_path = last_part
+
+        self.config_name = config_file_path
+        self.config_file_path = pathlib.Path(config_file_path)
         self.file_extension = file_extension.lstrip('.')
         self.generator_type = generator_type
         self.indent = indent
