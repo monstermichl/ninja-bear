@@ -35,16 +35,16 @@ class DistributorBase(ABC):
 
         return self._config[key] if key_exists else None, key_exists
     
-    def distribute(self, file_name: str, data: str, config_path: str):
+    def distribute(self, file_name: str, data: str, input_path: str):
         """
         Distributes the config according to the derivative implementation.
 
-        :param file_name:   Config file name.
-        :type file_name:    str
-        :param data:        Config file data.
-        :type data:         str
-        :param config_path: Config file path.
-        :type config_path:  str
+        :param file_name:  Config file name.
+        :type file_name:   str
+        :param data:       Config file data.
+        :type data:        str
+        :param input_path: Input file path.
+        :type input_path:  str
 
         :return: The current instance.
         :rtype:  DistributorBase
@@ -52,7 +52,7 @@ class DistributorBase(ABC):
         self._distribute(DistributeInfo(
             file_name=file_name,
             data=data,
-            config_path=config_path,
+            input_path=input_path,
             credentials=self._credentials,
         ))
         return self

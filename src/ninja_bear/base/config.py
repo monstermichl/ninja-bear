@@ -217,7 +217,7 @@ class Config:
     @staticmethod
     def _parse(
         content: str | object,
-        config_path: str,
+        input_path: str,
         namespace: str='',
         directory: str='',
         namespaces: List[str]=None,
@@ -230,9 +230,8 @@ class Config:
         :param content:                 YAML configuration strings. For config details, please check the
                                         test-config.yaml in the example folder.
         :type content:                  str
-        :param config_path:             Output config file path. NOTE: The actual file name format might be overruled by
-                                        the specified file_naming rule from the config.
-        :type config_path:              str
+        :param input_path:              Input config file path.
+        :type input_path:               str
         :param namespace:               Specifies a namespace for the config. If None or empty, no namespace will
                                         be set.
         :type nammespace:               str
@@ -340,7 +339,7 @@ class Config:
                     config_type = Config._evaluate_language_config(language_config_plugins, language_name)
 
                     language_configs.append(config_type(
-                        config_path,
+                        input_path,
                         properties=properties,
                         indent=indent,
                         transformers=Config._evaluate_language_transformers(language, transformers),
