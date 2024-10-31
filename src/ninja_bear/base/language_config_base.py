@@ -34,7 +34,7 @@ class LanguageConfigBase(ABC):
 
     def __init__(
         self,
-        config_name: str,
+        input_path: str,
         properties: List[Property],
         indent: int = _DEFAULT_INDENT,
         transformers: List[str] = None,
@@ -46,10 +46,8 @@ class LanguageConfigBase(ABC):
         """
         Constructor
 
-        :param config_name:        Language config name. The config name acts more like a template as it might
-                                   be changed by the naming convention rules or the specific language config
-                                   implementation (e.g. test-config might become e.g. TestConfig).
-        :type config_name:         str
+        :param input_path:         Language input config path.
+        :type input_path:          str
         :param properties:         List of properties.
         :type properties:          List[Property]
         :param indent:             Property indent for the generated config, defaults to _DEFAULT_INDENT
@@ -64,7 +62,7 @@ class LanguageConfigBase(ABC):
         :type additional_props:    dict, optional
         """
         config = LanguageConfigConfiguration(
-            config_name=config_name,
+            input_path,
             file_extension=self._file_extension(),
             generator_type=self._generator_type(),
             indent=indent,
@@ -85,7 +83,8 @@ class LanguageConfigBase(ABC):
         file_naming_convention = config.naming_conventions.file_naming_convention
         file_naming_convention = file_naming_convention \
             if file_naming_convention else self._default_file_naming_convention()
-
+        
+        self.input_path = config.input_path
         self.config_info = ConfigFileInfo(
             # Convert config file name according to naming convention if a convention was provided. Otherwise, just use
             # the config name directly.
@@ -135,7 +134,11 @@ class LanguageConfigBase(ABC):
         """
         data = self.dump()
 
-        [distributor.distribute(self.config_info.file_name_full, data) for distributor in self.distributors]            
+        [distributor.distribute(
+            self.config_info.file_name_full,
+            data,
+            self.input_path,
+        ) for distributor in self.distributors]            
         return self
 
     @abstractmethod
