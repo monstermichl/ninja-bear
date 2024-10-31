@@ -156,7 +156,7 @@ def create_language_plugin():
         requirements=[],
         dev_requirements=[],
         source_files=['config.py', 'generator.py'],
-        test_files=['test.py', 'compare_files'],
+        test_files=['test.py'],
         entry_point_module='config',
         entry_point_class='Config',
         call_flags=[],

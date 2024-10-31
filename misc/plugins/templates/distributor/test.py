@@ -98,7 +98,7 @@ class Test(unittest.TestCase):
         self._test_config_path = join(self._test_path, '..', f'example/{self._config_file}')
         self._plugins = [
             Plugin('examplescript', ExampleScriptConfig),
-            Plugin('<module>', Distributor)
+            Plugin('<plugin>', Distributor)
         ]
 
     def test_distribution(self):
