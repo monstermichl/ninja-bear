@@ -106,7 +106,6 @@ class Test(unittest.TestCase):
         with open(self._test_config_path, 'r') as f:
             config = yaml.safe_load(f)
 
-            # Get secret from environment variables.
             credential = DistributorCredentials('example-alias', None, 'password')
             orchestrator = Orchestrator.parse_config(config, self._test_config_path, [credential], plugins=self._plugins)
 
