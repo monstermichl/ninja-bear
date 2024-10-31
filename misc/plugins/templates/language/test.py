@@ -4,6 +4,7 @@ import unittest
 
 from ninja_bear import Orchestrator, Plugin
 from ninja_bear.base.generator_configuration import GeneratorConfiguration
+from src.<module-folder>.generator import Generator
 from src.<module-folder>.config import Config
 
 
