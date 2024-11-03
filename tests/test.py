@@ -140,14 +140,14 @@ class Test(unittest.TestCase):
         self.assertEqual(local_generator.dump().strip(), _COMPARE_FILE_CONTENT.strip())
         self.maxDiff = original_max_diff
 
-    def test_write_configs(self):
+    def test_write_constants(self):
         OUTPUT_DIR = path.join(self._test_path, 'test_output')
         orchestrator = Orchestrator.read_config(self._test_config_path, plugins=self._plugins)
 
         if not os.path.isdir(OUTPUT_DIR):
             os.mkdir(OUTPUT_DIR)
         
-        # Write all configs to the output folder.
+        # Write all constants to the output folder.
         orchestrator.write(OUTPUT_DIR)
 
         # Collect the output file names.

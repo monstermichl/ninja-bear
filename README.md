@@ -49,7 +49,7 @@ properties:
 # -----------------------------------------------------------------------------
 # This sections defines the available transformers and distributors. They are
 # are used if property values need to be transformed before they get written
-# or if specific language configs shall be distributed. To use a transformer
+# or if specific language constants shall be distributed. To use a transformer
 # and/or a distributor, its alias needs to be used in the language section
 # (refer to c-example).
 # -----------------------------------------------------------------------------
@@ -112,10 +112,10 @@ from ninja_bear import Orchestrator
 # Create Orchestrator instance from file.
 orchestrator = Orchestrator.read_config('test-config.yaml')
 
-# Write configs to 'generated' directory.
+# Write constants to 'generated' directory.
 orchestrator.write('generated')
 
-# Distribute configs (if required).
+# Distribute constants (if required).
 orchestrator.distribute()
 ```
 
