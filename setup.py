@@ -51,10 +51,9 @@ setup(
     url = 'https://github.com/monstermichl/ninja-bear.git',
     keywords = [
         'ninja-bear',
-        'multi',
+        'constants',
         'language',
         'generator',
         'distributor',
-        'configuration',
     ],
 )
