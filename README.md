@@ -121,3 +121,19 @@ orchestrator.distribute()
 
 ## Create a plugin
 To create a new plugin, clone the repository, run the [create_plugin.py](https://github.com/monstermichl/ninja-bear/blob/main/misc/plugins/create_plugin.py) script and select the corresponding plugin type. The script guides you through the required steps and creates a new folder (e.g. ninja-bear-language-examplescript), which contains all necessary files to get started. All files that require some implementation contain the comment **"TODO: Implement"**. The method comments contain information about what to implement. To install and test the plugin, scripts can be found in the *helpers* directory.
+
+## Example list of available plugins
+A short list of available plugins for ninja-bear. There are probably more. For a better overview please refer to [pypi.org](https://pypi.org/search/?q=%22ninja-bear-*%22).
+
+### Languages
+- [ninja-bear-language-c](https://pypi.org/project/ninja-bear-language-c/)
+- [ninja-bear-language-go](https://pypi.org/project/ninja-bear-language-go/)
+- [ninja-bear-language-java](https://pypi.org/project/ninja-bear-language-java/)
+- [ninja-bear-language-javascript](https://pypi.org/project/ninja-bear-language-javascript/)
+- [ninja-bear-language-python](https://pypi.org/project/ninja-bear-language-python/)
+- [ninja-bear-language-shell](https://pypi.org/project/ninja-bear-language-shell/)
+- [ninja-bear-language-typescript](https://pypi.org/project/ninja-bear-language-typescript/)
+
+### Distributors
+- [ninja-bear-language-fs](https://pypi.org/project/ninja-bear-distributor-fs/)
+- [ninja-bear-language-git](https://pypi.org/project/ninja-bear-distributor-git/)
