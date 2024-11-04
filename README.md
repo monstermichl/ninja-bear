@@ -1,5 +1,5 @@
 # ninja-bear 🥷🐻
-In times of distributed systems and en vogue micro-architecture it can get quite cumbersome to keep constants that are required by several components up-to-date and in sync. It can get especially hard when these components or services are written in different languages. ninja-bear targets this issue by using a language neutral YAML configuration that lets you generate language specific constants-files.
+In times of distributed systems and en vogue micro-architecture it can get quite cumbersome to keep constants that are required by several components up-to-date and in sync. It can get especially hard when these components or services are written in different languages. ninja-bear targets this issue by using a language neutral YAML configuration that lets you generate language specific constant-files.
 
 ## Concept
 ninja-bear uses a plugin-based approach in which each language and distributor is an independend Python module. This gives developers a high amount of flexibility by letting them define and publish their own languages and distributors without the need to modify ninja-bear directly.
@@ -12,7 +12,7 @@ pip install ninja-bear
 ## Example
 Lets have a look at a simple example to see what *ninja-bear* can do for you.
 
-The example YAML file contains a property named *greeting* with the value "Hello World". Config files shall be generated for [TypeScript](https://pypi.org/project/ninja-bear-language-typescript/), [Python](https://pypi.org/project/ninja-bear-language-python/) and [C](https://pypi.org/project/ninja-bear-language-c/) (using the corresponding plugins). In case of *C*, the value shall be changed to *"Hello Mars"* and the file shall be distributed to Git using the [ninja-bear-distributor-git](https://pypi.org/project/ninja-bear-distributor-git/) plugin.
+The example YAML file contains a property named *greeting* with the value "Hello World". Constant-files shall be generated for [TypeScript](https://pypi.org/project/ninja-bear-language-typescript/), [Python](https://pypi.org/project/ninja-bear-language-python/) and [C](https://pypi.org/project/ninja-bear-language-c/) (using the corresponding plugins). In case of *C*, the value shall be changed to *"Hello Mars"* and the file shall be distributed to Git using the [ninja-bear-distributor-git](https://pypi.org/project/ninja-bear-distributor-git/) plugin.
 
 For detailed configuration information, please check [test-config.yaml](https://github.com/monstermichl/ninja-bear/blob/main/example/test-config.yaml). All possible values are described there.
 
