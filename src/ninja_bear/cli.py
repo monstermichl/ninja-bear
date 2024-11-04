@@ -40,7 +40,7 @@ def main():
         help='Credential for distributions in the form of <alias>=[<username>:]<password>',
         required=False, action='append')
     parser.add_argument('-d', f'--{_DISTRIBUTE_PARAMETER}',
-        help='Distribute the generated configs to the specified locations', required=False, action='store_true')
+        help='Distribute the generated constants to the specified locations', required=False, action='store_true')
 
     args = parser.parse_args()
 

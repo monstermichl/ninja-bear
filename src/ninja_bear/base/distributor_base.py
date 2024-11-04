@@ -10,7 +10,7 @@ from .distributor_credentials import DistributorCredentials
 class DistributorBase(ABC):
     """
     Abstract class that acts as the base for all Distributor implementations. Distributors
-    are used to distribute the generated configs to different locations (based on the actual
+    are used to distribute the generated constants to different locations (based on the actual
     distributor implementation).
     """
 

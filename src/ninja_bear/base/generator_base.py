@@ -133,7 +133,7 @@ class GeneratorBase(ABC):
 
         # If not naming conventation has been provided, use camel-case as default.
         if not self._naming_conventions.properties_naming_convention:
-            self._naming_conventions.properties_naming_convention = NamingConventionType.CAMEL_CASE
+            self._naming_conventions.properties_naming_convention = self._default_property_naming_convention()
 
         # Update property names according to naming convention.
         for property in properties_copy:
@@ -202,6 +202,9 @@ class GeneratorBase(ABC):
         :rtype:  str
         """
         pass
+
+    def _default_property_naming_convention(self) -> NamingConventionType:
+        return NamingConventionType.CAMEL_CASE
 
     def _add_newline(self, s: str) -> str:
         """
