@@ -40,9 +40,9 @@ class NameConverter:
         """
         UNDERLINE = '_'
 
-        # Handle Camel- or Pascal-cased strings by replacing uppercase letters with
-        # lowercase and add an underline in front.
-        name = re.sub(r'[A-Z]', lambda match: f'{UNDERLINE}{match.group(0).lower()}', name).lstrip(UNDERLINE)
+        # Handle Camel- or Pascal-cased strings by adding an underline in front of all first uppercase letters
+        # and lowercasing the whole string afterwards.
+        name = re.sub(r'(?<!^)(?<![A-Z_])([A-Z])', lambda match: f'{UNDERLINE}{match.group(1)}', name).lower()
 
         # Replace all special characters by underline for easier further processing.
         name = re.sub(r'\W+', UNDERLINE, name)
