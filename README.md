@@ -137,5 +137,5 @@ A short list of available plugins for ninja-bear. There are probably more. For a
 - [ninja-bear-language-typescript](https://pypi.org/project/ninja-bear-language-typescript/)
 
 ### Distributors
-- [ninja-bear-language-fs](https://pypi.org/project/ninja-bear-distributor-fs/)
-- [ninja-bear-language-git](https://pypi.org/project/ninja-bear-distributor-git/)
+- [ninja-bear-distributor-fs](https://pypi.org/project/ninja-bear-distributor-fs/)
+- [ninja-bear-distributor-git](https://pypi.org/project/ninja-bear-distributor-git/)
